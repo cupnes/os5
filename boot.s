@@ -80,8 +80,14 @@ load_sector:
 	movw	$0x0001, %ax
 	lmsw	%ax
 
-end:
-	jmp		end
+	movw	$2*8, %ax
+	movw	%ax, %ds
+	movw	%ax, %es
+	movw	%ax, %fs
+	movw	%ax, %gs
+	movw	%ax, %ss
+
+	ljmp	$8, $0
 
 print_msg:
 	lodsb
