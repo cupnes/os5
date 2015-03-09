@@ -12,7 +12,7 @@
 	movw	$0x0000, %ax
 	int		$0x10
 
-	movw	$msg, %si
+	movw	$msg_welcome, %si
 	call	print_msg
 
 end:
@@ -29,6 +29,6 @@ print_msg:
 print_msg_ret:
 	ret
 
-msg:
-	.ascii	"Hello"
+msg_welcome:
+	.ascii	"Welcome to OS5!\r\n"
 	.byte	0
