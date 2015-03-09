@@ -31,6 +31,30 @@ load_sector:
 	movw	$msg_completed, %si
 	call	print_msg
 
+	/* マスタPICの初期化 */
+	movb	$0x10, %al
+	outb	%al, $0x20	/* ICW1 */
+	movb	$0x00, %al
+	outb	%al, $0x21	/* ICW2 */
+	movb	$0x04, %al
+	outb	%al, $0x21	/* ICW3 */
+	movb	$0x01, %al
+	outb	%al, $0x21	/* ICW4 */
+	movb	$0xff, %al
+	outb	%al, $0x21	/* OCW1 */
+
+	/* スレーブPICの初期化 */
+	movb	$0x10, %al
+	outb	%al, $0xa0	/* ICW1 */
+	movb	$0x00, %al
+	outb	%al, $0xa1	/* ICW2 */
+	movb	$0x02, %al
+	outb	%al, $0xa1	/* ICW3 */
+	movb	$0x01, %al
+	outb	%al, $0xa1	/* ICW4 */
+	movb	$0xff, %al
+	outb	%al, $0xa1	/* OCW1 */
+
 	call	waitkbdout
 	movb	$0xd1, %al
 	outb	%al, $0x64
