@@ -31,6 +31,14 @@ load_sector:
 	movw	$msg_completed, %si
 	call	print_msg
 
+	call	waitkbdout
+	movb	$0xd1, %al
+	outb	%al, $0x64
+	call	waitkbdout
+	movb	$0xdf, %al
+	outb	%al, $0x60
+	call	waitkbdout
+
 end:
 	jmp		end
 
@@ -43,6 +51,12 @@ print_msg:
 	int		$0x10
 	jmp		print_msg
 print_msg_ret:
+	ret
+waitkbdout:
+	inb		$0x64, %al
+	andb	$0x02, %al
+	inb		$0x60, %al
+	jnz		waitkbdout
 	ret
 
 msg_welcome:
