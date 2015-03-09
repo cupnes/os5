@@ -9,7 +9,7 @@
 	movw	$0x1000, %sp
 
 	/* ビデオモード設定(画面クリア) */
-	movw	$0x0000, %ax
+	movw	$0x0003, %ax
 	int		$0x10
 
 	movw	$msg_welcome, %si
