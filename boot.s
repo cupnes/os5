@@ -77,6 +77,9 @@ load_sector:
 	movw	%ax, %ds
 	lgdtw	gdt_descr
 
+	movw	$0x0001, %ax
+	lmsw	%ax
+
 end:
 	jmp		end
 
