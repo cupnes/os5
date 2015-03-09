@@ -39,6 +39,20 @@ load_sector:
 	outb	%al, $0x60
 	call	waitkbdout
 
+	/* GDTを0x0009 0000から配置 */
+	movw	$0x07c0, %ax	/* src */
+	movw	%ax, %ds
+	movw	$gdt, %si
+	movw	$0x9000, %ax	/* dst */
+	movw	%ax, %es
+	subw	%di, %di
+	movw	$12, %cx		/* words */
+	rep		movsw
+
+	movw	$0x07c0, %ax
+	movw	%ax, %ds
+	lgdtw	gdt_descr
+
 end:
 	jmp		end
 
@@ -58,6 +72,21 @@ waitkbdout:
 	inb		$0x60, %al
 	jnz		waitkbdout
 	ret
+
+	.align 2
+	.word 0
+gdt_descr:
+	.word 3*8-1
+	.word 0x0000, 0x09
+	/* .word gdt,0x07c0				*/
+	/* と設定しても、				*/
+	/* GDTRには、ベースアドレスが	*/
+	/* 0x00c0 [gdtの場所]			*/
+	/* と読み込まれてしまう			*/
+gdt:
+	.quad 0x0000000000000000	/* NULL descriptor */
+	.quad 0x00c09a01000007ff	/* 8Mb */
+	.quad 0x00c09201000007ff	/* 8Mb */
 
 msg_welcome:
 	.ascii	"Welcome to OS5!\r\n"
