@@ -1,20 +1,10 @@
-AS = as
-
 .s.o:
-	$(AS) -o $@ $<
-.o.bin:
-	objcopy -O binary $< $@
+	as -o $@ $<
 
 all: fd.img
 
-fd.img: boot.dat sys.dat
-	cat boot.dat sys.dat > $@
-
-boot.dat: boot.bin
-	cp boot.bin boot.dat
-
-sys.dat: sys.bin
-	cp $< $@
+fd.img: boot.bin sys.bin
+	cat boot.bin sys.bin > $@
 
 boot.bin: boot.o
 	ld -o $@ $< -T boot.ld
