@@ -10,16 +10,15 @@ all: fd.img
 fd.img: boot.dat sys.dat
 	cat boot.dat sys.dat > $@
 
-boot.dat: boot.bin signature.dat
-	dd if=/dev/zero of=zero.dat bs=1 count=$$((510 - $$(stat -c%s boot.bin)))
-	cat boot.bin zero.dat signature.dat > $@
+boot.dat: boot.bin
+	cp boot.bin boot.dat
 
 sys.dat: sys.bin
 	dd if=/dev/zero of=zero.dat bs=1 count=$$((512 - $$(stat -c%s sys.bin)))
 	cat sys.bin zero.dat > $@
 
 boot.bin: boot.o
-	objcopy -O binary boot.o boot.bin
+	ld -o $@ $< -T boot.ld
 
 sys.bin: sys.o
 	objcopy -O binary sys.o sys.bin
@@ -27,9 +26,6 @@ sys.bin: sys.o
 boot.o: boot.s
 
 sys.o: sys.s
-
-signature.dat:
-	bash -c 'echo -en "\x55\xaa" > signature.dat'
 
 clean:
 	rm -f *~ *.o *.bin *.dat *.img

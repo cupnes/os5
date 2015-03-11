@@ -1,5 +1,6 @@
 	.code16
 
+	.text
 	cli
 
 	movw	$0x07c0, %ax
@@ -106,6 +107,7 @@ waitkbdout:
 	jnz		waitkbdout
 	ret
 
+	.data
 	.align 2
 	.word 0
 gdt_descr:
