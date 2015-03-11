@@ -1,7 +1,17 @@
 	.code32
 
 	.text
-	movl	$0xbeefcafe, %eax
+
+	.global	main
+
+	movl	$0x00800000, %esp
+
+	pushl $0
+	pushl $0
+	pushl $0
+	pushl $end
+	pushl $main
+	ret
 
 end:
 	jmp		end
