@@ -108,8 +108,6 @@ waitkbdout:
 	ret
 
 	.data
-	.align 2
-	.word 0
 gdt_descr:
 	.word 3*8-1
 	.word 0x0000, 0x09
