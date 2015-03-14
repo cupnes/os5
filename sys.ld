@@ -5,6 +5,6 @@ SECTIONS
 	.text	: {*(.text)}
 	.data	: {*(.data)}
 
-	. = 510;
+	. = 4094;
 	.sign	: {SHORT(0x0000)}
 }
