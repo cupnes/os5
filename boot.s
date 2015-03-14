@@ -64,6 +64,17 @@ load_sectors:
 	outb	%al, $0x60
 	call	waitkbdout
 
+	/* 0x0001 0000から4KB配置していたsysを	*/
+	/* 0x0000 0000からの4KBへ移動			*/
+	movw	$0x1000, %ax	/* src */
+	movw	%ax, %ds
+	subw	%si, %si
+	movw	$0x0000, %ax	/* dst */
+	movw	%ax, %es
+	subw	%di, %di
+	movw	$2048, %cx		/* words */
+	rep		movsw
+
 	/* GDTを0x0009 0000から配置 */
 	movw	$0x07c0, %ax	/* src */
 	movw	%ax, %ds
@@ -118,8 +129,8 @@ gdt_descr:
 	/* と読み込まれてしまう			*/
 gdt:
 	.quad 0x0000000000000000	/* NULL descriptor */
-	.quad 0x00c09a01000007ff	/* 8Mb */
-	.quad 0x00c09201000007ff	/* 8Mb */
+	.quad 0x00cf9a000000ffff	/* 4GB(r-x:Code) */
+	.quad 0x00cf92000000ffff	/* 4GB(rw-:Data) */
 
 msg_welcome:
 	.ascii	"Welcome to OS5!\r\n"
