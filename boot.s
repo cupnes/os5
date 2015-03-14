@@ -19,15 +19,15 @@
 	movw	$msg_now_loading, %si
 	call	print_msg
 
-load_sector:
+load_sectors:
 	movw	$0x1000, %ax
 	movw	%ax, %es
-	movw	$0x0201, %ax
+	movw	$0x0208, %ax
 	movw	$0x0002, %cx
 	movw	$0x0000, %dx
 	movw	$0x0000, %bx
 	int		$0x13
-	jc		load_sector
+	jc		load_sectors
 
 	movw	$msg_completed, %si
 	call	print_msg
