@@ -16,21 +16,39 @@ void put_char_pos(char c, unsigned char x, unsigned char y)
 
 void put_char(char c)
 {
-	put_char_pos(c, cursor_pos.x, cursor_pos.y);
-	if (cursor_pos.x < COLUMNS - 1) {
-		cursor_pos.x++;
-	} else {
+	switch (c) {
+	case '\r':
 		cursor_pos.x = 0;
+		break;
+
+	case '\n':
 		cursor_pos.y++;
+		break;
+
+	default:
+		put_char_pos(c, cursor_pos.x, cursor_pos.y);
+		if (cursor_pos.x < COLUMNS - 1) {
+			cursor_pos.x++;
+		} else {
+			cursor_pos.x = 0;
+			cursor_pos.y++;
+		}
+		break;
+	}
+}
+
+void put_str(char *str)
+{
+	while (*str != '\0') {
+		put_char(*str);
+		str++;
 	}
 }
 
 int main(void)
 {
-	unsigned char i;
-
-	for (i = 0; i < COLUMNS - 1; i++) put_char('A');
-	for (i = 0; i < COLUMNS - 2; i++) put_char('B');
+	put_str("Hello OS5:main()\r\n");
+	put_str("This is a test.\r\n");
 
 	while (1);
 
