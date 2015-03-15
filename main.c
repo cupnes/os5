@@ -45,10 +45,34 @@ void put_str(char *str)
 	}
 }
 
+void dump_hex(unsigned int val, unsigned int num_digits)
+{
+	unsigned int new_x = cursor_pos.x + num_digits;
+	unsigned int dump_digit = new_x - 1;
+
+	while (num_digits) {
+		unsigned char tmp_val = val & 0x0000000f;
+		if (tmp_val < 10) {
+			put_char_pos('0' + tmp_val, dump_digit, cursor_pos.y);
+		} else {
+			put_char_pos('A' + tmp_val - 10, dump_digit, cursor_pos.y);
+		}
+		val >>= 4;
+		dump_digit--;
+		num_digits--;
+	}
+
+	cursor_pos.x = new_x;
+}
+
 int main(void)
 {
 	put_str("Hello OS5:main()\r\n");
 	put_str("This is a test.\r\n");
+
+	put_str("\r\n[");
+	dump_hex(0x0123cafe, 8);
+	put_str("]\r\n");
 
 	while (1);
 
