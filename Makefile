@@ -1,5 +1,5 @@
 CFLAGS	=	-Wall -Wextra
-CFLAGS	+=	-nostdinc -nostdlib -fno-builtin
+CFLAGS	+=	-nostdinc -nostdlib -fno-builtin -c
 
 .s.o:
 	as -o $@ $<
@@ -13,7 +13,7 @@ boot.bin: boot.o
 	ld -o $@ $< -T boot.ld
 
 sys.bin: sys.o main.o
-	ld -o $@ sys.o main.o -T sys.ld
+	ld -o $@ sys.o main.o -M -s -T sys.ld -x > System.map
 
 boot.o: boot.s
 

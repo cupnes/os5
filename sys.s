@@ -17,3 +17,4 @@ end:
 	jmp		end
 
 	.data
+	.bss
