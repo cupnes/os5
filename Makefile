@@ -23,7 +23,7 @@ main.o: main.c
 	gcc $(CFLAGS) -o $@ $<
 
 clean:
-	rm -f *~ *.o *.bin *.dat *.img
+	rm -f *~ *.o *.bin *.dat *.img *.map
 
 run: fd.img
 	qemu -fda fd.img
