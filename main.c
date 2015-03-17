@@ -110,7 +110,14 @@ unsigned char get_keycode(void)
 	return get_keydata() & ~IOADR_KBC_DATA_BIT_BRAKE;
 }
 
-unsigned char get_keycode_release(void)
+unsigned char get_keycode_pressed(void)
+{
+	unsigned char keycode;
+	while ((keycode = get_keydata()) & IOADR_KBC_DATA_BIT_BRAKE);
+	return keycode & ~IOADR_KBC_DATA_BIT_BRAKE;
+}
+
+unsigned char get_keycode_released(void)
 {
 	unsigned char keycode;
 	while (!((keycode = get_keydata()) & IOADR_KBC_DATA_BIT_BRAKE));
@@ -119,21 +126,7 @@ unsigned char get_keycode_release(void)
 
 char get_char(void)
 {
-	return keymap[get_keycode()];
-}
-
-char get_char_remchatt(void)
-{
-	unsigned char cnt = 0;
-	char prev_char = 0x00, now_char;
-
-	while (cnt < CHATT_CNT) {
-		now_char = get_char();
-		if (prev_char == now_char) cnt++;
-		prev_char = now_char;
-	}
-
-	return now_char;
+	return keymap[get_keycode_released()];
 }
 
 int main(void)
@@ -143,7 +136,7 @@ int main(void)
 	put_str("Hello OS5:main()\r\n");
 
 	while (1) {
-		char tmp_char = get_char_remchatt();
+		char tmp_char = get_char();
 		put_char(tmp_char);
 		if (tmp_char == '\n') put_char('\r');
 	}
