@@ -1,21 +1,5 @@
-#define SCREEN_START				0xb8000
-#define COLUMNS						80
-#define ATTR						0x07
-#define CHATT_CNT					1
-#define IOADR_KBC_DATA				0x0060
-#define IOADR_KBC_DATA_BIT_BRAKE	0x80
-#define IOADR_KBC_STATUS			0x0064
-#define IOADR_KBC_STATUS_BIT_OBF	0x01
-
-#define outb(value,port) \
-__asm__ ("outb %%al,%%dx"::"a" (value),"d" (port))
-
-
-#define inb(port) ({ \
-unsigned char _v; \
-__asm__ volatile ("inb %%dx,%%al":"=a" (_v):"d" (port)); \
-_v; \
-})
+#include <io_port.h>
+#include <console_io.h>
 
 const char keymap[] = {
 	0x00, 0x1b, '1', '2', '3', '4', '5', '6',
@@ -39,6 +23,12 @@ const char keymap[] = {
 struct {
 	unsigned int x, y;
 } cursor_pos;
+
+void move_cursor_rel(unsigned int x, unsigned int y)
+{
+	cursor_pos.x += x;
+	cursor_pos.y += y;
+}
 
 void put_char_pos(char c, unsigned char x, unsigned char y)
 {
@@ -127,19 +117,4 @@ unsigned char get_keycode_released(void)
 char get_char(void)
 {
 	return keymap[get_keycode_released()];
-}
-
-int main(void)
-{
-	cursor_pos.y += 2;
-
-	put_str("Hello OS5:main()\r\n");
-
-	while (1) {
-		char tmp_char = get_char();
-		put_char(tmp_char);
-		if (tmp_char == '\n') put_char('\r');
-	}
-
-	return 0;
 }
