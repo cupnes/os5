@@ -4,6 +4,8 @@ CFLAGS	+=	-Iinclude
 
 .s.o:
 	as -o $@ $<
+.c.o:
+	gcc $(CFLAGS) -o $@ $<
 
 all: fd.img
 
@@ -21,13 +23,11 @@ boot/boot.o: boot/boot.s
 kernel/sys.o: kernel/sys.s
 
 lib/console_io.o: lib/console_io.c include/io_port.h include/console_io.h
-	gcc $(CFLAGS) -o $@ $<
 
 kernel/main.o: kernel/main.c include/console_io.h
-	gcc $(CFLAGS) -o $@ $<
 
 clean:
-	rm -f *~ *.o *.bin *.dat *.img *.map
+	rm -f *~ *.o *.bin *.dat *.img *.map boot/*~ boot/*.o include/*~ include/*.o lib/*~ lib/*.o kernel/*~ kernel/*.o
 
 run: fd.img
 	qemu -fda fd.img
