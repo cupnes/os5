@@ -24,9 +24,9 @@ rp_sidt:
 	lidt idt_descr
 
 	/* マスタPICの初期化 */
-	movb	$0x10, %al
+	movb	$0x11, %al
 	outb	%al, $0x20	/* ICW1 */
-	movb	$0x00, %al
+	movb	$0x20, %al
 	outb	%al, $0x21	/* ICW2 */
 	movb	$0x04, %al
 	outb	%al, $0x21	/* ICW3 */
@@ -36,9 +36,9 @@ rp_sidt:
 	outb	%al, $0x21	/* OCW1 */
 
 	/* スレーブPICの初期化 */
-	movb	$0x10, %al
+	movb	$0x11, %al
 	outb	%al, $0xa0	/* ICW1 */
-	movb	$0x00, %al
+	movb	$0x28, %al
 	outb	%al, $0xa1	/* ICW2 */
 	movb	$0x02, %al
 	outb	%al, $0xa1	/* ICW3 */
@@ -62,9 +62,12 @@ end:
 	jmp		end
 
 ignore_int:
-	incb 0xb8000+160		/* put something on the screen	*/
-	movb $2,0xb8000+161		/* so that we know something	*/
-	iret					/* happened						*/
+	incb	0xb8000+160		/* put something on the screen	*/
+	movb	$2, 0xb8000+161	/* so that we know something	*/
+	movb	$0x61, %al
+	outb	%al, $0x20
+	inb		$0x60, %al
+	iret
 
 	.data
 .align 2
