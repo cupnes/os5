@@ -6,22 +6,30 @@
 
 	movl	$0x00800000, %esp
 
-	lgdt gdt_descr
+	lgdt	gdt_descr
 
-	lea ignore_int,%edx
-	movl $0x00080000,%eax
-	movw %dx,%ax		/* selector = 0x0008 = cs */
-	movw $0x8E00,%dx	/* interrupt gate - dpl=0, present */
-
-	lea idt,%edi
-	mov $256,%ecx
+	lea		ignore_int, %edx
+	movl	$0x00080000, %eax
+	movw	%dx, %ax			/* selector = 0x0008 = cs */
+	movw	$0x8E00, %dx		/* interrupt gate - dpl=0, present */
+	lea		idt, %edi
+	mov		$256, %ecx
 rp_sidt:
-	movl %eax,(%edi)
-	movl %edx,4(%edi)
-	addl $8,%edi
-	dec %ecx
-	jne rp_sidt
-	lidt idt_descr
+	movl	%eax, (%edi)
+	movl	%edx, 4(%edi)
+	addl	$8, %edi
+	dec		%ecx
+	jne		rp_sidt
+	lidt	idt_descr
+
+	lea		keyboard_handler, %edx
+	movl	$0x00080000, %eax
+	movw	%dx, %ax
+	movw	$0x8E00, %dx
+	lea		idt, %edi
+	addl	$8*33, %edi
+	movl	%eax, (%edi)
+	movl	%edx, 4(%edi)
 
 	/* マスタPICの初期化 */
 	movb	$0x11, %al
@@ -61,12 +69,15 @@ rp_sidt:
 end:
 	jmp		end
 
-ignore_int:
-	incb	0xb8000+160		/* put something on the screen	*/
-	movb	$2, 0xb8000+161	/* so that we know something	*/
+keyboard_handler:
+	incb	0xb8000+160
+	movb	$2, 0xb8000+161
 	movb	$0x61, %al
 	outb	%al, $0x20
 	inb		$0x60, %al
+	iret
+
+ignore_int:
 	iret
 
 	.data
