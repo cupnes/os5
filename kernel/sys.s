@@ -70,8 +70,6 @@ ignore_int:
 	iret
 
 	.data
-.align 2
-.word 0
 idt_descr:
 	.word 256*8-1		# idt contains 256 entries
 	.long idt
@@ -80,12 +78,9 @@ gdt_descr:
 	.word 3*8-1
 	.long gdt
 
-	.align	8
 idt:	.fill 256,8,0		/* idt is uninitialized			*/
 
 gdt:
 	.quad 0x0000000000000000	/* NULL descriptor */
 	.quad 0x00cf9a000000ffff	/* 4GB(r-x:Code) */
 	.quad 0x00cf92000000ffff	/* 4GB(rw-:Data) */
-
-	.bss
