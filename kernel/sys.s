@@ -40,7 +40,7 @@ rp_sidt:
 	outb	%al, $0x21	/* ICW3 */
 	movb	$0x01, %al
 	outb	%al, $0x21	/* ICW4 */
-	movb	$0xfd, %al
+	movb	$0xff, %al
 	outb	%al, $0x21	/* OCW1 */
 
 	/* スレーブPICの初期化 */

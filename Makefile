@@ -24,7 +24,7 @@ kernel/sys.o: kernel/sys.s
 
 lib/console_io.o: lib/console_io.c include/io_port.h include/console_io.h
 
-kernel/main.o: kernel/main.c include/console_io.h include/cpu.h
+kernel/main.o: kernel/main.c include/cpu.h include/io_port.h include/console_io.h
 
 clean:
 	rm -f *~ *.o *.bin *.dat *.img *.map boot/*~ boot/*.o include/*~ include/*.o lib/*~ lib/*.o kernel/*~ kernel/*.o
