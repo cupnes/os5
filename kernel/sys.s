@@ -10,8 +10,8 @@
 
 	lea		ignore_int, %edx
 	movl	$0x00080000, %eax
-	movw	%dx, %ax			/* selector = 0x0008 = cs */
-	movw	$0x8E00, %dx		/* interrupt gate - dpl=0, present */
+	movw	%dx, %ax
+	movw	$0x8E00, %dx
 	lea		idt, %edi
 	mov		$256, %ecx
 rp_sidt:
