@@ -55,16 +55,12 @@ rp_sidt:
 	movb	$0xff, %al
 	outb	%al, $0xa1	/* OCW1 */
 
-	sti
-
-	/*
 	pushl $0
 	pushl $0
 	pushl $0
 	pushl $end
 	pushl $main
 	ret
-	*/
 
 end:
 	jmp		end

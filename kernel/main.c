@@ -1,16 +1,11 @@
 #include <console_io.h>
+#include <cpu.h>
 
 int main(void)
 {
-	move_cursor_rel(0, 2);
+	sti();
 
-	put_str("Hello OS5:main()\r\n");
-
-	while (1) {
-		char tmp_char = get_char();
-		put_char(tmp_char);
-		if (tmp_char == '\n') put_char('\r');
-	}
+	while (1);
 
 	return 0;
 }
