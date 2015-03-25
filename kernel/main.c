@@ -1,10 +1,14 @@
 #include <cpu.h>
-#include <io_port.h>
+#include <intr.h>
 #include <console_io.h>
 
 int main(void)
 {
-	outb(0xfd, IOADR_MPIC_OCW1);
+	unsigned char mask;
+
+	mask = intr_get_mask_master();
+	mask &= ~INTR_MASK_BIT_KB;
+	intr_set_mask_master(mask);
 	sti();
 
 	while (1);

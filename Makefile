@@ -15,16 +15,18 @@ fd.img: boot.bin sys.bin
 boot.bin: boot/boot.o
 	ld -o $@ $< -T boot/boot.ld
 
-sys.bin: kernel/sys.o lib/console_io.o kernel/main.o
-	ld -o $@ kernel/sys.o lib/console_io.o kernel/main.o -M -s -T kernel/sys.ld -x > System.map
+sys.bin: kernel/sys.o kernel/intr.o lib/console_io.o kernel/main.o
+	ld -o $@ kernel/sys.o kernel/intr.o lib/console_io.o kernel/main.o -M -s -T kernel/sys.ld -x > System.map
 
 boot/boot.o: boot/boot.s
 
 kernel/sys.o: kernel/sys.s
 
+kernel/intr.o: kernel/intr.c include/io_port.h include/intr.h
+
 lib/console_io.o: lib/console_io.c include/io_port.h include/console_io.h
 
-kernel/main.o: kernel/main.c include/cpu.h include/io_port.h include/console_io.h
+kernel/main.o: kernel/main.c include/cpu.h include/intr.h include/console_io.h
 
 clean:
 	rm -f *~ *.o *.bin *.dat *.img *.map boot/*~ boot/*.o include/*~ include/*.o lib/*~ lib/*.o kernel/*~ kernel/*.o
