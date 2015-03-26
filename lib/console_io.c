@@ -24,6 +24,18 @@ struct {
 	unsigned int x, y;
 } cursor_pos;
 
+void do_ir_keyboard(void)
+{
+	volatile unsigned char *video_mem = (unsigned char *)0xb8000;
+	volatile unsigned char tmp;
+
+	tmp = *(video_mem + 160);
+	*(video_mem + 160) = ++tmp;
+	*(video_mem + 161) = 2;
+	outb_p(0x61, 0x0020);
+	tmp = inb_p(0x0060);
+}
+
 void move_cursor_rel(unsigned int x, unsigned int y)
 {
 	cursor_pos.x += x;

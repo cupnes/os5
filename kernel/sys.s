@@ -31,22 +31,18 @@ rp_sidt:
 	movl	%eax, (%edi)
 	movl	%edx, 4(%edi)
 
-	pushl $0
-	pushl $0
-	pushl $0
-	pushl $end
-	pushl $main
+	pushl	$0
+	pushl	$0
+	pushl	$0
+	pushl	$end
+	pushl	$main
 	ret
 
 end:
 	jmp		end
 
 keyboard_handler:
-	incb	0xb8000+160
-	movb	$2, 0xb8000+161
-	movb	$0x61, %al
-	outb	%al, $0x20
-	inb		$0x60, %al
+	call	do_ir_keyboard
 	iret
 
 ignore_int:
