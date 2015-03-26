@@ -91,8 +91,8 @@ void dump_hex(unsigned int val, unsigned int num_digits)
 
 unsigned char get_keydata(void)
 {
-	while (!(inb(IOADR_KBC_STATUS) & IOADR_KBC_STATUS_BIT_OBF));
-	return inb(IOADR_KBC_DATA);
+	while (!(inb_p(IOADR_KBC_STATUS) & IOADR_KBC_STATUS_BIT_OBF));
+	return inb_p(IOADR_KBC_DATA);
 }
 
 unsigned char get_keycode(void)
