@@ -6,6 +6,6 @@ SECTIONS
 	.data	: {*(.data)}
 	.bss	: {*(.bss)}
 
-	. = 4094;
-	.sign	: {SHORT(0x0000)}
+	. = 8702;
+	.sign	: {SHORT(0xbeef)}
 }

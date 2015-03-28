@@ -22,7 +22,7 @@
 load_sectors:
 	movw	$0x1000, %ax
 	movw	%ax, %es
-	movw	$0x0208, %ax
+	movw	$0x0211, %ax
 	movw	$0x0002, %cx
 	movw	$0x0000, %dx
 	movw	$0x0000, %bx
@@ -72,7 +72,7 @@ load_sectors:
 	movw	$0x0000, %ax	/* dst */
 	movw	%ax, %es
 	subw	%di, %di
-	movw	$2048, %cx		/* words */
+	movw	$4352, %cx		/* words */
 	rep		movsw
 
 	/* GDTを0x0009 0000から配置 */
