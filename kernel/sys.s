@@ -2,7 +2,7 @@
 
 	.text
 
-	.global	main
+	.global	main, idt, keyboard_handler
 
 	movl	$0x00080000, %esp
 
@@ -21,15 +21,6 @@ rp_sidt:
 	dec		%ecx
 	jne		rp_sidt
 	lidt	idt_descr
-
-	lea		keyboard_handler, %edx
-	movl	$0x00080000, %eax
-	movw	%dx, %ax
-	movw	$0x8E00, %dx
-	lea		idt, %edi
-	addl	$8*33, %edi
-	movl	%eax, (%edi)
-	movl	%edx, 4(%edi)
 
 	pushl	$0
 	pushl	$0
