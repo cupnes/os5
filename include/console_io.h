@@ -3,6 +3,7 @@
 #define IOADR_KBC_STATUS			0x0064
 #define IOADR_KBC_STATUS_BIT_OBF	0x01
 
+#define INTR_IR_KB					1
 #define INTR_NUM_KB					33
 #define INTR_MASK_BIT_KB			0x02
 #define SCREEN_START				0xb8000

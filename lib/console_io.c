@@ -1,3 +1,4 @@
+#include <intr.h>
 #include <io_port.h>
 #include <console_io.h>
 
@@ -26,14 +27,11 @@ struct {
 
 void do_ir_keyboard(void)
 {
-	volatile unsigned char *video_mem = (unsigned char *)0xb8000;
-	volatile unsigned char tmp;
-
-	tmp = *(video_mem + 160);
-	*(video_mem + 160) = ++tmp;
-	*(video_mem + 161) = 2;
-	outb_p(0x61, 0x0020);
-	tmp = inb_p(0x0060);
+	char tmp_char = get_char();
+	put_char(tmp_char);
+	if (tmp_char == '\n') put_char('\r');
+	outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_KB,
+		IOADR_MPIC_OCW2);
 }
 
 void move_cursor_rel(unsigned int x, unsigned int y)
