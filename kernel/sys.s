@@ -4,7 +4,7 @@
 
 	.global	main
 
-	movl	$0x00800000, %esp
+	movl	$0x00080000, %esp
 
 	lgdt	gdt_descr
 
