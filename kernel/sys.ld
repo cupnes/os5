@@ -2,10 +2,11 @@ OUTPUT_FORMAT("binary");
 
 SECTIONS
 {
+	. = 0x7e00;
 	.text	: {*(.text)}
 	.data	: {*(.data)}
 	.bss	: {*(.bss)}
 
-	. = 8702;
+	. = 0x7e00 + 36350;
 	.sign	: {SHORT(0xbeef)}
 }

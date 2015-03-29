@@ -19,15 +19,105 @@
 	movw	$msg_now_loading, %si
 	call	print_msg
 
-load_sectors:
+	/* ディスクサービス セクタ読み込み
+	 * int 0x13, AH=0x02
+	 * 入力
+	 * - AL: 読み込むセクタ数
+	 * - CH: トラックの下位8ビット
+	 * - CL(上位2ビット): トラックの上位2ビット
+	 * - CL(下位6ビット): セクタを指定
+	 * - DH: ヘッド番号を指定
+	 * - DL: セクタを読み込むドライブ番号を指定
+	 * - ES: 読み込み先のセグメント指定
+	 * - BX: 読み込み先のオフセットアドレス指定
+	 * 出力
+	 * - EFLAGSのCFビット: 0=成功, 1=失敗
+	 * - AH: エラーコード(0x00=成功)
+	 * - AL: 読み込んだセクタ数
+	 * 備考
+	 * - トラック番号: 0始まり
+	 * - ヘッド番号: 0始まり
+	 * - セクタ番号: 1始まり
+	 * - セクタ数/トラック: 2HDは18
+	 * - セクタ18の次は、別トラック(裏面)へ
+	 * - 64KB境界を超えて読みだすことはできない
+	 *   (その際は、2回に分ける)
+	 */
+
+	/* トラック0, ヘッド0, セクタ2以降
+	 * src: トラック0, ヘッド0のセクタ2以降
+	 *      (17セクタ = 8704バイト = 0x2200バイト)
+	 * dst: 0x0000 7e00 〜 0x0000 bfff
+	 */
+load_track0_head0:
+	movw	$0x0000, %ax
+	movw	%ax, %es
+	movw	$0x7e00, %bx
+	movw	$0x0000, %dx
+	movw	$0x0002, %cx
+	movw	$0x0211, %ax
+	int		$0x13
+	jc		load_track0_head0
+
+	/* トラック0, ヘッド1, 全セクタ
+	 * src: トラック0, ヘッド1の全セクタ
+	 *      (18セクタ = 9216バイト = 0x2400バイト)
+	 * dst: 0x0000 a000 〜 0x0000 c3ff
+	 */
+load_track0_head1:
+	movw	$0x0000, %ax
+	movw	%ax, %es
+	movw	$0xa000, %bx
+	movw	$0x0100, %dx
+	movw	$0x0001, %cx
+	movw	$0x0212, %ax
+	int		$0x13
+	jc		load_track0_head1
+
+	/* トラック1, ヘッド0, 全セクタ
+	 * src: トラック1, ヘッド0の全セクタ
+	 *      (18セクタ = 9216バイト = 0x2400バイト)
+	 * dst: 0x0000 c400 〜 0x0000 e7ff
+	 */
+load_track1_head0:
+	movw	$0x0000, %ax
+	movw	%ax, %es
+	movw	$0xc400, %bx
+	movw	$0x0000, %dx
+	movw	$0x0101, %cx
+	movw	$0x0212, %ax
+	int		$0x13
+	jc		load_track1_head0
+
+	/* トラック1, ヘッド1, セクタ1 - 12
+	 * src: トラック1, ヘッド1の12セクタ
+	 *      (12セクタ = 6144バイト = 0x1800バイト)
+	 * dst: 0x0000 e800 〜 0x0000 ffff
+	 */
+load_track1_head1_1:
+	movw	$0x0000, %ax
+	movw	%ax, %es
+	movw	$0xe800, %bx
+	movw	$0x0100, %dx
+	movw	$0x0101, %cx
+	movw	$0x020c, %ax
+	int		$0x13
+	jc		load_track1_head1_1
+
+	/* トラック1, ヘッド1, セクタ13 - 18
+	 * src: トラック1, ヘッド1の6セクタ
+	 *      (6セクタ = 3072バイト = 0xc00バイト)
+	 * dst: 0x0001 0000 〜 0x0001 0bff
+	 */
+load_track1_head1_2:
 	movw	$0x1000, %ax
 	movw	%ax, %es
-	movw	$0x0211, %ax
-	movw	$0x0002, %cx
-	movw	$0x0000, %dx
 	movw	$0x0000, %bx
+	movw	$0x0100, %dx
+	movw	$0x010d, %cx
+	movw	$0x0206, %ax
 	int		$0x13
-	jc		load_sectors
+	jc		load_track1_head1_1
 
 	movw	$msg_completed, %si
 	call	print_msg
@@ -64,17 +154,6 @@ load_sectors:
 	outb	%al, $0x60
 	call	waitkbdout
 
-	/* 0x0001 0000から4KB配置していたsysを	*/
-	/* 0x0000 0000からの4KBへ移動			*/
-	movw	$0x1000, %ax	/* src */
-	movw	%ax, %ds
-	subw	%si, %si
-	movw	$0x0000, %ax	/* dst */
-	movw	%ax, %es
-	subw	%di, %di
-	movw	$4352, %cx		/* words */
-	rep		movsw
-
 	/* GDTを0x0009 0000から配置 */
 	movw	$0x07c0, %ax	/* src */
 	movw	%ax, %ds
@@ -99,7 +178,7 @@ load_sectors:
 	movw	%ax, %gs
 	movw	%ax, %ss
 
-	ljmp	$8, $0
+	ljmp	$8, $0x7e00
 
 print_msg:
 	lodsb
