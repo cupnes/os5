@@ -42,8 +42,6 @@ int main(void)
 	intr_set_mask_master(mask);
 	sti();
 
-	put_str("Hello OS5:main()\r\n");
-
 	while (1) {
 		char buf[MAX_LINE_SIZE];
 		put_str("OS5> ");
