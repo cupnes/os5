@@ -8,6 +8,7 @@ int main(void)
 
 	move_cursor_rel(0, 2);
 
+	con_init();
 	intr_set_handler(INTR_NUM_KB, (unsigned int)&keyboard_handler);
 	intr_init();
 	mask = intr_get_mask_master();
@@ -17,7 +18,11 @@ int main(void)
 
 	put_str("Hello OS5:main()\r\n");
 
-	while (1);
+	while (1) {
+		char tmp = get_char();
+		put_char(tmp);
+		if (tmp == '\n') put_char('\r');
+	}
 
 	return 0;
 }
