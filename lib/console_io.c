@@ -216,3 +216,18 @@ char get_char(void)
 {
 	return keymap[get_keycode_released()];
 }
+
+void get_line(char *buf, unsigned int buf_size)
+{
+	unsigned int i;
+
+	for (i = 0; i < buf_size - 1; i++) {
+		buf[i] = get_char();
+		put_char(buf[i]);
+		if (buf[i] == '\n') {
+			put_char('\r');
+			break;
+		}
+	}
+	buf[i] = '\0';
+}

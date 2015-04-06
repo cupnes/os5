@@ -1,20 +1,4 @@
 #include <common.h>
-#include <console_io.h>
-
-void get_line(char *buf, unsigned int buf_size)
-{
-	unsigned int i;
-
-	for (i = 0; i < buf_size - 1; i++) {
-		buf[i] = get_char();
-		put_char(buf[i]);
-		if (buf[i] == '\n') {
-			put_char('\r');
-			break;
-		}
-	}
-	buf[i] = '\0';
-}
 
 void memcpy(void *dst, const void *src, unsigned int size)
 {
