@@ -11,6 +11,10 @@
 #define ATTR						0x07
 #define CHATT_CNT					1
 
+#define ASCII_ESC					0x1b
+#define ASCII_BS					0x08
+#define ASCII_HT					0x09
+
 extern unsigned char keyboard_handler;
 
 void con_init(void);
