@@ -15,8 +15,8 @@ fd.img: boot.bin sys.bin
 boot.bin: boot/boot.o
 	ld -o $@ $< -T boot/boot.ld
 
-sys.bin: kernel/sys.o kernel/intr.o lib/console_io.o lib/common.o kernel/main.o
-	ld -o $@ kernel/sys.o kernel/intr.o lib/console_io.o lib/common.o kernel/main.o -M -s -T kernel/sys.ld -x > System.map
+sys.bin: kernel/sys.o kernel/intr.o lib/console_io.o lib/common.o kernel/shell.o kernel/main.o
+	ld -o $@ kernel/sys.o kernel/intr.o lib/console_io.o lib/common.o kernel/shell.o kernel/main.o -M -s -T kernel/sys.ld -x > System.map
 
 boot/boot.o: boot/boot.s
 
@@ -27,6 +27,8 @@ kernel/intr.o: kernel/intr.c
 lib/console_io.o: lib/console_io.c
 
 lib/common.o: lib/common.c
+
+kernel/shell.o: kernel/shell.c
 
 kernel/main.o: kernel/main.c
 
