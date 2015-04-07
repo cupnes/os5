@@ -221,12 +221,20 @@ void get_line(char *buf, unsigned int buf_size)
 {
 	unsigned int i;
 
-	for (i = 0; i < buf_size - 1; i++) {
+	for (i = 0; i < buf_size - 1;) {
 		buf[i] = get_char();
-		put_char(buf[i]);
-		if (buf[i] == '\n') {
-			put_char('\r');
-			break;
+		if (buf[i] == ASCII_BS) {
+			if (i == 0) continue;
+			cursor_pos.x--;
+			put_char_pos(' ', cursor_pos.x, cursor_pos.y);
+			i--;
+		} else {
+			put_char(buf[i]);
+			if (buf[i] == '\n') {
+				put_char('\r');
+				break;
+			}
+			i++;
 		}
 	}
 	buf[i] = '\0';
