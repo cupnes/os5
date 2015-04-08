@@ -8,8 +8,10 @@ enum {
 	ECHO,
 	READB,
 	READW,
+	READL,
 	WRITEB,
 	WRITEW,
+	WRITEL,
 	COMMAND_NUM
 } _COMMAND_SET;
 
@@ -47,6 +49,19 @@ static int command_readw(char *args)
 	return 0;
 }
 
+static int command_readl(char *args)
+{
+	char first[128], other[128];
+	unsigned int *addr;
+
+	str_getfirstentry(args, first, other);
+	addr = (unsigned int *)str_ahextoint(first);
+	dump_hex(*addr, 8);
+	put_str("\r\n");
+
+	return 0;
+}
+
 static int command_writeb(char *args)
 {
 	char first[16], second[32], other[128], _other[128];
@@ -75,6 +90,20 @@ static int command_writew(char *args)
 	return 0;
 }
 
+static int command_writel(char *args)
+{
+	char first[16], second[32], other[128], _other[128];
+	unsigned int data, *addr;
+
+	str_getfirstentry(args, first, other);
+	str_getfirstentry(other, second, _other);
+	data = (unsigned int)str_ahextoint(first);
+	addr = (unsigned int *)str_ahextoint(second);
+	*addr = data;
+
+	return 0;
+}
+
 static unsigned char get_command_id(const char *command)
 {
 	if (!str_compare(command, "echo")) {
@@ -89,12 +118,20 @@ static unsigned char get_command_id(const char *command)
 		return READW;
 	}
 
+	if (!str_compare(command, "readl")) {
+		return READL;
+	}
+
 	if (!str_compare(command, "writeb")) {
 		return WRITEB;
 	}
 
 	if (!str_compare(command, "writew")) {
 		return WRITEW;
+	}
+
+	if (!str_compare(command, "writel")) {
+		return WRITEL;
 	}
 
 	return COMMAND_NUM;
@@ -121,11 +158,17 @@ void shell(void)
 		case READW:
 			command_readw(args);
 			break;
+		case READL:
+			command_readl(args);
+			break;
 		case WRITEB:
 			command_writeb(args);
 			break;
 		case WRITEW:
 			command_writew(args);
+			break;
+		case WRITEL:
+			command_writel(args);
 			break;
 		default:
 			put_str("Command not found.\r\n");
