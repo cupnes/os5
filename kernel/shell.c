@@ -14,6 +14,7 @@ enum {
 	WRITEB,
 	WRITEW,
 	WRITEL,
+	IOWRITEB,
 	COMMAND_NUM
 } _COMMAND_SET;
 
@@ -119,6 +120,21 @@ static int command_writel(char *args)
 	return 0;
 }
 
+static int command_iowriteb(char *args)
+{
+	char first[16], second[32], other[128], _other[128];
+	unsigned char data;
+	unsigned short addr;
+
+	str_getfirstentry(args, first, other);
+	str_getfirstentry(other, second, _other);
+	data = (unsigned char)str_ahextoint(first);
+	addr = (unsigned short)str_ahextoint(second);
+	outb_p(data, addr);
+
+	return 0;
+}
+
 static unsigned char get_command_id(const char *command)
 {
 	if (!str_compare(command, "echo")) {
@@ -151,6 +167,10 @@ static unsigned char get_command_id(const char *command)
 
 	if (!str_compare(command, "writel")) {
 		return WRITEL;
+	}
+
+	if (!str_compare(command, "iowriteb")) {
+		return IOWRITEB;
 	}
 
 	return COMMAND_NUM;
@@ -191,6 +211,9 @@ void shell(void)
 			break;
 		case WRITEL:
 			command_writel(args);
+			break;
+		case IOWRITEB:
+			command_iowriteb(args);
 			break;
 		default:
 			put_str("Command not found.\r\n");
