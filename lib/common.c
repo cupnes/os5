@@ -12,6 +12,12 @@ void memcpy(void *dst, const void *src, unsigned int size)
 	}
 }
 
+int pow(int num, int multer)
+{
+	if (multer == 0) return 1;
+	return pow(num, multer - 1) * num;
+}
+
 int str_findchar(const char *src, char key)
 {
 	int i;
@@ -55,4 +61,49 @@ int str_compare(const char *src, const char *dst)
 	} else {
 		return (int)(*src - *dst);
 	}
+}
+
+int str_ahextoint(const char *hex_str)
+{
+	int len = str_getlen(hex_str);
+	int val = 0, i;
+
+	for (i = 0; hex_str[i] != '\0'; i++) {
+		if (('0' <= hex_str[i]) && (hex_str[i] <= '9')) {
+			val += (hex_str[i] - '0') * pow(16, len - 2 - i);
+		} else {
+			val += (hex_str[i] - 'a' + 10) * pow(16, len - 2 - i);
+		}
+	}
+
+	return val;
+}
+
+void str_getfirstentry(const char *line, char *first, char *other)
+{
+	int line_len, first_len, other_len;
+
+	line_len = str_getlen(line);
+	first_len = str_findchar(line, ' ');
+	if (first_len < 0) {
+		memcpy((void *)first, (void *)line, line_len);
+		first_len = line_len;
+		other_len = 0;
+		other[other_len] = '\0';
+	} else {
+		memcpy((void *)first, (void *)line, first_len);
+		first[first_len] = '\0';
+		first_len++;
+		other_len = line_len - first_len;
+		memcpy((void *)other, (void *)(line + first_len), other_len);
+	}
+
+#ifdef DEBUG
+	put_str(line);
+	put_str("|");
+	put_str(first);
+	put_str(":");
+	put_str(other);
+	put_str("\r\n");
+#endif /* DEBUG */
 }
