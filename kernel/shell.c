@@ -7,6 +7,7 @@
 enum {
 	ECHO,
 	READB,
+	READW,
 	WRITEB,
 	COMMAND_NUM
 } _COMMAND_SET;
@@ -27,6 +28,19 @@ static int command_readb(char *args)
 	str_getfirstentry(args, first, other);
 	addr = (unsigned char *)str_ahextoint(first);
 	dump_hex(*addr, 2);
+	put_str("\r\n");
+
+	return 0;
+}
+
+static int command_readw(char *args)
+{
+	char first[128], other[128];
+	unsigned short *addr;
+
+	str_getfirstentry(args, first, other);
+	addr = (unsigned short *)str_ahextoint(first);
+	dump_hex(*addr, 4);
 	put_str("\r\n");
 
 	return 0;
@@ -56,6 +70,10 @@ static unsigned char get_command_id(const char *command)
 		return READB;
 	}
 
+	if (!str_compare(command, "readw")) {
+		return READW;
+	}
+
 	if (!str_compare(command, "writeb")) {
 		return WRITEB;
 	}
@@ -80,6 +98,9 @@ void shell(void)
 			break;
 		case READB:
 			command_readb(args);
+			break;
+		case READW:
+			command_readw(args);
 			break;
 		case WRITEB:
 			command_writeb(args);
