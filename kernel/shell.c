@@ -1,3 +1,4 @@
+#include <io_port.h>
 #include <console_io.h>
 #include <common.h>
 #include <shell.h>
@@ -9,6 +10,7 @@ enum {
 	READB,
 	READW,
 	READL,
+	IOREADB,
 	WRITEB,
 	WRITEW,
 	WRITEL,
@@ -57,6 +59,19 @@ static int command_readl(char *args)
 	str_getfirstentry(args, first, other);
 	addr = (unsigned int *)str_ahextoint(first);
 	dump_hex(*addr, 8);
+	put_str("\r\n");
+
+	return 0;
+}
+
+static int command_ioreadb(char *args)
+{
+	char first[128], other[128];
+	unsigned short addr;
+
+	str_getfirstentry(args, first, other);
+	addr = (unsigned short)str_ahextoint(first);
+	dump_hex(inb_p(addr), 2);
 	put_str("\r\n");
 
 	return 0;
@@ -122,6 +137,10 @@ static unsigned char get_command_id(const char *command)
 		return READL;
 	}
 
+	if (!str_compare(command, "ioreadb")) {
+		return IOREADB;
+	}
+
 	if (!str_compare(command, "writeb")) {
 		return WRITEB;
 	}
@@ -160,6 +179,9 @@ void shell(void)
 			break;
 		case READL:
 			command_readl(args);
+			break;
+		case IOREADB:
+			command_ioreadb(args);
 			break;
 		case WRITEB:
 			command_writeb(args);
