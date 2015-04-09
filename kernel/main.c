@@ -17,7 +17,7 @@ int main(void)
 	intr_set_mask_master(mask);
 	sti();
 
-	shell();
+	start_shell();
 
 	return 0;
 }

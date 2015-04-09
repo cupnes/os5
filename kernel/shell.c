@@ -31,8 +31,8 @@ static int command_readb(char *args)
 	char first[128], other[128];
 	unsigned char *addr;
 
-	str_getfirstentry(args, first, other);
-	addr = (unsigned char *)str_ahextoint(first);
+	str_get_first_entry(args, first, other);
+	addr = (unsigned char *)str_conv_ahex_int(first);
 	dump_hex(*addr, 2);
 	put_str("\r\n");
 
@@ -44,8 +44,8 @@ static int command_readw(char *args)
 	char first[128], other[128];
 	unsigned short *addr;
 
-	str_getfirstentry(args, first, other);
-	addr = (unsigned short *)str_ahextoint(first);
+	str_get_first_entry(args, first, other);
+	addr = (unsigned short *)str_conv_ahex_int(first);
 	dump_hex(*addr, 4);
 	put_str("\r\n");
 
@@ -57,8 +57,8 @@ static int command_readl(char *args)
 	char first[128], other[128];
 	unsigned int *addr;
 
-	str_getfirstentry(args, first, other);
-	addr = (unsigned int *)str_ahextoint(first);
+	str_get_first_entry(args, first, other);
+	addr = (unsigned int *)str_conv_ahex_int(first);
 	dump_hex(*addr, 8);
 	put_str("\r\n");
 
@@ -70,8 +70,8 @@ static int command_ioreadb(char *args)
 	char first[128], other[128];
 	unsigned short addr;
 
-	str_getfirstentry(args, first, other);
-	addr = (unsigned short)str_ahextoint(first);
+	str_get_first_entry(args, first, other);
+	addr = (unsigned short)str_conv_ahex_int(first);
 	dump_hex(inb_p(addr), 2);
 	put_str("\r\n");
 
@@ -83,10 +83,10 @@ static int command_writeb(char *args)
 	char first[16], second[32], other[128], _other[128];
 	unsigned char data, *addr;
 
-	str_getfirstentry(args, first, other);
-	str_getfirstentry(other, second, _other);
-	data = (unsigned char)str_ahextoint(first);
-	addr = (unsigned char *)str_ahextoint(second);
+	str_get_first_entry(args, first, other);
+	str_get_first_entry(other, second, _other);
+	data = (unsigned char)str_conv_ahex_int(first);
+	addr = (unsigned char *)str_conv_ahex_int(second);
 	*addr = data;
 
 	return 0;
@@ -97,10 +97,10 @@ static int command_writew(char *args)
 	char first[16], second[32], other[128], _other[128];
 	unsigned short data, *addr;
 
-	str_getfirstentry(args, first, other);
-	str_getfirstentry(other, second, _other);
-	data = (unsigned short)str_ahextoint(first);
-	addr = (unsigned short *)str_ahextoint(second);
+	str_get_first_entry(args, first, other);
+	str_get_first_entry(other, second, _other);
+	data = (unsigned short)str_conv_ahex_int(first);
+	addr = (unsigned short *)str_conv_ahex_int(second);
 	*addr = data;
 
 	return 0;
@@ -111,10 +111,10 @@ static int command_writel(char *args)
 	char first[16], second[32], other[128], _other[128];
 	unsigned int data, *addr;
 
-	str_getfirstentry(args, first, other);
-	str_getfirstentry(other, second, _other);
-	data = (unsigned int)str_ahextoint(first);
-	addr = (unsigned int *)str_ahextoint(second);
+	str_get_first_entry(args, first, other);
+	str_get_first_entry(other, second, _other);
+	data = (unsigned int)str_conv_ahex_int(first);
+	addr = (unsigned int *)str_conv_ahex_int(second);
 	*addr = data;
 
 	return 0;
@@ -126,10 +126,10 @@ static int command_iowriteb(char *args)
 	unsigned char data;
 	unsigned short addr;
 
-	str_getfirstentry(args, first, other);
-	str_getfirstentry(other, second, _other);
-	data = (unsigned char)str_ahextoint(first);
-	addr = (unsigned short)str_ahextoint(second);
+	str_get_first_entry(args, first, other);
+	str_get_first_entry(other, second, _other);
+	data = (unsigned char)str_conv_ahex_int(first);
+	addr = (unsigned short)str_conv_ahex_int(second);
 	outb_p(data, addr);
 
 	return 0;
@@ -176,7 +176,7 @@ static unsigned char get_command_id(const char *command)
 	return COMMAND_NUM;
 }
 
-void shell(void)
+void start_shell(void)
 {
 	while (1) {
 		char buf[MAX_LINE_SIZE];
@@ -185,7 +185,7 @@ void shell(void)
 
 		put_str("OS5> ");
 		get_line(buf, MAX_LINE_SIZE);
-		str_getfirstentry(buf, command, args);
+		str_get_first_entry(buf, command, args);
 		command_id = get_command_id(command);
 		switch (command_id) {
 		case ECHO:

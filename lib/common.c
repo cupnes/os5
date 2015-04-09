@@ -1,6 +1,6 @@
 #include <common.h>
 
-void memcpy(void *dst, const void *src, unsigned int size)
+void copy_mem(const void *src, void *dst, unsigned int size)
 {
 	unsigned char *d = (unsigned char *)dst;
 	unsigned char *s = (unsigned char *)src;
@@ -18,7 +18,7 @@ int pow(int num, int multer)
 	return pow(num, multer - 1) * num;
 }
 
-int str_findchar(const char *src, char key)
+int str_find_char(const char *src, char key)
 {
 	int i;
 
@@ -32,7 +32,7 @@ int str_findchar(const char *src, char key)
 	return i;
 }
 
-int str_getlen(const char *src)
+int str_get_len(const char *src)
 {
 	int len;
 	for (len = 0; src[len] != '\0'; len++);
@@ -63,9 +63,9 @@ int str_compare(const char *src, const char *dst)
 	}
 }
 
-int str_ahextoint(const char *hex_str)
+int str_conv_ahex_int(const char *hex_str)
 {
-	int len = str_getlen(hex_str);
+	int len = str_get_len(hex_str);
 	int val = 0, i;
 
 	for (i = 0; hex_str[i] != '\0'; i++) {
@@ -79,23 +79,23 @@ int str_ahextoint(const char *hex_str)
 	return val;
 }
 
-void str_getfirstentry(const char *line, char *first, char *other)
+void str_get_first_entry(const char *line, char *first, char *other)
 {
 	int line_len, first_len, other_len;
 
-	line_len = str_getlen(line);
-	first_len = str_findchar(line, ' ');
+	line_len = str_get_len(line);
+	first_len = str_find_char(line, ' ');
 	if (first_len < 0) {
-		memcpy((void *)first, (void *)line, line_len);
+		copy_mem((void *)line, (void *)first, line_len);
 		first_len = line_len;
 		other_len = 0;
 		other[other_len] = '\0';
 	} else {
-		memcpy((void *)first, (void *)line, first_len);
+		copy_mem((void *)line, (void *)first, first_len);
 		first[first_len] = '\0';
 		first_len++;
 		other_len = line_len - first_len;
-		memcpy((void *)other, (void *)(line + first_len), other_len);
+		copy_mem((void *)(line + first_len), (void *)other, other_len);
 	}
 
 #ifdef DEBUG
