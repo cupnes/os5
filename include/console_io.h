@@ -23,6 +23,7 @@ extern unsigned char keyboard_handler;
 extern struct cursor_position cursor_pos;
 
 void con_init(void);
+void update_cursor(void);
 void put_char_pos(char c, unsigned char x, unsigned char y);
 void put_char(char c);
 void put_str(char *str);

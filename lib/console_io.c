@@ -108,6 +108,20 @@ void con_init(void)
 	keycode_queue.is_full = 0;
 }
 
+void update_cursor(void)
+{
+	unsigned int cursor_address = (cursor_pos.y * 80) + cursor_pos.x;
+	unsigned char cursor_address_msb = (unsigned char)(cursor_address >> 8);
+	unsigned char cursor_address_lsb = (unsigned char)cursor_address;
+
+	cli();
+	outb_p(0x0e, 0x3d4);
+	outb_p(cursor_address_msb, 0x3d5);
+	outb_p(0x0f, 0x3d4);
+	outb_p(cursor_address_lsb, 0x3d5);
+	sti();
+}
+
 void put_char_pos(char c, unsigned char x, unsigned char y)
 {
 	unsigned char *pos;
@@ -137,6 +151,8 @@ void put_char(char c)
 		}
 		break;
 	}
+
+	update_cursor();
 }
 
 void put_str(char *str)
@@ -165,6 +181,8 @@ void dump_hex(unsigned int val, unsigned int num_digits)
 	}
 
 	cursor_pos.x = new_x;
+
+	update_cursor();
 }
 
 unsigned char get_keydata_noir(void)
@@ -218,6 +236,7 @@ void get_line(char *buf, unsigned int buf_size)
 		if (buf[i] == ASCII_BS) {
 			if (i == 0) continue;
 			cursor_pos.x--;
+			update_cursor();
 			put_char_pos(' ', cursor_pos.x, cursor_pos.y);
 			i--;
 		} else {
