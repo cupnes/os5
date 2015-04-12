@@ -15,10 +15,14 @@
 #define ASCII_BS					0x08
 #define ASCII_HT					0x09
 
+struct cursor_position {
+	unsigned int x, y;
+};
+
 extern unsigned char keyboard_handler;
+extern struct cursor_position cursor_pos;
 
 void con_init(void);
-void move_cursor_rel(unsigned int x, unsigned int y);
 void put_char_pos(char c, unsigned char x, unsigned char y);
 void put_char(char c);
 void put_str(char *str);

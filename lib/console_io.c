@@ -30,9 +30,7 @@ struct queue {
 	unsigned char is_full;
 } keycode_queue;
 
-struct {
-	unsigned int x, y;
-} cursor_pos;
+struct cursor_position cursor_pos;
 
 static unsigned char error_status;
 
@@ -108,12 +106,6 @@ void con_init(void)
 	keycode_queue.start = 0;
 	keycode_queue.end = 0;
 	keycode_queue.is_full = 0;
-}
-
-void move_cursor_rel(unsigned int x, unsigned int y)
-{
-	cursor_pos.x += x;
-	cursor_pos.y += y;
 }
 
 void put_char_pos(char c, unsigned char x, unsigned char y)

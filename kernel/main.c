@@ -7,7 +7,7 @@ int main(void)
 {
 	unsigned char mask;
 
-	move_cursor_rel(0, 2);
+	cursor_pos.y += 2;
 
 	con_init();
 	intr_set_handler(INTR_NUM_KB, (unsigned int)&keyboard_handler);
