@@ -120,6 +120,19 @@ void update_cursor(void)
 	outb_p(0x0f, 0x3d4);
 	outb_p(cursor_address_lsb, 0x3d5);
 	sti();
+
+	if (cursor_pos.y >= ROWS) {
+		unsigned int start_address = (cursor_pos.y - ROWS + 1) * 80;
+		unsigned char start_address_msb = (unsigned char)(start_address >> 8);
+		unsigned char start_address_lsb = (unsigned char)start_address;
+
+		cli();
+		outb_p(0x0c, 0x3d4);
+		outb_p(start_address_msb, 0x3d5);
+		outb_p(0x0d, 0x3d4);
+		outb_p(start_address_lsb, 0x3d5);
+		sti();
+	}
 }
 
 void put_char_pos(char c, unsigned char x, unsigned char y)
