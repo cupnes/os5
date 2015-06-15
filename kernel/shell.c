@@ -15,6 +15,7 @@ enum {
 	WRITEW,
 	WRITEL,
 	IOWRITEB,
+	TEST,
 	COMMAND_NUM
 } _COMMAND_SET;
 
@@ -135,6 +136,28 @@ static int command_iowriteb(char *args)
 	return 0;
 }
 
+static int command_test(char *args)
+{
+	volatile unsigned char *p;
+	/* char first[128], other[128]; */
+	/* unsigned short addr; */
+
+	/* str_get_first_entry(args, first, other); */
+	/* addr = (unsigned short)str_conv_ahex_int(first); */
+	/* dump_hex(inb_p(addr), 2); */
+	/* put_str("\r\n"); */
+
+	outb_p(0x02, 0x03d8);
+
+	put_str("Write Video mem.\r\n");
+
+	for (p = (unsigned char *)0xa0000; p <= (unsigned char *)0xaffff; p++) {
+		*p = (unsigned char)((unsigned int)p & 0x000000ff);
+	}
+
+	return 0;
+}
+
 static unsigned char get_command_id(const char *command)
 {
 	if (!str_compare(command, "echo")) {
@@ -171,6 +194,10 @@ static unsigned char get_command_id(const char *command)
 
 	if (!str_compare(command, "iowriteb")) {
 		return IOWRITEB;
+	}
+
+	if (!str_compare(command, "test")) {
+		return TEST;
 	}
 
 	return COMMAND_NUM;
@@ -214,6 +241,9 @@ void start_shell(void)
 			break;
 		case IOWRITEB:
 			command_iowriteb(args);
+			break;
+		case TEST:
+			command_test(args);
 			break;
 		default:
 			put_str("Command not found.\r\n");
