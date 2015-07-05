@@ -2,7 +2,7 @@
 
 	.text
 
-	.global	main, idt, keyboard_handler
+	.global	main, idt, gdt, keyboard_handler
 
 	movl	$0x00080000, %esp
 
@@ -54,3 +54,4 @@ gdt:
 	.quad 0x0000000000000000	/* NULL descriptor */
 	.quad 0x00cf9a000000ffff	/* 4GB(r-x:Code) */
 	.quad 0x00cf92000000ffff	/* 4GB(rw-:Data) */
+	.fill 5, 8, 0
