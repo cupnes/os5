@@ -83,12 +83,12 @@ int main(void)
 	gdt[4].limit0 = limit & 0x0000ffff;
 	gdt[4].limit1 = (limit & 0x000f0000) >> 16;
 
-	base = (unsigned int)shell_tss;
+	base = (unsigned int)&shell_tss;
 	gdt[4].base0 = base & 0x0000ffff;
 	gdt[4].base1 = (base & 0x00ff0000) >> 16;
 	gdt[4].base2 = (base & 0xff000000) >> 24;
 
-	gdt[4].type = /* TODO */;
+	/* gdt[4].type = /\* TODO *\/; */
 	gdt[4].p = 1;
 	gdt[4].d = 1;
 
