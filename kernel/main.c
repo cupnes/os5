@@ -3,6 +3,12 @@
 #include <console_io.h>
 #include <shell.h>
 
+static inline unsigned int get_sp(void)
+{
+	register unsigned sp asm("sp");
+	return sp;
+}
+
 struct segment_descriptor {
 	union {
 		struct {
@@ -16,7 +22,7 @@ struct segment_descriptor {
 			unsigned short limit1: 4, avl: 1, l: 1, d: 1, g: 1, base2: 8;
 		};
 	};
-} shell_ldt[2];
+};
 
 extern struct segment_descriptor gdt[8];
 
@@ -48,7 +54,7 @@ struct tss {
 	unsigned short		ldt, __ldth;
 	unsigned short		trace;
 	unsigned short		io_bitmap_base;
-} shell_tss;
+} shell_tss, task1_tss;
 
 int main(void)
 {
@@ -58,39 +64,18 @@ int main(void)
 	cursor_pos.y += 2;
 	update_cursor();
 
-	/* Setup GDT for shell_ldt */
-	limit = sizeof(shell_ldt);
+	/* Setup GDT for shell_tss */
+	limit = sizeof(shell_tss);
 	gdt[3].limit0 = limit & 0x0000ffff;
 	gdt[3].limit1 = (limit & 0x000f0000) >> 16;
 
-	base = (unsigned int)shell_ldt;
+	base = (unsigned int)&shell_tss;
 	gdt[3].base0 = base & 0x0000ffff;
 	gdt[3].base1 = (base & 0x00ff0000) >> 16;
 	gdt[3].base2 = (base & 0xff000000) >> 24;
 
-	gdt[3].type = 2;
+	gdt[3].type = 9;
 	gdt[3].p = 1;
-	gdt[3].d = 1;
-
-	/* Setup shell_ldt */
-	for (i = 0; i < 2; i++) {
-		shell_ldt[i].a = gdt[i + 1].a;
-		shell_ldt[i].b = gdt[i + 1].b;
-	}
-
-	/* Setup GDT for shell_tss */
-	limit = sizeof(shell_tss);
-	gdt[4].limit0 = limit & 0x0000ffff;
-	gdt[4].limit1 = (limit & 0x000f0000) >> 16;
-
-	base = (unsigned int)&shell_tss;
-	gdt[4].base0 = base & 0x0000ffff;
-	gdt[4].base1 = (base & 0x00ff0000) >> 16;
-	gdt[4].base2 = (base & 0xff000000) >> 24;
-
-	/* gdt[4].type = /\* TODO *\/; */
-	gdt[4].p = 1;
-	gdt[4].d = 1;
 
 	/* Setup shell_tss */
 
@@ -101,6 +86,9 @@ int main(void)
 	mask &= ~INTR_MASK_BIT_KB;
 	intr_set_mask_master(mask);
 	sti();
+
+	dump_hex(get_sp(), 8);
+	while (1);
 
 	start_shell();
 
