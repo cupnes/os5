@@ -3,12 +3,6 @@
 #include <console_io.h>
 #include <shell.h>
 
-static inline unsigned int get_sp(void)
-{
-	register unsigned sp asm("sp");
-	return sp;
-}
-
 struct segment_descriptor {
 	union {
 		struct {
@@ -23,6 +17,8 @@ struct segment_descriptor {
 		};
 	};
 };
+
+void load_task_register(void);
 
 extern struct segment_descriptor gdt[8];
 
@@ -59,10 +55,14 @@ struct tss {
 int main(void)
 {
 	unsigned char mask;
-	unsigned int i, limit, base;
+	unsigned int limit, base;
+	/* unsigned short segment_selector; */
+	volatile unsigned char flag = 1;
 
+	cli();
 	cursor_pos.y += 2;
 	update_cursor();
+	cli();
 
 	/* Setup GDT for shell_tss */
 	limit = sizeof(shell_tss);
@@ -78,6 +78,12 @@ int main(void)
 	gdt[3].p = 1;
 
 	/* Setup shell_tss */
+	load_task_register();
+	while (flag);
+	/* __asm__("movw $0x18, %%ax;ltr %%ax"::); */
+	/* segment_selector = 8*3; */
+	/* __asm__("movw %1, %0;ltr %1":"r":"r"(segment_selector)); */
+	/* __asm__("ltr %0"::"r"(segment_selector)); */
 
 	con_init();
 	intr_set_handler(INTR_NUM_KB, (unsigned int)&keyboard_handler);
@@ -86,9 +92,6 @@ int main(void)
 	mask &= ~INTR_MASK_BIT_KB;
 	intr_set_mask_master(mask);
 	sti();
-
-	dump_hex(get_sp(), 8);
-	while (1);
 
 	start_shell();
 

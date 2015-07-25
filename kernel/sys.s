@@ -2,7 +2,7 @@
 
 	.text
 
-	.global	main, idt, gdt, keyboard_handler
+	.global	main, idt, gdt, keyboard_handler, load_task_register
 
 	movl	$0x00080000, %esp
 
@@ -38,6 +38,13 @@ keyboard_handler:
 
 ignore_int:
 	iret
+
+load_task_register:
+	movl	$0x18, %eax
+	ltr		%ax
+arkw:
+	jmp		arkw
+	ret
 
 	.data
 idt_descr:
