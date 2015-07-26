@@ -41,9 +41,9 @@ ignore_int:
 
 load_task_register:
 	movl	$0x18, %eax
-	ltr		%ax
 arkw:
 	jmp		arkw
+	ltr		%ax
 	ret
 
 	.data
