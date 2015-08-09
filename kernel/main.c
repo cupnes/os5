@@ -65,7 +65,6 @@ int main(void)
 {
 	unsigned char mask;
 	unsigned int limit, base;
-	volatile unsigned char flag = 1;
 	unsigned char i;
 
 	cli();
@@ -92,7 +91,6 @@ int main(void)
 	/* Setup shell_tss */
 	load_task_register();
 	put_str("task loaded.\r\n");
-	while (flag);
 
 	con_init();
 	intr_set_handler(INTR_NUM_KB, (unsigned int)&keyboard_handler);
