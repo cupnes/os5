@@ -65,7 +65,6 @@ int main(void)
 {
 	unsigned char mask;
 	unsigned int limit, base;
-	/* unsigned short segment_selector; */
 	volatile unsigned char flag = 1;
 	unsigned char i;
 
@@ -87,18 +86,13 @@ int main(void)
 	gdt[3].type = 9;
 	gdt[3].p = 1;
 
-	/* for (i = 0; i < EXCEPTION_NUM; i++) */
-	/* 	intr_set_handler(i, (unsigned int)&exception_handler); */
-	intr_set_handler(13, (unsigned int)&exception_handler);
+	for (i = 0; i < EXCEPTION_NUM; i++)
+		intr_set_handler(i, (unsigned int)&exception_handler);
 
 	/* Setup shell_tss */
 	load_task_register();
 	put_str("task loaded.\r\n");
 	while (flag);
-	/* __asm__("movw $0x18, %%ax;ltr %%ax"::); */
-	/* segment_selector = 8*3; */
-	/* __asm__("movw %1, %0;ltr %1":"r":"r"(segment_selector)); */
-	/* __asm__("ltr %0"::"r"(segment_selector)); */
 
 	con_init();
 	intr_set_handler(INTR_NUM_KB, (unsigned int)&keyboard_handler);

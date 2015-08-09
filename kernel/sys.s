@@ -37,7 +37,7 @@ keyboard_handler:
 	iret
 
 exception_handler:
-	jmp		exception_handler
+	call	do_exception
 	iret
 
 ignore_int:
@@ -54,7 +54,7 @@ idt_descr:
 	.long idt
 
 gdt_descr:
-	.word 4*8-1
+	.word 8*8-1
 	.long gdt
 
 idt:	.fill 256,8,0		/* idt is uninitialized			*/
