@@ -2,7 +2,7 @@
 
 	.text
 
-	.global	main, idt, gdt, keyboard_handler, load_task_register
+	.global	main, idt, gdt, keyboard_handler, exception_handler, load_task_register
 
 	movl	$0x00080000, %esp
 
@@ -36,13 +36,15 @@ keyboard_handler:
 	call	do_ir_keyboard
 	iret
 
+exception_handler:
+	jmp		exception_handler
+	iret
+
 ignore_int:
 	iret
 
 load_task_register:
 	movl	$0x18, %eax
-arkw:
-	jmp		arkw
 	ltr		%ax
 	ret
 
@@ -52,7 +54,7 @@ idt_descr:
 	.long idt
 
 gdt_descr:
-	.word 3*8-1
+	.word 4*8-1
 	.long gdt
 
 idt:	.fill 256,8,0		/* idt is uninitialized			*/

@@ -52,12 +52,22 @@ struct tss {
 	unsigned short		io_bitmap_base;
 } shell_tss, task1_tss;
 
+void do_exception(void)
+{
+	put_str("exception\r\n");
+	while (1);
+}
+
+extern unsigned char exception_handler;
+
+#define EXCEPTION_NUM	20
 int main(void)
 {
 	unsigned char mask;
 	unsigned int limit, base;
 	/* unsigned short segment_selector; */
 	volatile unsigned char flag = 1;
+	unsigned char i;
 
 	cli();
 	cursor_pos.y += 2;
@@ -77,8 +87,13 @@ int main(void)
 	gdt[3].type = 9;
 	gdt[3].p = 1;
 
+	/* for (i = 0; i < EXCEPTION_NUM; i++) */
+	/* 	intr_set_handler(i, (unsigned int)&exception_handler); */
+	intr_set_handler(13, (unsigned int)&exception_handler);
+
 	/* Setup shell_tss */
 	load_task_register();
+	put_str("task loaded.\r\n");
 	while (flag);
 	/* __asm__("movw $0x18, %%ax;ltr %%ax"::); */
 	/* segment_selector = 8*3; */
