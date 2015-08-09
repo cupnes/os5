@@ -128,6 +128,8 @@ int main(void)
 	intr_set_mask_master(mask);
 	sti();
 
+	__asm__("ljmp	$0x20, $0");
+
 	start_shell();
 
 	return 0;
