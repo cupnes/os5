@@ -60,6 +60,11 @@ void do_exception(void)
 
 extern unsigned char exception_handler;
 
+void task1(void)
+{
+	while(1);
+}
+
 #define EXCEPTION_NUM	20
 int main(void)
 {
@@ -91,6 +96,29 @@ int main(void)
 	/* Setup shell_tss */
 	load_task_register();
 	put_str("task loaded.\r\n");
+
+	/* Setup GDT for shell_tss */
+	limit = sizeof(task1_tss);
+	gdt[4].limit0 = limit & 0x0000ffff;
+	gdt[4].limit1 = (limit & 0x000f0000) >> 16;
+
+	base = (unsigned int)&task1_tss;
+	gdt[4].base0 = base & 0x0000ffff;
+	gdt[4].base1 = (base & 0x00ff0000) >> 16;
+	gdt[4].base2 = (base & 0xff000000) >> 24;
+
+	gdt[4].type = 9;
+	gdt[4].p = 1;
+
+	/* Setup task1_tss */
+	task1_tss.eip = (unsigned int)task1;
+	task1_tss.esp = 0x00085000;
+	task1_tss.es = 0x0010;
+	task1_tss.cs = 0x0008;
+	task1_tss.ss = 0x0010;
+	task1_tss.ds = 0x0010;
+	task1_tss.fs = 0x0010;
+	task1_tss.gs = 0x0010;
 
 	con_init();
 	intr_set_handler(INTR_NUM_KB, (unsigned int)&keyboard_handler);
