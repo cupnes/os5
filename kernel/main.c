@@ -62,7 +62,9 @@ extern unsigned char exception_handler;
 
 void task1(void)
 {
-	while(1);
+	put_str("task1\r\n");
+	__asm__("ljmp	$0x18, $0");
+	while (1);
 }
 
 #define EXCEPTION_NUM	20
