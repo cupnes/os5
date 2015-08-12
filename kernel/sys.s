@@ -2,7 +2,7 @@
 
 	.text
 
-	.global	main, idt, gdt, keyboard_handler, exception_handler, load_task_register
+	.global	main, idt, gdt, keyboard_handler, timer_handler, exception_handler, load_task_register
 
 	movl	$0x00080000, %esp
 
@@ -34,6 +34,10 @@ end:
 
 keyboard_handler:
 	call	do_ir_keyboard
+	iret
+
+timer_handler:
+	jmp	timer_handler
 	iret
 
 exception_handler:

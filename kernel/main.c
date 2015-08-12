@@ -77,6 +77,7 @@ int main(void)
 	unsigned char t1, t2;
 	unsigned short timer_counter;
 	volatile unsigned int cnt;
+	extern unsigned char timer_handler;
 
 	cli();
 	cursor_pos.y += 2;
@@ -127,10 +128,11 @@ int main(void)
 	task1_tss.gs = 0x0010;
 
 	con_init();
+	intr_set_handler(32, (unsigned int)&timer_handler);
 	intr_set_handler(INTR_NUM_KB, (unsigned int)&keyboard_handler);
 	intr_init();
 	mask = intr_get_mask_master();
-	mask &= ~INTR_MASK_BIT_KB;
+	mask &= ~(0x01 | INTR_MASK_BIT_KB);
 	intr_set_mask_master(mask);
 	sti();
 
