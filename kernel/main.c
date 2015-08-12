@@ -2,6 +2,7 @@
 #include <intr.h>
 #include <console_io.h>
 #include <shell.h>
+#include <io_port.h>
 
 struct segment_descriptor {
 	union {
@@ -73,6 +74,9 @@ int main(void)
 	unsigned char mask;
 	unsigned int limit, base;
 	unsigned char i;
+	unsigned char t1, t2;
+	unsigned short timer_counter;
+	volatile unsigned int cnt;
 
 	cli();
 	cursor_pos.y += 2;
@@ -131,6 +135,27 @@ int main(void)
 	sti();
 
 	__asm__("ljmp	$0x20, $0");
+
+	/* 0b0011 0100 */
+	outb_p(0x34, 0x0043);
+	outb_p(0x00, 0x0040);
+	outb_p(0x00, 0x0040);
+	put_str("Timer initialized.\r\n");
+
+	/* 0b1101 0010 */
+	while (1) {
+		outb_p(0xd2, 0x0043);
+		t1 = inb_p(0x0040);
+		t2 = inb_p(0x0040);
+		timer_counter = (unsigned short)((t2 << 8) | t1);
+		dump_hex(t1, 2);
+		put_str(",");
+		dump_hex(t2, 2);
+		put_str(",");
+		dump_hex(timer_counter, 4);
+		put_str("\r\n");
+		for (cnt = 0; cnt < 10000000; cnt++);
+	}
 
 	start_shell();
 
