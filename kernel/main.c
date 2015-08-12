@@ -68,6 +68,18 @@ void task1(void)
 	while (1);
 }
 
+void do_timer(void)
+{
+	static unsigned int counter = 0;
+	counter++;
+	if (counter >= 100) {
+		put_str("do_timer\r\n");
+		counter = 0;
+	}
+	outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | 0,
+	       IOADR_MPIC_OCW2);
+}
+
 #define EXCEPTION_NUM	20
 int main(void)
 {
@@ -140,11 +152,12 @@ int main(void)
 
 	/* 0b0011 0100 */
 	outb_p(0x34, 0x0043);
-	outb_p(0x00, 0x0040);
-	outb_p(0x00, 0x0040);
+	outb_p(0x9c, 0x0040);
+	outb_p(0x2e, 0x0040);
 	put_str("Timer initialized.\r\n");
 
 	/* 0b1101 0010 */
+#if 0
 	while (1) {
 		outb_p(0xd2, 0x0043);
 		t1 = inb_p(0x0040);
@@ -158,6 +171,7 @@ int main(void)
 		put_str("\r\n");
 		for (cnt = 0; cnt < 10000000; cnt++);
 	}
+#endif
 
 	start_shell();
 
