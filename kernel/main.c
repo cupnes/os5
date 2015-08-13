@@ -61,6 +61,8 @@ void do_exception(void)
 
 extern unsigned char exception_handler;
 
+unsigned int global_counter = 0;
+
 void task1(void)
 {
 	volatile unsigned int cnt;
@@ -72,25 +74,21 @@ void task1(void)
 
 void do_timer(void)
 {
-	static unsigned int counter = 0;
-
 #if 0
 	put_str("\r\nT:");
 	dump_hex(counter, 2);
 	put_str("\r\n");
 #endif
 
-	if (counter) {
-		counter = 0;
-		outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | 0,
-		       IOADR_MPIC_OCW2);
-		__asm__("ljmp	$0x18, $0");
-
-	} else {
-		counter = 1;
+	global_counter++;
+	if (global_counter % 2) {
 		outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | 0,
 		       IOADR_MPIC_OCW2);
 		__asm__("ljmp	$0x20, $0");
+	} else {
+		outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | 0,
+		       IOADR_MPIC_OCW2);
+		__asm__("ljmp	$0x18, $0");
 	}
 
 #if 0
