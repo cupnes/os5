@@ -169,20 +169,17 @@ int main(void)
 	intr_set_mask_master(mask);
 	sti();
 
+	outb_p(0x34, 0x0043);
+	/* 割り込み周期11932(0x2e9c)サイクル(=100Hz、10ms毎)に設定 */
+	outb_p(0x9c, 0x0040);
+	outb_p(0x2e, 0x0040);
+	put_str("Timer initialized.\r\n");
+
 	while (1) {
 		put_str("A");
 		for (cnt = 0; cnt < 1000000; cnt++);
 	}
 
-	__asm__("ljmp	$0x20, $0");
-
-	/* 0b0011 0100 */
-	outb_p(0x34, 0x0043);
-	outb_p(0x9c, 0x0040);
-	outb_p(0x2e, 0x0040);
-	put_str("Timer initialized.\r\n");
-
-	/* 0b1101 0010 */
 #if 0
 	while (1) {
 		outb_p(0xd2, 0x0043);
