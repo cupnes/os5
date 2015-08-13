@@ -71,7 +71,8 @@ void task1(void)
 		/* put_char_pos('O', 0, 0); */
 		/* put_char_pos('S', 0, 1); */
 		/* put_char_pos('5', 0, 2); */
-		put_str("B");
+		/* put_char('-'); */
+		sti();
 		uptime = global_counter / 100;
 		for (cnt = 0; cnt < 1000000; cnt++);
 	}
@@ -84,6 +85,8 @@ void do_timer(void)
 	dump_hex(counter, 2);
 	put_str("\r\n");
 #endif
+
+	put_str(".");
 
 	global_counter++;
 	if (global_counter % 2) {
