@@ -63,21 +63,44 @@ extern unsigned char exception_handler;
 
 void task1(void)
 {
-	put_str("task1\r\n");
-	__asm__("ljmp	$0x18, $0");
-	while (1);
+	volatile unsigned int cnt;
+	while (1) {
+		put_str("B");
+		for (cnt = 0; cnt < 1000000; cnt++);
+	}
 }
 
 void do_timer(void)
 {
 	static unsigned int counter = 0;
+
+#if 0
+	put_str("\r\nT:");
+	dump_hex(counter, 2);
+	put_str("\r\n");
+#endif
+
+	if (counter) {
+		counter = 0;
+		outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | 0,
+		       IOADR_MPIC_OCW2);
+		__asm__("ljmp	$0x18, $0");
+
+	} else {
+		counter = 1;
+		outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | 0,
+		       IOADR_MPIC_OCW2);
+		__asm__("ljmp	$0x20, $0");
+	}
+
+#if 0
 	counter++;
 	if (counter >= 100) {
 		put_str("do_timer\r\n");
 		counter = 0;
 	}
-	outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | 0,
-	       IOADR_MPIC_OCW2);
+#endif
+
 }
 
 #define EXCEPTION_NUM	20
@@ -116,7 +139,7 @@ int main(void)
 	load_task_register();
 	put_str("task loaded.\r\n");
 
-	/* Setup GDT for shell_tss */
+	/* Setup GDT for task1_tss */
 	limit = sizeof(task1_tss);
 	gdt[4].limit0 = limit & 0x0000ffff;
 	gdt[4].limit1 = (limit & 0x000f0000) >> 16;
@@ -147,6 +170,11 @@ int main(void)
 	mask &= ~(0x01 | INTR_MASK_BIT_KB);
 	intr_set_mask_master(mask);
 	sti();
+
+	while (1) {
+		put_str("A");
+		for (cnt = 0; cnt < 1000000; cnt++);
+	}
 
 	__asm__("ljmp	$0x20, $0");
 
