@@ -72,7 +72,6 @@ void task1(void)
 		/* put_char_pos('S', 0, 1); */
 		/* put_char_pos('5', 0, 2); */
 		/* put_char('-'); */
-		sti();
 		uptime = global_counter / 100;
 		for (cnt = 0; cnt < 1000000; cnt++);
 	}
@@ -161,6 +160,7 @@ int main(void)
 	/* Setup task1_tss */
 	task1_tss.eip = (unsigned int)task1;
 	task1_tss.esp = 0x00085000;
+	task1_tss.eflags = 0x00000200;
 	task1_tss.es = 0x0010;
 	task1_tss.cs = 0x0008;
 	task1_tss.ss = 0x0010;
