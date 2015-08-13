@@ -138,7 +138,7 @@ static int command_iowriteb(char *args)
 
 static int command_test(char *args)
 {
-	volatile unsigned char *p;
+	/* volatile unsigned char *p; */
 	/* char first[128], other[128]; */
 	/* unsigned short addr; */
 
@@ -147,13 +147,17 @@ static int command_test(char *args)
 	/* dump_hex(inb_p(addr), 2); */
 	/* put_str("\r\n"); */
 
-	outb_p(0x02, 0x03d8);
+	/* outb_p(0x02, 0x03d8); */
 
-	put_str("Write Video mem.\r\n");
+	/* put_str("Write Video mem.\r\n"); */
 
-	for (p = (unsigned char *)0xa0000; p <= (unsigned char *)0xaffff; p++) {
-		*p = (unsigned char)((unsigned int)p & 0x000000ff);
-	}
+	/* for (p = (unsigned char *)0xa0000; p <= (unsigned char *)0xaffff; p++) { */
+	/* 	*p = (unsigned char)((unsigned int)p & 0x000000ff); */
+	/* } */
+
+	extern unsigned int uptime;
+	dump_hex(uptime, 8);
+	put_str("\r\n");
 
 	return 0;
 }

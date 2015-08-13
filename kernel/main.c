@@ -62,12 +62,17 @@ void do_exception(void)
 extern unsigned char exception_handler;
 
 unsigned int global_counter = 0;
+unsigned int uptime;
 
 void task1(void)
 {
 	volatile unsigned int cnt;
 	while (1) {
+		/* put_char_pos('O', 0, 0); */
+		/* put_char_pos('S', 0, 1); */
+		/* put_char_pos('5', 0, 2); */
 		put_str("B");
+		uptime = global_counter / 100;
 		for (cnt = 0; cnt < 1000000; cnt++);
 	}
 }
@@ -175,10 +180,12 @@ int main(void)
 	outb_p(0x2e, 0x0040);
 	put_str("Timer initialized.\r\n");
 
+#if 0
 	while (1) {
 		put_str("A");
 		for (cnt = 0; cnt < 1000000; cnt++);
 	}
+#endif
 
 #if 0
 	while (1) {
