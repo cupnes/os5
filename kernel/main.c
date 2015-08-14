@@ -94,8 +94,6 @@ void do_timer(void)
 	put_str("\r\n");
 #endif
 
-	put_str(".");
-
 	global_counter++;
 	if (global_counter % 2) {
 		outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | 0,
