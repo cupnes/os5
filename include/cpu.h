@@ -45,3 +45,5 @@ struct tss {
 	unsigned short		trace;
 	unsigned short		io_bitmap_base;
 };
+
+void load_task_register(void);
