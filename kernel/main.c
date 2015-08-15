@@ -47,6 +47,7 @@ int main(void)
 	unsigned char i;
 	extern unsigned char timer_handler;
 
+	/* Setup console */
 	cli();
 	cursor_pos.y += 2;
 	update_cursor();
