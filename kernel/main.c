@@ -68,16 +68,18 @@ void task1(void)
 {
 	volatile unsigned int cnt;
 	while (1) {
+		uptime = global_counter / 100;
 		if (cursor_pos.y < ROWS) {
-			put_str_pos("OS5", COLUMNS - 3, 0);
+			put_str_pos("uptime:", COLUMNS - (7 + 4), 0);
+			dump_hex_pos(uptime, 4, COLUMNS - 4, 0);
 		} else {
-			put_str_pos("5SO", COLUMNS - 3, cursor_pos.y - ROWS + 1);
+			put_str_pos("uptime:", COLUMNS - (7 + 4), cursor_pos.y - ROWS + 1);
+			dump_hex_pos(uptime, 4, COLUMNS - 4, cursor_pos.y - ROWS + 1);
 		}
 		/* put_char_pos('O', 0, 0); */
 		/* put_char_pos('S', 0, 1); */
 		/* put_char_pos('5', 0, 2); */
 		/* put_char('-'); */
-		uptime = global_counter / 100;
 		for (cnt = 0; cnt < 1000000; cnt++);
 	}
 }
