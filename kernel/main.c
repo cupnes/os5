@@ -4,8 +4,6 @@
 #include <shell.h>
 #include <io_port.h>
 
-extern struct segment_descriptor gdt[8];
-
 struct tss shell_tss, task1_tss;
 
 void do_exception(void)

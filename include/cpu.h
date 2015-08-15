@@ -46,4 +46,6 @@ struct tss {
 	unsigned short		io_bitmap_base;
 };
 
+extern struct segment_descriptor gdt[8];
+
 void load_task_register(void);
