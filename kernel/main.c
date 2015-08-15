@@ -76,22 +76,12 @@ void task1(void)
 			put_str_pos("uptime:", COLUMNS - (7 + 4), cursor_pos.y - ROWS + 1);
 			dump_hex_pos(uptime, 4, COLUMNS - 4, cursor_pos.y - ROWS + 1);
 		}
-		/* put_char_pos('O', 0, 0); */
-		/* put_char_pos('S', 0, 1); */
-		/* put_char_pos('5', 0, 2); */
-		/* put_char('-'); */
 		for (cnt = 0; cnt < 1000000; cnt++);
 	}
 }
 
 void do_timer(void)
 {
-#if 0
-	put_str("\r\nT:");
-	dump_hex(counter, 2);
-	put_str("\r\n");
-#endif
-
 	global_counter++;
 	if (global_counter % 2) {
 		outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | 0,
@@ -102,15 +92,6 @@ void do_timer(void)
 		       IOADR_MPIC_OCW2);
 		__asm__("ljmp	$0x18, $0");
 	}
-
-#if 0
-	counter++;
-	if (counter >= 100) {
-		put_str("do_timer\r\n");
-		counter = 0;
-	}
-#endif
-
 }
 
 #define EXCEPTION_NUM	20
@@ -119,9 +100,6 @@ int main(void)
 	unsigned char mask;
 	unsigned int limit, base;
 	unsigned char i;
-	unsigned char t1, t2;
-	unsigned short timer_counter;
-	volatile unsigned int cnt;
 	extern unsigned char timer_handler;
 
 	cli();
@@ -187,29 +165,6 @@ int main(void)
 	outb_p(0x9c, 0x0040);
 	outb_p(0x2e, 0x0040);
 	put_str("Timer initialized.\r\n");
-
-#if 0
-	while (1) {
-		put_str("A");
-		for (cnt = 0; cnt < 1000000; cnt++);
-	}
-#endif
-
-#if 0
-	while (1) {
-		outb_p(0xd2, 0x0043);
-		t1 = inb_p(0x0040);
-		t2 = inb_p(0x0040);
-		timer_counter = (unsigned short)((t2 << 8) | t1);
-		dump_hex(t1, 2);
-		put_str(",");
-		dump_hex(t2, 2);
-		put_str(",");
-		dump_hex(timer_counter, 4);
-		put_str("\r\n");
-		for (cnt = 0; cnt < 10000000; cnt++);
-	}
-#endif
 
 	start_shell();
 
