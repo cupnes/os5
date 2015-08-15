@@ -7,8 +7,6 @@
 
 struct tss shell_tss, task1_tss;
 
-extern unsigned char exception_handler;
-
 unsigned int global_counter = 0;
 unsigned int uptime;
 
@@ -42,7 +40,6 @@ void do_timer(void)
 	}
 }
 
-#define EXCEPTION_NUM	20
 int main(void)
 {
 	unsigned char mask;
