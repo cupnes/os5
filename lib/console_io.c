@@ -224,6 +224,24 @@ void dump_hex(unsigned int val, unsigned int num_digits)
 	update_cursor();
 }
 
+void dump_hex_pos(unsigned int val, unsigned int num_digits, unsigned char x, unsigned char y)
+{
+	unsigned int new_x = x + num_digits;
+	unsigned int dump_digit = new_x - 1;
+
+	while (num_digits) {
+		unsigned char tmp_val = val & 0x0000000f;
+		if (tmp_val < 10) {
+			put_char_pos('0' + tmp_val, dump_digit, y);
+		} else {
+			put_char_pos('A' + tmp_val - 10, dump_digit, y);
+		}
+		val >>= 4;
+		dump_digit--;
+		num_digits--;
+	}
+}
+
 unsigned char get_keydata_noir(void)
 {
 	while (!(inb_p(IOADR_KBC_STATUS) & IOADR_KBC_STATUS_BIT_OBF));
