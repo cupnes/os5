@@ -1,16 +1,11 @@
 #include <cpu.h>
 #include <intr.h>
+#include <excp.h>
 #include <console_io.h>
 #include <shell.h>
 #include <io_port.h>
 
 struct tss shell_tss, task1_tss;
-
-void do_exception(void)
-{
-	put_str("exception\r\n");
-	while (1);
-}
 
 extern unsigned char exception_handler;
 
