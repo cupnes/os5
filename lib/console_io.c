@@ -176,6 +176,32 @@ void put_str(char *str)
 	}
 }
 
+void put_str_pos(char *str, unsigned char x, unsigned char y)
+{
+	while (*str != '\0') {
+		switch (*str) {
+		case '\r':
+			x = 0;
+			break;
+
+		case '\n':
+			y++;
+			break;
+
+		default:
+			put_char_pos(*str, x, y);
+			if (x < COLUMNS - 1) {
+				x++;
+			} else {
+				x = 0;
+				y++;
+			}
+			break;
+		}
+		str++;
+	}
+}
+
 void dump_hex(unsigned int val, unsigned int num_digits)
 {
 	unsigned int new_x = cursor_pos.x + num_digits;

@@ -69,13 +69,9 @@ void task1(void)
 	volatile unsigned int cnt;
 	while (1) {
 		if (cursor_pos.y < ROWS) {
-			put_char_pos('O', COLUMNS - 3, 0);
-			put_char_pos('S', COLUMNS - 2, 0);
-			put_char_pos('5', COLUMNS - 1, 0);
+			put_str_pos("OS5", COLUMNS - 3, 0);
 		} else {
-			put_char_pos('5', COLUMNS - 3, cursor_pos.y - ROWS + 1);
-			put_char_pos('S', COLUMNS - 2, cursor_pos.y - ROWS + 1);
-			put_char_pos('O', COLUMNS - 1, cursor_pos.y - ROWS + 1);
+			put_str_pos("5SO", COLUMNS - 3, cursor_pos.y - ROWS + 1);
 		}
 		/* put_char_pos('O', 0, 0); */
 		/* put_char_pos('S', 0, 1); */

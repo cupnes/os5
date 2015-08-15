@@ -28,6 +28,7 @@ void update_cursor(void);
 void put_char_pos(char c, unsigned char x, unsigned char y);
 void put_char(char c);
 void put_str(char *str);
+void put_str_pos(char *str, unsigned char x, unsigned char y);
 void dump_hex(unsigned int val, unsigned int num_digits);
 unsigned char get_keydata_noir(void);
 unsigned char get_keydata(void);
