@@ -2,16 +2,15 @@
 #include <intr.h>
 #include <excp.h>
 #include <console_io.h>
+#include <timer.h>
 #include <shell.h>
 #include <io_port.h>
 
 struct tss shell_tss, task1_tss;
 
-unsigned int global_counter = 0;
-unsigned int uptime;
-
 void task1(void)
 {
+	static unsigned int uptime;
 	volatile unsigned int cnt;
 	while (1) {
 		uptime = global_counter / 100;
@@ -23,20 +22,6 @@ void task1(void)
 			dump_hex_pos(uptime, 4, COLUMNS - 4, cursor_pos.y - ROWS + 1);
 		}
 		for (cnt = 0; cnt < 1000000; cnt++);
-	}
-}
-
-void do_timer(void)
-{
-	global_counter++;
-	if (global_counter % 2) {
-		outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | 0,
-		       IOADR_MPIC_OCW2);
-		__asm__("ljmp	$0x20, $0");
-	} else {
-		outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | 0,
-		       IOADR_MPIC_OCW2);
-		__asm__("ljmp	$0x18, $0");
 	}
 }
 
