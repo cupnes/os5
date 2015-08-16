@@ -1,3 +1,3 @@
-extern struct tss task1_tss;
+extern struct tss uptime_tss;
 
-void task1(void);
+void uptime(void);

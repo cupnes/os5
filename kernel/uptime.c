@@ -3,9 +3,9 @@
 #include <timer.h>
 #include <console_io.h>
 
-struct tss task1_tss;
+struct tss uptime_tss;
 
-void task1(void)
+void uptime(void)
 {
 	static unsigned int uptime;
 	volatile unsigned int cnt;
