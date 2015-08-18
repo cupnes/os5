@@ -49,3 +49,4 @@ struct tss {
 extern struct segment_descriptor gdt[8];
 
 void load_task_register(void);
+void init_gdt(unsigned int idx, unsigned int base, unsigned int limit);

@@ -12,7 +12,6 @@ struct tss shell_tss;
 int main(void)
 {
 	unsigned char mask;
-	unsigned int limit, base;
 	unsigned char i;
 	extern unsigned char timer_handler;
 
@@ -23,17 +22,7 @@ int main(void)
 	cli();
 
 	/* Setup GDT for shell_tss */
-	limit = sizeof(shell_tss);
-	gdt[3].limit0 = limit & 0x0000ffff;
-	gdt[3].limit1 = (limit & 0x000f0000) >> 16;
-
-	base = (unsigned int)&shell_tss;
-	gdt[3].base0 = base & 0x0000ffff;
-	gdt[3].base1 = (base & 0x00ff0000) >> 16;
-	gdt[3].base2 = (base & 0xff000000) >> 24;
-
-	gdt[3].type = 9;
-	gdt[3].p = 1;
+	init_gdt(3, (unsigned int)&shell_tss, sizeof(shell_tss));
 
 	/* Setup exception handler */
 	for (i = 0; i < EXCEPTION_NUM; i++)
@@ -44,17 +33,7 @@ int main(void)
 	put_str("task loaded.\r\n");
 
 	/* Setup GDT for uptime_tss */
-	limit = sizeof(uptime_tss);
-	gdt[4].limit0 = limit & 0x0000ffff;
-	gdt[4].limit1 = (limit & 0x000f0000) >> 16;
-
-	base = (unsigned int)&uptime_tss;
-	gdt[4].base0 = base & 0x0000ffff;
-	gdt[4].base1 = (base & 0x00ff0000) >> 16;
-	gdt[4].base2 = (base & 0xff000000) >> 24;
-
-	gdt[4].type = 9;
-	gdt[4].p = 1;
+	init_gdt(4, (unsigned int)&uptime_tss, sizeof(uptime_tss));
 
 	/* Setup uptime_tss */
 	uptime_tss.eip = (unsigned int)uptime;
