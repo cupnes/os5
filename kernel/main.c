@@ -14,6 +14,7 @@ int main(void)
 	unsigned char mask;
 	unsigned char i;
 	extern unsigned char timer_handler;
+	unsigned short segment_selector;
 
 	/* Setup console */
 	cli();
@@ -29,7 +30,9 @@ int main(void)
 		intr_set_handler(i, (unsigned int)&exception_handler);
 
 	/* Setup Task Register */
-	load_task_register();
+	segment_selector = 8 * 3;
+	/* __asm__("movw %1, %0; ltr %1":"r":"r"(segment_selector)); */
+	__asm__("ltr %0"::"r"(segment_selector));
 	put_str("task loaded.\r\n");
 
 	/* Setup uptime task */
