@@ -1,3 +1,2 @@
-#define SHELL_GDT_IDX	3
-
+void init_shell(void);
 void start_shell(void);

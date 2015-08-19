@@ -7,14 +7,11 @@
 #include <io_port.h>
 #include <uptime.h>
 
-struct tss shell_tss;
-
 int main(void)
 {
 	unsigned char mask;
 	unsigned char i;
 	extern unsigned char timer_handler;
-	unsigned short segment_selector;
 
 	/* Setup console */
 	cli();
@@ -26,15 +23,8 @@ int main(void)
 	for (i = 0; i < EXCEPTION_NUM; i++)
 		intr_set_handler(i, (unsigned int)&exception_handler);
 
-	/* Setup GDT for shell_tss */
-	init_gdt(3, (unsigned int)&shell_tss, sizeof(shell_tss));
-
-	/* Setup Task Register */
-	segment_selector = 8 * SHELL_GDT_IDX;
-	__asm__("ltr %0"::"r"(segment_selector));
-	put_str("task loaded.\r\n");
-
-	/* Setup uptime task */
+	/* Setup tasks */
+	init_shell();
 	init_uptime();
 
 	/* Setup interrupt handler and mask register */

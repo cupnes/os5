@@ -1,9 +1,11 @@
+#include <shell.h>
+#include <cpu.h>
 #include <io_port.h>
 #include <console_io.h>
 #include <common.h>
-#include <shell.h>
 
 #define MAX_LINE_SIZE	512
+#define SHELL_GDT_IDX	3
 
 enum {
 	ECHO,
@@ -18,6 +20,8 @@ enum {
 	TEST,
 	COMMAND_NUM
 } _COMMAND_SET;
+
+struct tss shell_tss;
 
 static int command_echo(char *args)
 {
@@ -186,6 +190,18 @@ static unsigned char get_command_id(const char *command)
 	}
 
 	return COMMAND_NUM;
+}
+
+void init_shell(void)
+{
+	unsigned short segment_selector = 8 * SHELL_GDT_IDX;
+
+	/* Setup GDT for shell_tss */
+	init_gdt(3, (unsigned int)&shell_tss, sizeof(shell_tss));
+
+	/* Setup Task Register */
+	__asm__("ltr %0"::"r"(segment_selector));
+	put_str("task loaded.\r\n");
 }
 
 void start_shell(void)
