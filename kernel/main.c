@@ -30,7 +30,7 @@ int main(void)
 	init_gdt(3, (unsigned int)&shell_tss, sizeof(shell_tss));
 
 	/* Setup Task Register */
-	segment_selector = 8 * 3;
+	segment_selector = 8 * SHELL_GDT_IDX;
 	__asm__("ltr %0"::"r"(segment_selector));
 	put_str("task loaded.\r\n");
 
