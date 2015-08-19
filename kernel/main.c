@@ -31,7 +31,6 @@ int main(void)
 
 	/* Setup Task Register */
 	segment_selector = 8 * 3;
-	/* __asm__("movw %1, %0; ltr %1":"r":"r"(segment_selector)); */
 	__asm__("ltr %0"::"r"(segment_selector));
 	put_str("task loaded.\r\n");
 
