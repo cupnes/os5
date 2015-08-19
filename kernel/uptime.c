@@ -5,6 +5,23 @@
 
 struct tss uptime_tss;
 
+void init_uptime(void)
+{
+	/* Setup GDT for uptime_tss */
+	init_gdt(4, (unsigned int)&uptime_tss, sizeof(uptime_tss));
+
+	/* Setup uptime_tss */
+	uptime_tss.eip = (unsigned int)uptime;
+	uptime_tss.esp = 0x00085000;
+	uptime_tss.eflags = 0x00000200;
+	uptime_tss.es = 0x0010;
+	uptime_tss.cs = 0x0008;
+	uptime_tss.ss = 0x0010;
+	uptime_tss.ds = 0x0010;
+	uptime_tss.fs = 0x0010;
+	uptime_tss.gs = 0x0010;
+}
+
 void uptime(void)
 {
 	static unsigned int uptime;
