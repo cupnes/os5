@@ -24,8 +24,8 @@ int main(void)
 		intr_set_handler(i, (unsigned int)&exception_handler);
 
 	/* Setup tasks */
-	init_shell();
-	init_uptime();
+	shell_init();
+	uptime_init();
 
 	/* Setup interrupt handler and mask register */
 	con_init();
@@ -45,7 +45,7 @@ int main(void)
 	put_str("Timer initialized.\r\n");
 
 	/* Start main task */
-	start_shell();
+	shell_start();
 
 	return 0;
 }

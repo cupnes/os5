@@ -5,13 +5,13 @@
 
 struct tss uptime_tss;
 
-void init_uptime(void)
+void uptime_init(void)
 {
 	/* Setup GDT for uptime_tss */
 	init_gdt(4, (unsigned int)&uptime_tss, sizeof(uptime_tss));
 
 	/* Setup uptime_tss */
-	uptime_tss.eip = (unsigned int)uptime;
+	uptime_tss.eip = (unsigned int)uptime_start;
 	uptime_tss.esp = 0x00085000;
 	uptime_tss.eflags = 0x00000200;
 	uptime_tss.es = 0x0010;
@@ -22,7 +22,7 @@ void init_uptime(void)
 	uptime_tss.gs = 0x0010;
 }
 
-void uptime(void)
+void uptime_start(void)
 {
 	static unsigned int uptime;
 	volatile unsigned int cnt;

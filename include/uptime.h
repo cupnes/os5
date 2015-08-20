@@ -1,2 +1,2 @@
-void init_uptime(void);
-void uptime(void);
+void uptime_init(void);
+void uptime_start(void);

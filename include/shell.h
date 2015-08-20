@@ -1,2 +1,2 @@
-void init_shell(void);
-void start_shell(void);
+void shell_init(void);
+void shell_start(void);

@@ -192,7 +192,7 @@ static unsigned char get_command_id(const char *command)
 	return COMMAND_NUM;
 }
 
-void init_shell(void)
+void shell_init(void)
 {
 	unsigned short segment_selector = 8 * SHELL_GDT_IDX;
 
@@ -204,7 +204,7 @@ void init_shell(void)
 	put_str("task loaded.\r\n");
 }
 
-void start_shell(void)
+void shell_start(void)
 {
 	while (1) {
 		char buf[MAX_LINE_SIZE];
