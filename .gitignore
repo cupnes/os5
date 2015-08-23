@@ -4,6 +4,8 @@
 *.dat
 *.img
 *.map
+*#
 GPATH
 GRTAGS
 GTAGS
+GSYMS
