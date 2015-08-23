@@ -37,11 +37,8 @@ int main(void)
 	intr_set_mask_master(mask);
 	sti();
 
-	/* Setup PIT */
-	outb_p(0x34, 0x0043);
-	/* 割り込み周期11932(0x2e9c)サイクル(=100Hz、10ms毎)に設定 */
-	outb_p(0x9c, 0x0040);
-	outb_p(0x2e, 0x0040);
+	/* Setup timer */
+	timer_init();
 	put_str("Timer initialized.\r\n");
 
 	/* Start main task */

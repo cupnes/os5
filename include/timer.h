@@ -7,4 +7,6 @@
 
 extern unsigned int global_counter;
 
+void timer_init(void);
+
 #endif /* _TIMER_H_ */
