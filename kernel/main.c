@@ -27,8 +27,11 @@ int main(void)
 	shell_init();
 	uptime_init();
 
-	/* Setup interrupt handler and mask register */
+	/* Setup devices */
 	con_init();
+	timer_init();
+
+	/* Setup interrupt handler and mask register */
 	intr_set_handler(INTR_NUM_TIMER, (unsigned int)&timer_handler);
 	intr_set_handler(INTR_NUM_KB, (unsigned int)&keyboard_handler);
 	intr_init();
@@ -36,10 +39,6 @@ int main(void)
 	mask &= ~(INTR_MASK_BIT_TIMER | INTR_MASK_BIT_KB);
 	intr_set_mask_master(mask);
 	sti();
-
-	/* Setup timer */
-	timer_init();
-	put_str("Timer initialized.\r\n");
 
 	/* Start main task */
 	shell_start();
