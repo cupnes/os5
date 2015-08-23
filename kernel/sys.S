@@ -1,3 +1,5 @@
+#include <asm/cpu.h>
+
 	.code32
 
 	.text
@@ -53,7 +55,7 @@ idt_descr:
 	.long	idt
 
 gdt_descr:
-	.word	8*8-1
+	.word	GDT_SIZE*8-1
 	.long	gdt
 
 idt:
@@ -63,4 +65,4 @@ gdt:
 	.quad	0x0000000000000000	/* NULL descriptor */
 	.quad	0x00cf9a000000ffff	/* 4GB(r-x:Code) */
 	.quad	0x00cf92000000ffff	/* 4GB(rw-:Data) */
-	.fill	5, 8, 0
+	.fill	GDT_SIZE-3, 8, 0

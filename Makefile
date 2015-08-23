@@ -4,6 +4,8 @@ CFLAGS	+=	-Iinclude
 
 .s.o:
 	as -o $@ $<
+.S.o:
+	gcc $(CFLAGS) -o $@ $<
 .c.o:
 	gcc $(CFLAGS) -o $@ $<
 
@@ -20,7 +22,7 @@ sys.bin: kernel/sys.o kernel/cpu.o kernel/intr.o kernel/excp.o kernel/timer.o ke
 
 boot/boot.o: boot/boot.s
 
-kernel/sys.o: kernel/sys.s
+kernel/sys.o: kernel/sys.S
 
 kernel/cpu.o: kernel/cpu.c
 
