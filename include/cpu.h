@@ -1,3 +1,5 @@
+#include <asm/cpu.h>
+
 #define sti()	__asm__ ("sti"::)
 #define cli()	__asm__ ("cli"::)
 
@@ -46,6 +48,6 @@ struct tss {
 	unsigned short		io_bitmap_base;
 };
 
-extern struct segment_descriptor gdt[8];
+extern struct segment_descriptor gdt[GDT_SIZE];
 
 void init_gdt(unsigned int idx, unsigned int base, unsigned int limit);
