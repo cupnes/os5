@@ -11,7 +11,6 @@ int main(void)
 {
 	unsigned char mask;
 	unsigned char i;
-	extern unsigned char timer_handler;
 
 	/* Setup console */
 	cli();

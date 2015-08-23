@@ -11,6 +11,7 @@
 #define INTR_NUM_TIMER		32
 #define INTR_MASK_BIT_TIMER	0x01
 
+extern unsigned char timer_handler;
 extern unsigned int global_counter;
 
 void timer_init(void);
