@@ -4,7 +4,6 @@
 #include <console_io.h>
 #include <timer.h>
 #include <shell.h>
-#include <io_port.h>
 #include <uptime.h>
 
 int main(void)
