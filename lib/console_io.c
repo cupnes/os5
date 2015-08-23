@@ -176,6 +176,32 @@ void put_str(char *str)
 	}
 }
 
+void put_str_pos(char *str, unsigned char x, unsigned char y)
+{
+	while (*str != '\0') {
+		switch (*str) {
+		case '\r':
+			x = 0;
+			break;
+
+		case '\n':
+			y++;
+			break;
+
+		default:
+			put_char_pos(*str, x, y);
+			if (x < COLUMNS - 1) {
+				x++;
+			} else {
+				x = 0;
+				y++;
+			}
+			break;
+		}
+		str++;
+	}
+}
+
 void dump_hex(unsigned int val, unsigned int num_digits)
 {
 	unsigned int new_x = cursor_pos.x + num_digits;
@@ -196,6 +222,24 @@ void dump_hex(unsigned int val, unsigned int num_digits)
 	cursor_pos.x = new_x;
 
 	update_cursor();
+}
+
+void dump_hex_pos(unsigned int val, unsigned int num_digits, unsigned char x, unsigned char y)
+{
+	unsigned int new_x = x + num_digits;
+	unsigned int dump_digit = new_x - 1;
+
+	while (num_digits) {
+		unsigned char tmp_val = val & 0x0000000f;
+		if (tmp_val < 10) {
+			put_char_pos('0' + tmp_val, dump_digit, y);
+		} else {
+			put_char_pos('A' + tmp_val - 10, dump_digit, y);
+		}
+		val >>= 4;
+		dump_digit--;
+		num_digits--;
+	}
 }
 
 unsigned char get_keydata_noir(void)
