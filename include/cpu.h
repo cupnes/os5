@@ -1,3 +1,6 @@
+#ifndef _CPU_H_
+#define _CPU_H_
+
 #include <asm/cpu.h>
 
 #define sti()	__asm__ ("sti"::)
@@ -51,3 +54,5 @@ struct tss {
 extern struct segment_descriptor gdt[GDT_SIZE];
 
 void init_gdt(unsigned int idx, unsigned int base, unsigned int limit);
+
+#endif /* _CPU_H_ */
