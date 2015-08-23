@@ -15,6 +15,7 @@ enum {
 	WRITEW,
 	WRITEL,
 	IOWRITEB,
+	TEST,
 	COMMAND_NUM
 } _COMMAND_SET;
 
@@ -135,6 +136,13 @@ static int command_iowriteb(char *args)
 	return 0;
 }
 
+static int command_test(char *args)
+{
+	put_str("test\r\n");
+
+	return 0;
+}
+
 static unsigned char get_command_id(const char *command)
 {
 	if (!str_compare(command, "echo")) {
@@ -171,6 +179,10 @@ static unsigned char get_command_id(const char *command)
 
 	if (!str_compare(command, "iowriteb")) {
 		return IOWRITEB;
+	}
+
+	if (!str_compare(command, "test")) {
+		return TEST;
 	}
 
 	return COMMAND_NUM;
@@ -214,6 +226,9 @@ void shell_start(void)
 			break;
 		case IOWRITEB:
 			command_iowriteb(args);
+			break;
+		case TEST:
+			command_test(args);
 			break;
 		default:
 			put_str("Command not found.\r\n");
