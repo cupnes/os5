@@ -22,13 +22,13 @@ int main(void)
 	for (i = 0; i < EXCEPTION_NUM; i++)
 		intr_set_handler(i, (unsigned int)&exception_handler);
 
-	/* Setup tasks */
-	shell_init();
-	uptime_init();
-
 	/* Setup devices */
 	con_init();
 	timer_init();
+
+	/* Setup tasks */
+	shell_init();
+	uptime_init();
 
 	/* Setup interrupt handler and mask register */
 	intr_set_handler(INTR_NUM_TIMER, (unsigned int)&timer_handler);
