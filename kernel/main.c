@@ -29,11 +29,11 @@ int main(void)
 
 	/* Setup interrupt handler and mask register */
 	con_init();
-	intr_set_handler(32, (unsigned int)&timer_handler);
+	intr_set_handler(INTR_NUM_TIMER, (unsigned int)&timer_handler);
 	intr_set_handler(INTR_NUM_KB, (unsigned int)&keyboard_handler);
 	intr_init();
 	mask = intr_get_mask_master();
-	mask &= ~(0x01 | INTR_MASK_BIT_KB);
+	mask &= ~(INTR_MASK_BIT_TIMER | INTR_MASK_BIT_KB);
 	intr_set_mask_master(mask);
 	sti();
 
