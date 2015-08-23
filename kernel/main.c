@@ -22,6 +22,9 @@ int main(void)
 	/* Setup devices */
 	con_init();
 
+	/* Setup tasks */
+	shell_init();
+
 	/* Setup interrupt handler and mask register */
 	intr_set_handler(INTR_NUM_KB, (unsigned int)&keyboard_handler);
 	intr_init();
