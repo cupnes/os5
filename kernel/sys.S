@@ -4,7 +4,7 @@
 
 	.text
 
-	.global	main, idt, gdt, keyboard_handler, exception_handler
+	.global	main, idt, gdt, keyboard_handler, timer_handler, exception_handler
 
 	movl	$0x00080000, %esp
 
@@ -36,6 +36,10 @@ end:
 
 keyboard_handler:
 	call	do_ir_keyboard
+	iret
+
+timer_handler:
+	call	do_ir_timer
 	iret
 
 exception_handler:
