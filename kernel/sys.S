@@ -4,7 +4,7 @@
 
 	.text
 
-	.global	main, idt, keyboard_handler, exception_handler
+	.global	main, idt, gdt, keyboard_handler, exception_handler
 
 	movl	$0x00080000, %esp
 
