@@ -176,7 +176,7 @@ static unsigned char get_command_id(const char *command)
 	return COMMAND_NUM;
 }
 
-void start_shell(void)
+void shell_start(void)
 {
 	while (1) {
 		char buf[MAX_LINE_SIZE];
