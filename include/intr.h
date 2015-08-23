@@ -1,3 +1,6 @@
+#ifndef _INTR_H_
+#define _INTR_H_
+
 #define IOADR_MPIC_OCW2	0x0020
 #define IOADR_MPIC_OCW2_BIT_MANUAL_EOI	0x60
 #define IOADR_MPIC_ICW1	0x0020
@@ -17,3 +20,5 @@ unsigned char intr_get_mask_master(void);
 void intr_set_mask_slave(unsigned char mask);
 unsigned char intr_get_mask_slave(void);
 void intr_set_handler(unsigned char intr_num, unsigned int handler_addr);
+
+#endif /* _INTR_H_ */

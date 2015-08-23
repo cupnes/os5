@@ -1,3 +1,6 @@
+#ifndef _CONSOLE_IO_H_
+#define _CONSOLE_IO_H_
+
 #define IOADR_KBC_DATA				0x0060
 #define IOADR_KBC_DATA_BIT_BRAKE	0x80
 #define IOADR_KBC_STATUS			0x0064
@@ -36,3 +39,5 @@ unsigned char get_keycode_pressed(void);
 unsigned char get_keycode_released(void);
 char get_char(void);
 void get_line(char *buf, unsigned int buf_size);
+
+#endif /* _CONSOLE_IO_H_ */

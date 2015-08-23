@@ -1,4 +1,7 @@
-#define outb(value, port) \
+#ifndef _IO_PORT_H_
+#define _IO_PORT_H_
+
+#define outb(value, port)				\
 __asm__ ("outb %%al,%%dx"::"a" (value),"d" (port))
 
 #define inb(port) ({ \
@@ -21,3 +24,5 @@ __asm__ volatile ("inb %%dx,%%al\n" \
 	"1:":"=a" (_v):"d" (port)); \
 _v; \
 })
+
+#endif /* _IO_PORT_H_ */
