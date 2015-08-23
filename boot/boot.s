@@ -11,7 +11,7 @@
 
 	/* ビデオモード設定(画面クリア) */
 	movw	$0x0003, %ax
-	int		$0x10
+	int	$0x10
 
 	movw	$msg_welcome, %si
 	call	print_msg
@@ -56,8 +56,8 @@ load_track0_head0:
 	movw	$0x0000, %dx
 	movw	$0x0002, %cx
 	movw	$0x0211, %ax
-	int		$0x13
-	jc		load_track0_head0
+	int	$0x13
+	jc	load_track0_head0
 
 	/* トラック0, ヘッド1, 全セクタ
 	 * src: トラック0, ヘッド1の全セクタ
@@ -71,8 +71,8 @@ load_track0_head1:
 	movw	$0x0100, %dx
 	movw	$0x0001, %cx
 	movw	$0x0212, %ax
-	int		$0x13
-	jc		load_track0_head1
+	int	$0x13
+	jc	load_track0_head1
 
 	/* トラック1, ヘッド0, 全セクタ
 	 * src: トラック1, ヘッド0の全セクタ
@@ -86,8 +86,8 @@ load_track1_head0:
 	movw	$0x0000, %dx
 	movw	$0x0101, %cx
 	movw	$0x0212, %ax
-	int		$0x13
-	jc		load_track1_head0
+	int	$0x13
+	jc	load_track1_head0
 
 	/* トラック1, ヘッド1, セクタ1 - 12
 	 * src: トラック1, ヘッド1の12セクタ
@@ -101,8 +101,8 @@ load_track1_head1_1:
 	movw	$0x0100, %dx
 	movw	$0x0101, %cx
 	movw	$0x020c, %ax
-	int		$0x13
-	jc		load_track1_head1_1
+	int	$0x13
+	jc	load_track1_head1_1
 
 	/* トラック1, ヘッド1, セクタ13 - 18
 	 * src: トラック1, ヘッド1の6セクタ
@@ -116,8 +116,8 @@ load_track1_head1_2:
 	movw	$0x0100, %dx
 	movw	$0x010d, %cx
 	movw	$0x0206, %ax
-	int		$0x13
-	jc		load_track1_head1_1
+	int	$0x13
+	jc	load_track1_head1_1
 
 	movw	$msg_completed, %si
 	call	print_msg
@@ -161,8 +161,8 @@ load_track1_head1_2:
 	movw	$0x9000, %ax	/* dst */
 	movw	%ax, %es
 	subw	%di, %di
-	movw	$12, %cx		/* words */
-	rep		movsw
+	movw	$12, %cx	/* words */
+	rep	movsw
 
 	movw	$0x07c0, %ax
 	movw	%ax, %ds
@@ -183,33 +183,34 @@ load_track1_head1_2:
 print_msg:
 	lodsb
 	andb	%al, %al
-	jz		print_msg_ret
+	jz	print_msg_ret
 	movb	$0xe, %ah
 	movw	$7, %bx
-	int		$0x10
-	jmp		print_msg
+	int	$0x10
+	jmp	print_msg
 print_msg_ret:
 	ret
 waitkbdout:
-	inb		$0x64, %al
+	inb	$0x64, %al
 	andb	$0x02, %al
-	inb		$0x60, %al
-	jnz		waitkbdout
+	inb	$0x60, %al
+	jnz	waitkbdout
 	ret
 
 	.data
 gdt_descr:
-	.word 3*8-1
-	.word 0x0000, 0x09
-	/* .word gdt,0x07c0				*/
-	/* と設定しても、				*/
-	/* GDTRには、ベースアドレスが	*/
-	/* 0x00c0 [gdtの場所]			*/
-	/* と読み込まれてしまう			*/
+	.word	3*8-1
+	.word	0x0000, 0x09
+	/* .word gdt,0x07c0
+	 * と設定しても、
+	 * GDTRには、ベースアドレスが
+	 * 0x00c0 [gdtの場所]
+	 * と読み込まれてしまう
+	 */
 gdt:
-	.quad 0x0000000000000000	/* NULL descriptor */
-	.quad 0x00cf9a000000ffff	/* 4GB(r-x:Code) */
-	.quad 0x00cf92000000ffff	/* 4GB(rw-:Data) */
+	.quad	0x0000000000000000	/* NULL descriptor */
+	.quad	0x00cf9a000000ffff	/* 4GB(r-x:Code) */
+	.quad	0x00cf92000000ffff	/* 4GB(rw-:Data) */
 
 msg_welcome:
 	.ascii	"Welcome to OS5!\r\n"
