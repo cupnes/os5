@@ -39,7 +39,7 @@ keyboard_handler:
 	iret
 
 timer_handler:
-	call	do_timer
+	call	do_ir_timer
 	iret
 
 exception_handler:
