@@ -284,7 +284,7 @@ char get_char(void)
 	return keymap[get_keycode_released()];
 }
 
-void get_line(char *buf, unsigned int buf_size)
+unsigned int get_line(char *buf, unsigned int buf_size)
 {
 	unsigned int i;
 
@@ -306,4 +306,6 @@ void get_line(char *buf, unsigned int buf_size)
 		}
 	}
 	buf[i] = '\0';
+
+	return i;
 }

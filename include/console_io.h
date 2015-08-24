@@ -40,6 +40,6 @@ unsigned char get_keycode(void);
 unsigned char get_keycode_pressed(void);
 unsigned char get_keycode_released(void);
 char get_char(void);
-void get_line(char *buf, unsigned int buf_size);
+unsigned int get_line(char *buf, unsigned int buf_size);
 
 #endif /* _CONSOLE_IO_H_ */

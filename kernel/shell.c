@@ -212,7 +212,9 @@ void shell_start(void)
 		unsigned char command_id;
 
 		put_str("OS5> ");
-		get_line(buf, MAX_LINE_SIZE);
+		if (get_line(buf, MAX_LINE_SIZE) <= 0) {
+			continue;
+		}
 		str_get_first_entry(buf, command, args);
 		command_id = get_command_id(command);
 		switch (command_id) {
