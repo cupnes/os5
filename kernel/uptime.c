@@ -8,7 +8,7 @@ struct tss uptime_tss;
 void uptime_init(void)
 {
 	/* Setup GDT for uptime_tss */
-	init_gdt(4, (unsigned int)&uptime_tss, sizeof(uptime_tss));
+	init_gdt(UPTIME_GDT_IDX, (unsigned int)&uptime_tss, sizeof(uptime_tss));
 
 	/* Setup uptime_tss */
 	uptime_tss.eip = (unsigned int)uptime_start;

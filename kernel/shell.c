@@ -5,7 +5,6 @@
 #include <common.h>
 
 #define MAX_LINE_SIZE	512
-#define SHELL_GDT_IDX	3
 
 enum {
 	ECHO,
@@ -197,7 +196,7 @@ void shell_init(void)
 	unsigned short segment_selector = 8 * SHELL_GDT_IDX;
 
 	/* Setup GDT for shell_tss */
-	init_gdt(3, (unsigned int)&shell_tss, sizeof(shell_tss));
+	init_gdt(SHELL_GDT_IDX, (unsigned int)&shell_tss, sizeof(shell_tss));
 
 	/* Setup Task Register */
 	__asm__("ltr %0"::"r"(segment_selector));
