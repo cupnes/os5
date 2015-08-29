@@ -191,6 +191,11 @@ static unsigned char get_command_id(const char *command)
 	return COMMAND_NUM;
 }
 
+void shell_context_switch(void)
+{
+	__asm__("ljmp	$0x18, $0");
+}
+
 void shell_init(void)
 {
 	unsigned short segment_selector = 8 * SHELL_GDT_IDX;

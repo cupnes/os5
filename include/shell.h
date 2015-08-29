@@ -4,6 +4,7 @@
 #define SHELL_GDT_IDX	3
 #define SHELL_ID	SHELL_GDT_IDX
 
+void shell_context_switch(void);
 void shell_init(void);
 void shell_start(void);
 

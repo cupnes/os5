@@ -2,6 +2,7 @@
 #include <io_port.h>
 #include <intr.h>
 #include <timer.h>
+#include <shell.h>
 
 void schedule(void)
 {
@@ -12,6 +13,6 @@ void schedule(void)
 	} else {
 		outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_TIMER,
 		       IOADR_MPIC_OCW2);
-		__asm__("ljmp	$0x18, $0");
+		shell_context_switch();
 	}
 }
