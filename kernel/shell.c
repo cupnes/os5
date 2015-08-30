@@ -202,7 +202,7 @@ void shell_init(void)
 	unsigned short segment_selector = 8 * SHELL_GDT_IDX;
 
 	/* Setup context switch function */
-	task[SHELL_ID].context_switch = shell_context_switch;
+	run_queue[SHELL_ID].context_switch = shell_context_switch;
 
 	/* Setup GDT for shell_tss */
 	init_gdt(SHELL_GDT_IDX, (unsigned int)&shell_tss, sizeof(shell_tss));

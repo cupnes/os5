@@ -10,7 +10,7 @@ struct task {
 	void (*context_switch)(void);
 };
 
-extern struct task task[TASK_NUM];
+extern struct task run_queue[TASK_NUM];
 
 void schedule(void);
 
