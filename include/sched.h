@@ -3,10 +3,14 @@
 
 #include <cpu.h>
 
+#define TASK_NUM	2
+
 struct task {
 	struct tss tss;
 	void (*context_switch)(void);
 };
+
+extern struct task task[TASK_NUM];
 
 void schedule(void);
 

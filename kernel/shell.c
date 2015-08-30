@@ -2,6 +2,7 @@
 #include <cpu.h>
 #include <io_port.h>
 #include <console_io.h>
+#include <sched.h>
 #include <common.h>
 
 #define MAX_LINE_SIZE	512
@@ -199,6 +200,9 @@ void shell_context_switch(void)
 void shell_init(void)
 {
 	unsigned short segment_selector = 8 * SHELL_GDT_IDX;
+
+	/* Setup context switch function */
+	task[SHELL_ID].context_switch = shell_context_switch;
 
 	/* Setup GDT for shell_tss */
 	init_gdt(SHELL_GDT_IDX, (unsigned int)&shell_tss, sizeof(shell_tss));

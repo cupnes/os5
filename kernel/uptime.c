@@ -2,6 +2,7 @@
 #include <cpu.h>
 #include <timer.h>
 #include <console_io.h>
+#include <sched.h>
 
 struct tss uptime_tss;
 
@@ -12,6 +13,9 @@ void uptime_context_switch(void)
 
 void uptime_init(void)
 {
+	/* Setup context switch function */
+	task[UPTIME_ID].context_switch = uptime_context_switch;
+
 	/* Setup GDT for uptime_tss */
 	init_gdt(UPTIME_GDT_IDX, (unsigned int)&uptime_tss, sizeof(uptime_tss));
 
