@@ -17,8 +17,8 @@ fd.img: boot.bin sys.bin
 boot.bin: boot/boot.o
 	ld -o $@ $< -T boot/boot.ld
 
-sys.bin: kernel/sys.o kernel/cpu.o kernel/intr.o kernel/excp.o kernel/sched.o kernel/timer.o kernel/uptime.o kernel/console_io.o kernel/common.o kernel/shell.o kernel/main.o
-	ld -o $@ kernel/sys.o kernel/cpu.o kernel/intr.o kernel/excp.o kernel/sched.o kernel/timer.o kernel/uptime.o kernel/console_io.o kernel/common.o kernel/shell.o kernel/main.o -M -s -T kernel/sys.ld -x > System.map
+sys.bin: kernel/sys.o kernel/cpu.o kernel/intr.o kernel/excp.o kernel/sched.o kernel/timer.o apps/uptime.o kernel/console_io.o kernel/common.o apps/shell.o kernel/main.o
+	ld -o $@ kernel/sys.o kernel/cpu.o kernel/intr.o kernel/excp.o kernel/sched.o kernel/timer.o apps/uptime.o kernel/console_io.o kernel/common.o apps/shell.o kernel/main.o -M -s -T kernel/sys.ld -x > System.map
 
 boot/boot.o: boot/boot.s
 
@@ -34,18 +34,18 @@ kernel/sched.o: kernel/sched.c
 
 kernel/timer.o: kernel/timer.c
 
-kernel/uptime.o: kernel/uptime.c
-
 kernel/console_io.o: kernel/console_io.c
 
 kernel/common.o: kernel/common.c
 
-kernel/shell.o: kernel/shell.c
-
 kernel/main.o: kernel/main.c
 
+apps/shell.o: apps/shell.c
+
+apps/uptime.o: apps/uptime.c
+
 clean:
-	rm -f *~ *.o *.bin *.dat *.img *.map boot/*~ boot/*.o include/*~ include/*.o kernel/*~ kernel/*.o
+	rm -f *~ *.o *.bin *.dat *.img *.map boot/*~ boot/*.o include/*~ include/*.o kernel/*~ kernel/*.o apps/*~ apps/*.o
 
 run: fd.img
 	qemu -fda fd.img
