@@ -3,13 +3,14 @@
 #include <intr.h>
 #include <timer.h>
 #include <shell.h>
+#include <uptime.h>
 
 void schedule(void)
 {
 	if (global_counter % 2) {
 		outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_TIMER,
 		       IOADR_MPIC_OCW2);
-		__asm__("ljmp	$0x20, $0");
+		uptime_context_switch();
 	} else {
 		outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_TIMER,
 		       IOADR_MPIC_OCW2);

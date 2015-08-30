@@ -5,6 +5,11 @@
 
 struct tss uptime_tss;
 
+void uptime_context_switch(void)
+{
+	__asm__("ljmp	$0x20, $0");
+}
+
 void uptime_init(void)
 {
 	/* Setup GDT for uptime_tss */

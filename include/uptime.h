@@ -4,6 +4,7 @@
 #define UPTIME_GDT_IDX	4
 #define UPTIME_ID	UPTIME_GDT_IDX
 
+void uptime_context_switch(void);
 void uptime_init(void);
 void uptime_start(void);
 
