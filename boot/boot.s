@@ -117,7 +117,7 @@ load_track1_head1_2:
 	movw	$0x010d, %cx
 	movw	$0x0206, %ax
 	int	$0x13
-	jc	load_track1_head1_1
+	jc	load_track1_head1_2
 
 	movw	$msg_completed, %si
 	call	print_msg
