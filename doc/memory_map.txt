@@ -1,0 +1,30 @@
+# -*-org-*-
+
+* boot loader
+| base              | 0x0000 7c00 |
+| SS(stack segment) | 0x0000      |
+
+| 0000 1000 | stack base                                                 |
+| ...       | ...                                                        |
+| 0000 7c00 | MBR                                                        |
+| 0000 7dfe | MBR(0xaa55)                                                |
+| 0000 7e00 | track 0, head 0, sector 2 - all (loaded text section head) |
+| 0000 a000 | track 0, head 1, sector all                                |
+| 0000 c400 | track 1, head 0, sector all                                |
+| 0000 e800 | track 1, head 1, sector 1 - 12                             |
+| 0001 0000 | track 1, head 1, sector 13 - 18                            |
+| ...       | ...                                                        |
+| 0009 0000 | GDT[0]                                                     |
+| 0009 0008 | GDT[1]                                                     |
+| 0009 0010 | GDT[2](last)                                               |
+
+* kernel
+| CS    | GDT[1] |
+| DS,SS | GDT[2] |
+
+| 0000 7e00 | loaded text and data section(first) |
+|           | text begin                          |
+|           | data begin                          |
+| 0001 0bff | loaded text and data section(last)  |
+| ...       | ...                                 |
+| 0008 0000 | stack base                          |
