@@ -91,14 +91,13 @@ int main(void)
 	cr0 |= 0x80000000;
 	__asm__("movl	%0, %%cr0"::"r"(cr0));
 
-	while (1);
-
 	/* Setup interrupt handler and mask register */
 	intr_set_handler(INTR_NUM_TIMER, (unsigned int)&timer_handler);
 	intr_set_handler(INTR_NUM_KB, (unsigned int)&keyboard_handler);
 	intr_init();
 	mask = intr_get_mask_master();
 	mask &= ~(INTR_MASK_BIT_TIMER | INTR_MASK_BIT_KB);
+	while (1);
 	intr_set_mask_master(mask);
 	sti();
 
