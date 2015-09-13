@@ -32,6 +32,7 @@ int main(void)
 		};
 	} *pte;
 	unsigned int paging_base_addr;
+	unsigned int cr0;
 
 	/* Setup console */
 	cli();
@@ -93,6 +94,11 @@ int main(void)
 	mask &= ~(INTR_MASK_BIT_TIMER | INTR_MASK_BIT_KB);
 	intr_set_mask_master(mask);
 	sti();
+
+	/* Start paging */
+	__asm__("movl	%%cr0, %0":"=r"(cr0):);
+	cr0 |= 0x80000000;
+	__asm__("movl	%0, %%cr0"::"r"(cr0));
 
 	/* Start main task */
 	shell_start();
