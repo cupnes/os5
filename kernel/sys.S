@@ -35,15 +35,16 @@ end:
 	jmp	end
 
 keyboard_handler:
+	jmp	keyboard_handler
 	call	do_ir_keyboard
 	iret
 
 timer_handler:
-	jmp	timer_handler
 	call	do_ir_timer
 	iret
 
 exception_handler:
+	jmp	exception_handler
 	call	do_exception
 	iret
 

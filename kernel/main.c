@@ -94,7 +94,7 @@ int main(void)
 	/* Start paging */
 	__asm__("movl	%%cr0, %0":"=r"(cr0):);
 	cr0 |= 0x80000000;
-	/* __asm__("movl	%0, %%cr0"::"r"(cr0)); */
+	__asm__("movl	%0, %%cr0"::"r"(cr0));
 
 	/* Setup interrupt handler and mask register */
 	intr_set_handler(INTR_NUM_TIMER, (unsigned int)&timer_handler);
@@ -102,12 +102,12 @@ int main(void)
 	intr_init();
 	mask = intr_get_mask_master();
 	mask &= ~(INTR_MASK_BIT_TIMER | INTR_MASK_BIT_KB);
-	intr_set_mask_master(mask);
+	/* intr_set_mask_master(mask); */
 	/* outb(mask, IOADR_MPIC_OCW1); */
-	/* __asm__("movb	$0x03, %%al\n" \ */
-	/* 	"outb	%%al, $0x0021"::); */
+	__asm__("movb	$0xfc, %%al\n" \
+		"outb	%%al, $0x0021"::);
+	while (_flag);
 	sti();
-	/* while (_flag); */
 
 	/* Start main task */
 	shell_start();
