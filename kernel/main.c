@@ -1,5 +1,4 @@
 #include <cpu.h>
-#include <io_port.h>
 #include <intr.h>
 #include <excp.h>
 #include <console_io.h>
@@ -89,7 +88,6 @@ int main(void)
 	shell_init();
 	cli();
 	uptime_init();
-	cli();
 
 	/* Start paging */
 	__asm__("movl	%%cr0, %0":"=r"(cr0):);
@@ -102,10 +100,7 @@ int main(void)
 	intr_init();
 	mask = intr_get_mask_master();
 	mask &= ~(INTR_MASK_BIT_TIMER | INTR_MASK_BIT_KB);
-	/* intr_set_mask_master(mask); */
-	/* outb(mask, IOADR_MPIC_OCW1); */
-	__asm__("movb	$0xfc, %%al\n" \
-		"outb	%%al, $0x0021"::);
+	intr_set_mask_master(mask);
 	while (_flag);
 	sti();
 
