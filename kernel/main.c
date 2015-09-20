@@ -1,4 +1,5 @@
 #include <cpu.h>
+#include <io_port.h>
 #include <intr.h>
 #include <excp.h>
 #include <console_io.h>
@@ -33,6 +34,8 @@ int main(void)
 	} *pte;
 	unsigned int paging_base_addr;
 	unsigned int cr0;
+
+	volatile unsigned char _flag = 1;
 
 	/* Setup console */
 	cli();
@@ -84,12 +87,14 @@ int main(void)
 
 	/* Setup tasks */
 	shell_init();
+	cli();
 	uptime_init();
+	cli();
 
 	/* Start paging */
 	__asm__("movl	%%cr0, %0":"=r"(cr0):);
 	cr0 |= 0x80000000;
-	__asm__("movl	%0, %%cr0"::"r"(cr0));
+	/* __asm__("movl	%0, %%cr0"::"r"(cr0)); */
 
 	/* Setup interrupt handler and mask register */
 	intr_set_handler(INTR_NUM_TIMER, (unsigned int)&timer_handler);
@@ -97,9 +102,12 @@ int main(void)
 	intr_init();
 	mask = intr_get_mask_master();
 	mask &= ~(INTR_MASK_BIT_TIMER | INTR_MASK_BIT_KB);
-	while (1);
 	intr_set_mask_master(mask);
+	/* outb(mask, IOADR_MPIC_OCW1); */
+	/* __asm__("movb	$0x03, %%al\n" \ */
+	/* 	"outb	%%al, $0x0021"::); */
 	sti();
+	/* while (_flag); */
 
 	/* Start main task */
 	shell_start();

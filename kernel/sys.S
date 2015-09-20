@@ -39,6 +39,7 @@ keyboard_handler:
 	iret
 
 timer_handler:
+	jmp	timer_handler
 	call	do_ir_timer
 	iret
 
