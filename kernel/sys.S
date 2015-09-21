@@ -58,6 +58,7 @@ gdt_descr:
 	.word	GDT_SIZE*8-1
 	.long	gdt
 
+	.balign	8
 idt:
 	.fill	256, 8, 0	/* idt is uninitialized */
 
