@@ -142,7 +142,6 @@ void put_char_pos(char c, unsigned char x, unsigned char y)
 
 	pos = (unsigned char *)(SCREEN_START + (((y * COLUMNS) + x) * 2));
 	*(unsigned short *)pos = (unsigned short)((ATTR << 8) | c);
-	while (_flag);
 }
 
 void put_char(char c)
