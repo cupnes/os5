@@ -82,6 +82,21 @@ int main(void)
 		paging_base_addr += 0x00001;
 		pte++;
 	}
+	for (; i < 0x0b8; i++) {
+		pte->all = 0;
+		pte++;
+	}
+	paging_base_addr = 0x000b8;
+	for (; i <= 0x0bf; i++) {
+		pte->all = 0;
+		pte->p = 1;
+		pte->r_w = 1;
+		pte->pwt = 1;
+		pte->pcd = 1;
+		pte->page_base = paging_base_addr;
+		paging_base_addr += 0x00001;
+		pte++;
+	}
 	for (; i < 0x1000; i++) {
 		pte->all = 0;
 		pte++;

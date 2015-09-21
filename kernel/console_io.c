@@ -141,8 +141,8 @@ void put_char_pos(char c, unsigned char x, unsigned char y)
 	unsigned char *pos;
 
 	pos = (unsigned char *)(SCREEN_START + (((y * COLUMNS) + x) * 2));
-	/* while (_flag); */
 	*(unsigned short *)pos = (unsigned short)((ATTR << 8) | c);
+	while (_flag);
 }
 
 void put_char(char c)
