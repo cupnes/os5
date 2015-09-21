@@ -2,6 +2,7 @@
 #include <intr.h>
 #include <io_port.h>
 #include <console_io.h>
+#include <debug.h>
 
 #define QUEUE_BUF_SIZE	256
 
@@ -140,6 +141,7 @@ void put_char_pos(char c, unsigned char x, unsigned char y)
 	unsigned char *pos;
 
 	pos = (unsigned char *)(SCREEN_START + (((y * COLUMNS) + x) * 2));
+	/* while (_flag); */
 	*(unsigned short *)pos = (unsigned short)((ATTR << 8) | c);
 }
 

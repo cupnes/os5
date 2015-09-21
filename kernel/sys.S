@@ -4,7 +4,7 @@
 
 	.text
 
-	.global	main, idt, gdt, keyboard_handler, timer_handler, exception_handler
+	.global	main, idt, gdt, keyboard_handler, timer_handler, exception_handler, page_fault_handler
 
 	movl	$0x00080000, %esp
 
@@ -44,6 +44,10 @@ timer_handler:
 
 exception_handler:
 	call	do_exception
+	iret
+
+page_fault_handler:
+	jmp	page_fault_handler
 	iret
 
 ignore_int:

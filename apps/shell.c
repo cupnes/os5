@@ -4,6 +4,7 @@
 #include <console_io.h>
 #include <sched.h>
 #include <common.h>
+#include <debug.h>
 
 #define MAX_LINE_SIZE	512
 
@@ -225,6 +226,7 @@ void shell_start(void)
 		char command[256], args[256];
 		unsigned char command_id;
 
+		_flag = 1;
 		put_str("OS5> ");
 		if (get_line(buf, MAX_LINE_SIZE) <= 0) {
 			continue;

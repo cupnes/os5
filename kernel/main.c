@@ -5,6 +5,9 @@
 #include <timer.h>
 #include <shell.h>
 #include <uptime.h>
+#include <debug.h>
+
+volatile unsigned char _flag = 0;
 
 int main(void)
 {
@@ -33,8 +36,7 @@ int main(void)
 	} *pte;
 	unsigned int paging_base_addr;
 	unsigned int cr0;
-
-	volatile unsigned char _flag = 1;
+	volatile unsigned char tmp;
 
 	/* Setup console */
 	cli();
@@ -45,6 +47,7 @@ int main(void)
 	/* Setup exception handler */
 	for (i = 0; i < EXCEPTION_NUM; i++)
 		intr_set_handler(i, (unsigned int)&exception_handler);
+	intr_set_handler(14, (unsigned int)&page_fault_handler);
 
 	/* Setup devices */
 	con_init();
@@ -89,19 +92,27 @@ int main(void)
 	cli();
 	uptime_init();
 
+	/* Test divide by zero exception */
+	/* __asm__("\tmovw	$8, %%ax\n" \ */
+	/* 	"\tmovb	$0, %%bl\n" \ */
+	/* 	"\tdivb	%%bl"::); */
+
 	/* Start paging */
 	__asm__("movl	%%cr0, %0":"=r"(cr0):);
 	cr0 |= 0x80000000;
 	__asm__("movl	%0, %%cr0"::"r"(cr0));
+
+	/* Test page fault exception */
+	/* __asm__("movb	0x000b8000, %0":"=r"(tmp):); */
 
 	/* Setup interrupt handler and mask register */
 	intr_set_handler(INTR_NUM_TIMER, (unsigned int)&timer_handler);
 	intr_set_handler(INTR_NUM_KB, (unsigned int)&keyboard_handler);
 	intr_init();
 	mask = intr_get_mask_master();
-	mask &= ~(INTR_MASK_BIT_TIMER | INTR_MASK_BIT_KB);
+	/* mask &= ~(INTR_MASK_BIT_TIMER | INTR_MASK_BIT_KB); */
+	mask &= ~INTR_MASK_BIT_KB;
 	intr_set_mask_master(mask);
-	while (_flag);
 	sti();
 
 	/* Start main task */
