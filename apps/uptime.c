@@ -8,6 +8,7 @@ struct tss uptime_tss;
 
 void uptime_context_switch(void)
 {
+	while (1);
 	__asm__("ljmp	$0x20, $0");
 }
 

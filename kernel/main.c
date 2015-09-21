@@ -67,12 +67,22 @@ int main(void)
 	}
 
 	pte = (struct page_table_entry *)0x00091000;
-	for (i = 0; i < 0x007; i++) {
+	/* paging_base_addr = 0x00000; */
+	/* pte->all = 0; */
+	/* pte->p = 1; */
+	/* pte->r_w = 1; */
+	/* pte->pwt = 1; */
+	/* pte->pcd = 1; */
+	/* pte->page_base = paging_base_addr; */
+	/* paging_base_addr += 0x00001; */
+	/* pte++; */
+	/* for (i = 0x001; i < 0x007; i++) { */
+	for (i = 0x000; i < 0x007; i++) {
 		pte->all = 0;
 		pte++;
 	}
 	paging_base_addr = 0x00007;
-	for (; i <= 0x080; i++) {
+	for (; i <= 0x085; i++) {
 		pte->all = 0;
 		pte->p = 1;
 		pte->r_w = 1;
@@ -120,13 +130,15 @@ int main(void)
 	/* Test page fault exception */
 	/* __asm__("movb	0x000b8000, %0":"=r"(tmp):); */
 
+
+	__asm__("ljmp	$0x20, $0");
+
 	/* Setup interrupt handler and mask register */
 	intr_set_handler(INTR_NUM_TIMER, (unsigned int)&timer_handler);
 	intr_set_handler(INTR_NUM_KB, (unsigned int)&keyboard_handler);
 	intr_init();
 	mask = intr_get_mask_master();
-	/* mask &= ~(INTR_MASK_BIT_TIMER | INTR_MASK_BIT_KB); */
-	mask &= ~INTR_MASK_BIT_KB;
+	mask &= ~(INTR_MASK_BIT_TIMER | INTR_MASK_BIT_KB);
 	intr_set_mask_master(mask);
 	sti();
 
