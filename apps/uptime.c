@@ -21,7 +21,7 @@ void uptime_init(void)
 	init_gdt(UPTIME_GDT_IDX, (unsigned int)&uptime_tss, sizeof(uptime_tss));
 
 	/* Setup uptime_tss */
-	uptime_tss.eip = (unsigned int)&tmp_uptime_start;
+	uptime_tss.eip = (unsigned int)&uptime_start;
 	uptime_tss.esp = 0x00085000;
 	uptime_tss.eflags = 0x00000200;
 	uptime_tss.es = 0x0010;
@@ -40,7 +40,6 @@ void uptime_start(void)
 {
 	static unsigned int uptime;
 	volatile unsigned int cnt;
-	while (1);
 	while (1) {
 		uptime = global_counter / 100;
 		if (cursor_pos.y < ROWS) {
