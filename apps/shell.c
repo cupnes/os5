@@ -4,7 +4,6 @@
 #include <console_io.h>
 #include <sched.h>
 #include <common.h>
-#include <debug.h>
 
 #define MAX_LINE_SIZE	512
 

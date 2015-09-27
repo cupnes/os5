@@ -3,7 +3,6 @@
 #include <timer.h>
 #include <console_io.h>
 #include <sched.h>
-#include <debug.h>
 
 struct tss uptime_tss;
 
@@ -21,7 +20,7 @@ void uptime_init(void)
 	init_gdt(UPTIME_GDT_IDX, (unsigned int)&uptime_tss, sizeof(uptime_tss));
 
 	/* Setup uptime_tss */
-	uptime_tss.eip = (unsigned int)&uptime_start;
+	uptime_tss.eip = (unsigned int)uptime_start;
 	uptime_tss.esp = 0x00085000;
 	uptime_tss.eflags = 0x00000200;
 	uptime_tss.es = 0x0010;
