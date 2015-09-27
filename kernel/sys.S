@@ -4,7 +4,7 @@
 
 	.text
 
-	.global	main, idt, gdt, keyboard_handler, timer_handler, exception_handler, page_fault_handler
+	.global	main, idt, gdt, keyboard_handler, timer_handler, exception_handler, exception_handler2, exception_handler3, exception_handler4, general_protection_handler, page_fault_handler, tmp_uptime_start
 
 	movl	$0x00080000, %esp
 
@@ -40,10 +40,29 @@ keyboard_handler:
 
 timer_handler:
 	call	do_ir_timer
+timer_handler_last:
+	/*jmp	timer_handler_last*/
 	iret
 
 exception_handler:
+	jmp	exception_handler
 	call	do_exception
+	iret
+
+exception_handler2:
+	jmp	exception_handler2
+	iret
+
+exception_handler3:
+	jmp	exception_handler3
+	iret
+
+exception_handler4:
+	jmp	exception_handler4
+	iret
+
+general_protection_handler:
+	jmp	general_protection_handler
 	iret
 
 page_fault_handler:
@@ -51,7 +70,12 @@ page_fault_handler:
 	iret
 
 ignore_int:
+	jmp	ignore_int
 	iret
+
+tmp_uptime_start:
+	jmp	tmp_uptime_start
+	ret
 
 	.data
 idt_descr:

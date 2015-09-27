@@ -45,9 +45,15 @@ int main(void)
 	cli();
 
 	/* Setup exception handler */
-	for (i = 0; i < EXCEPTION_NUM; i++)
+	for (i = 0; i < 10; i++)
 		intr_set_handler(i, (unsigned int)&exception_handler);
+	for (; i < 13; i++)
+		intr_set_handler(i, (unsigned int)&exception_handler2);
+	intr_set_handler(13, (unsigned int)&general_protection_handler);
 	intr_set_handler(14, (unsigned int)&page_fault_handler);
+	for (i = 15; i < EXCEPTION_NUM; i++)
+		intr_set_handler(i, (unsigned int)&exception_handler4);
+
 
 	/* Setup devices */
 	con_init();
@@ -130,9 +136,6 @@ int main(void)
 	/* Test page fault exception */
 	/* __asm__("movb	0x000b8000, %0":"=r"(tmp):); */
 
-
-	__asm__("ljmp	$0x20, $0");
-
 	/* Setup interrupt handler and mask register */
 	intr_set_handler(INTR_NUM_TIMER, (unsigned int)&timer_handler);
 	intr_set_handler(INTR_NUM_KB, (unsigned int)&keyboard_handler);
@@ -140,7 +143,10 @@ int main(void)
 	mask = intr_get_mask_master();
 	mask &= ~(INTR_MASK_BIT_TIMER | INTR_MASK_BIT_KB);
 	intr_set_mask_master(mask);
+	_flag = 1;
 	sti();
+
+	while (_flag);
 
 	/* Start main task */
 	shell_start();

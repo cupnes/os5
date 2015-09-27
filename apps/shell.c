@@ -207,6 +207,10 @@ void shell_init(void)
 	run_queue[SHELL_ID].context_switch = shell_context_switch;
 
 	/* Setup GDT for shell_tss */
+	shell_tss.ss0 = 0x0010;
+	shell_tss.ss1 = 0x0010;
+	shell_tss.ss2 = 0x0010;
+	shell_tss.__cr3 = 0x00090018;
 	init_gdt(SHELL_GDT_IDX, (unsigned int)&shell_tss, sizeof(shell_tss));
 
 	/* Setup CR3(PDBR) */
@@ -226,7 +230,6 @@ void shell_start(void)
 		char command[256], args[256];
 		unsigned char command_id;
 
-		_flag = 1;
 		put_str("OS5> ");
 		if (get_line(buf, MAX_LINE_SIZE) <= 0) {
 			continue;
