@@ -207,9 +207,6 @@ void shell_init(void)
 	run_queue[SHELL_ID].context_switch = shell_context_switch;
 
 	/* Setup GDT for shell_tss */
-	shell_tss.ss0 = 0x0010;
-	shell_tss.ss1 = 0x0010;
-	shell_tss.ss2 = 0x0010;
 	shell_tss.__cr3 = 0x00090018;
 	init_gdt(SHELL_GDT_IDX, (unsigned int)&shell_tss, sizeof(shell_tss));
 
