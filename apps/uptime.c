@@ -27,9 +27,6 @@ void uptime_init(void)
 	uptime_tss.es = 0x0010;
 	uptime_tss.cs = 0x0008;
 	uptime_tss.ss = 0x0010;
-	uptime_tss.ss0 = 0x0010;
-	uptime_tss.ss1 = 0x0010;
-	uptime_tss.ss2 = 0x0010;
 	uptime_tss.ds = 0x0010;
 	uptime_tss.fs = 0x0010;
 	uptime_tss.gs = 0x0010;
