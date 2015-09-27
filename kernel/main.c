@@ -146,8 +146,6 @@ int main(void)
 	_flag = 1;
 	sti();
 
-	while (_flag);
-
 	/* Start main task */
 	shell_start();
 
