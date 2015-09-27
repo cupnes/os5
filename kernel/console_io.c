@@ -2,7 +2,6 @@
 #include <intr.h>
 #include <io_port.h>
 #include <console_io.h>
-#include <debug.h>
 
 #define QUEUE_BUF_SIZE	256
 
