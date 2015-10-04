@@ -1,12 +1,23 @@
 #include <timer.h>
 #include <io_port.h>
 #include <intr.h>
+#include <console_io.h>
 #include <sched.h>
 
 unsigned int global_counter = 0;
 
 void do_ir_timer(void)
 {
+	unsigned char i, d, c;
+	for (i = keycode_queue.start; i != keycode_queue.end; i++) {
+		d = keycode_queue.buf[i];
+		c = keymap[d & ~IOADR_KBC_DATA_BIT_BRAKE];
+		if (c != 'a')
+			while (1);
+	}
+	/* if (keycode_queue.is_full || keycode_queue.start != keycode_queue.end) */
+	/* 	while (1); */
+
 	global_counter++;
 	schedule();
 }

@@ -36,6 +36,7 @@ void uptime_start(void)
 {
 	static unsigned int uptime;
 	volatile unsigned int cnt;
+	while (1);
 	while (1) {
 		uptime = global_counter / 100;
 		if (cursor_pos.y < ROWS) {

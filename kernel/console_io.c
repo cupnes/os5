@@ -3,8 +3,6 @@
 #include <io_port.h>
 #include <console_io.h>
 
-#define QUEUE_BUF_SIZE	256
-
 const char keymap[] = {
 	0x00, ASCII_ESC, '1', '2', '3', '4', '5', '6',
 	'7', '8', '9', '0', '-', '^', ASCII_BS, ASCII_HT,
@@ -24,15 +22,13 @@ const char keymap[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, '\\', 0x00, 0x00
 };
 
-struct queue {
-	unsigned char buf[QUEUE_BUF_SIZE];
-	unsigned char start, end;
-	unsigned char is_full;
-} keycode_queue;
+struct queue keycode_queue;
 
 struct cursor_position cursor_pos;
 
 static unsigned char error_status;
+
+/* static unsigned int kb_intr_count = 0; */
 
 static void enqueue(struct queue *q, unsigned char data)
 {
@@ -96,7 +92,12 @@ static unsigned char dequeue_ir(struct queue *q)
 
 void do_ir_keyboard(void)
 {
-	enqueue_ir(&keycode_queue, get_keydata_noir());
+	/* static unsigned char x = 0, y = 0; */
+	unsigned char data = get_keydata_noir();
+	/* kb_intr_count++; */
+	/* if (data & IOADR_KBC_DATA_BIT_BRAKE) */
+	/* 	put_char_pos(keymap[data & ~IOADR_KBC_DATA_BIT_BRAKE], x++, y); */
+	enqueue_ir(&keycode_queue, data);
 	outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_KB,
 		IOADR_MPIC_OCW2);
 }
@@ -287,9 +288,13 @@ char get_char(void)
 unsigned int get_line(char *buf, unsigned int buf_size)
 {
 	unsigned int i;
+	/* static unsigned char x = 0, y = 1; */
 
 	for (i = 0; i < buf_size - 1;) {
 		buf[i] = get_char();
+		/* cli(); */
+		/* put_char_pos(buf[i], x++, y); */
+		/* sti(); */
 		if (buf[i] == ASCII_BS) {
 			if (i == 0) continue;
 			cursor_pos.x--;
@@ -306,6 +311,9 @@ unsigned int get_line(char *buf, unsigned int buf_size)
 		}
 	}
 	buf[i] = '\0';
+	/* dump_hex(kb_intr_count, 2); */
+	/* kb_intr_count = 0; */
+	/* put_str("\r\n"); */
 
 	return i;
 }
