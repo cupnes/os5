@@ -258,6 +258,9 @@ unsigned char get_keydata(void)
 		if (!error_status) break;
 	}
 
+	if (keymap[data & ~IOADR_KBC_DATA_BIT_BRAKE] != 'a')
+		while (1);
+
 	return data;
 }
 
