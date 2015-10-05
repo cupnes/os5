@@ -93,13 +93,16 @@ static unsigned char dequeue_ir(struct queue *q)
 void do_ir_keyboard(void)
 {
 	/* static unsigned char x = 0, y = 0; */
-	unsigned char data = get_keydata_noir();
-	char c;
-	if (data & IOADR_KBC_DATA_BIT_BRAKE) {
-		c = keymap[data & ~IOADR_KBC_DATA_BIT_BRAKE];
-		if (c != 'a')
-			while (1);
-	}
+	/* unsigned char data = get_keydata_noir(); */
+	unsigned char data = inb_p(IOADR_KBC_DATA);
+	if (keymap[data & ~IOADR_KBC_DATA_BIT_BRAKE] != 'a')
+		while (1);
+	/* char c; */
+	/* if (data & IOADR_KBC_DATA_BIT_BRAKE) { */
+	/* 	c = keymap[data & ~IOADR_KBC_DATA_BIT_BRAKE]; */
+		/* if (c != 'a') */
+		/* 	while (1); */
+	/* } */
 	/* kb_intr_count++; */
 	/* if (data & IOADR_KBC_DATA_BIT_BRAKE) */
 	/* 	put_char_pos(keymap[data & ~IOADR_KBC_DATA_BIT_BRAKE], x++, y); */
@@ -251,7 +254,14 @@ void dump_hex_pos(unsigned int val, unsigned int num_digits, unsigned char x, un
 
 unsigned char get_keydata_noir(void)
 {
-	while (!(inb_p(IOADR_KBC_STATUS) & IOADR_KBC_STATUS_BIT_OBF));
+	volatile unsigned char status;
+	while (1) {
+		status = inb_p(IOADR_KBC_STATUS);
+		if ((status & IOADR_KBC_STATUS_BIT_OBF) && !(status & 0x80))
+			break;
+		/* if (status & IOADR_KBC_STATUS_BIT_OBF) */
+		/* 	break; */
+	}
 	return inb_p(IOADR_KBC_DATA);
 }
 
