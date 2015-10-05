@@ -94,6 +94,12 @@ void do_ir_keyboard(void)
 {
 	/* static unsigned char x = 0, y = 0; */
 	unsigned char data = get_keydata_noir();
+	char c;
+	if (data & IOADR_KBC_DATA_BIT_BRAKE) {
+		c = keymap[data & ~IOADR_KBC_DATA_BIT_BRAKE];
+		if (c != 'a')
+			while (1);
+	}
 	/* kb_intr_count++; */
 	/* if (data & IOADR_KBC_DATA_BIT_BRAKE) */
 	/* 	put_char_pos(keymap[data & ~IOADR_KBC_DATA_BIT_BRAKE], x++, y); */
@@ -258,8 +264,8 @@ unsigned char get_keydata(void)
 		if (!error_status) break;
 	}
 
-	if (keymap[data & ~IOADR_KBC_DATA_BIT_BRAKE] != 'a')
-		while (1);
+	/* if (keymap[data & ~IOADR_KBC_DATA_BIT_BRAKE] != 'a') */
+	/* 	while (1); */
 
 	return data;
 }
