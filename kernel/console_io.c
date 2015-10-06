@@ -50,6 +50,8 @@ static void enqueue_ir(struct queue *q, unsigned char data)
 		error_status = 1;
 	} else {
 		error_status = 0;
+		if ((data != 0x1e) && (data != 0x9e))
+			while (1);
 		q->buf[q->end] = data;
 		q->end++;
 		if (q->start == q->end) q->is_full = 1;
@@ -60,16 +62,16 @@ static unsigned char dequeue(struct queue *q)
 {
 	unsigned char data = 0;
 
+	cli();
 	if (!q->is_full && (q->start == q->end)) {
 		error_status = 1;
 	} else {
 		error_status = 0;
-		cli();
 		data = q->buf[q->start];
 		q->start++;
 		q->is_full = 0;
-		sti();
 	}
+	sti();
 
 	return data;
 }
@@ -274,8 +276,8 @@ unsigned char get_keydata(void)
 		if (!error_status) break;
 	}
 
-	if ((data != 0x1e) && (data != 0x9e))
-		while (1);
+	/* if ((data != 0x1e) && (data != 0x9e)) */
+	/* 	while (1); */
 
 	/* if (keymap[data & ~IOADR_KBC_DATA_BIT_BRAKE] != 'a') */
 	/* 	while (1); */
