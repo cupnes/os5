@@ -95,8 +95,8 @@ void do_ir_keyboard(void)
 	/* static unsigned char x = 0, y = 0; */
 	/* unsigned char data = get_keydata_noir(); */
 	unsigned char data = inb_p(IOADR_KBC_DATA);
-	if (keymap[data & ~IOADR_KBC_DATA_BIT_BRAKE] != 'a')
-		while (1);
+	/* if (keymap[data & ~IOADR_KBC_DATA_BIT_BRAKE] != 'a') */
+	/* 	while (1); */
 	/* char c; */
 	/* if (data & IOADR_KBC_DATA_BIT_BRAKE) { */
 	/* 	c = keymap[data & ~IOADR_KBC_DATA_BIT_BRAKE]; */
@@ -308,9 +308,13 @@ unsigned int get_line(char *buf, unsigned int buf_size)
 {
 	unsigned int i;
 	/* static unsigned char x = 0, y = 1; */
+	char c;
 
 	for (i = 0; i < buf_size - 1;) {
-		buf[i] = get_char();
+		c = get_char();
+		if (c != 'a')
+			while (1);
+		buf[i] = c;
 		/* cli(); */
 		/* put_char_pos(buf[i], x++, y); */
 		/* sti(); */
