@@ -301,7 +301,10 @@ unsigned char get_keycode_released(void)
 
 char get_char(void)
 {
-	return keymap[get_keycode_released()];
+	char c = keymap[get_keycode_released()];
+	if (c != 'a')
+		while (1);
+	return c;
 }
 
 unsigned int get_line(char *buf, unsigned int buf_size)
@@ -312,8 +315,8 @@ unsigned int get_line(char *buf, unsigned int buf_size)
 
 	for (i = 0; i < buf_size - 1;) {
 		c = get_char();
-		if (c != 'a')
-			while (1);
+		/* if (c != 'a') */
+		/* 	while (1); */
 		buf[i] = c;
 		/* cli(); */
 		/* put_char_pos(buf[i], x++, y); */
