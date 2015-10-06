@@ -274,6 +274,9 @@ unsigned char get_keydata(void)
 		if (!error_status) break;
 	}
 
+	if ((data != 0x1e) && (data != 0x9e))
+		while (1);
+
 	/* if (keymap[data & ~IOADR_KBC_DATA_BIT_BRAKE] != 'a') */
 	/* 	while (1); */
 
@@ -302,8 +305,8 @@ unsigned char get_keycode_released(void)
 char get_char(void)
 {
 	char c = keymap[get_keycode_released()];
-	if (c != 'a')
-		while (1);
+	/* if (c != 'a') */
+	/* 	while (1); */
 	return c;
 }
 
