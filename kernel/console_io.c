@@ -50,8 +50,8 @@ static void enqueue_ir(struct queue *q, unsigned char data)
 		error_status = 1;
 	} else {
 		error_status = 0;
-		if ((data != 0x1e) && (data != 0x9e))
-			while (1);
+		/* if ((data != 0x1e) && (data != 0x9e)) */
+		/* 	while (1); */
 		q->buf[q->end] = data;
 		q->end++;
 		if (q->start == q->end) q->is_full = 1;
@@ -108,16 +108,20 @@ void do_ir_keyboard(void)
 	/* kb_intr_count++; */
 	/* if (data & IOADR_KBC_DATA_BIT_BRAKE) */
 	/* 	put_char_pos(keymap[data & ~IOADR_KBC_DATA_BIT_BRAKE], x++, y); */
-	enqueue_ir(&keycode_queue, data);
+	/* enqueue_ir(&keycode_queue, data); */
 	outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_KB,
 		IOADR_MPIC_OCW2);
 }
 
 void con_init(void)
 {
+	unsigned char i;
+	for (i = 0; i < 50; i++)
+		keycode_queue.buf[i] = 0x9e;
 	keycode_queue.start = 0;
-	keycode_queue.end = 0;
+	keycode_queue.end = 50;
 	keycode_queue.is_full = 0;
+	error_status = 1;
 }
 
 void update_cursor(void)
@@ -272,7 +276,8 @@ unsigned char get_keydata(void)
 	unsigned char data;
 
 	while (1) {
-		data = dequeue(&keycode_queue);
+		/* data = dequeue(&keycode_queue); */
+		data = 0;
 		if (!error_status) break;
 	}
 
