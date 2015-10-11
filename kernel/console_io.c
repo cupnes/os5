@@ -32,7 +32,7 @@ struct queue {
 
 struct cursor_position cursor_pos;
 
-static volatile unsigned char error_status;
+static unsigned char error_status;
 
 static void enqueue(struct queue *q, unsigned char data)
 {
@@ -70,8 +70,6 @@ static unsigned char dequeue(struct queue *q)
 	} else {
 		error_status = 0;
 		data = q->buf[q->start];
-		/* if (data != 0x1e && data != 0x9e) */
-		/* 	while (1); */
 		q->start++;
 		q->is_full = 0;
 	}
@@ -103,7 +101,6 @@ void do_ir_keyboard(void)
 	status = inb_p(IOADR_KBC_STATUS);
 	if (status & IOADR_KBC_STATUS_BIT_OBF) {
 		data = inb_p(IOADR_KBC_DATA);
-		/* if (data == 0x1e || data == 0x9e) */
 		enqueue_ir(&keycode_queue, data);
 	}
 	outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_KB,
@@ -267,12 +264,7 @@ unsigned char get_keydata(void)
 		data = dequeue_ir(&keycode_queue);
 		if (!error_status) break;
 		sti();
-		/* if (data == 0x1e || data == 0x9e) */
-		/* 	break; */
 	}
-
-	/* if (data != 0x1e && data != 0x9e) */
-	/* 	while (1); */
 
 	return data;
 }
