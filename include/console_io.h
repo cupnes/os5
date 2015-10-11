@@ -18,21 +18,13 @@
 #define ASCII_ESC					0x1b
 #define ASCII_BS					0x08
 #define ASCII_HT					0x09
-#define QUEUE_BUF_SIZE			256
 
 struct cursor_position {
 	unsigned int x, y;
 };
-struct queue {
-	unsigned char buf[QUEUE_BUF_SIZE];
-	unsigned char start, end;
-	unsigned char is_full;
-};
 
 extern unsigned char keyboard_handler;
 extern struct cursor_position cursor_pos;
-extern const char keymap[];
-extern struct queue keycode_queue;
 
 void con_init(void);
 void update_cursor(void);

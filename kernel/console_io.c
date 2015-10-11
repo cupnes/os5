@@ -3,6 +3,8 @@
 #include <io_port.h>
 #include <console_io.h>
 
+#define QUEUE_BUF_SIZE	256
+
 const char keymap[] = {
 	0x00, ASCII_ESC, '1', '2', '3', '4', '5', '6',
 	'7', '8', '9', '0', '-', '^', ASCII_BS, ASCII_HT,
@@ -22,15 +24,15 @@ const char keymap[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, '\\', 0x00, 0x00
 };
 
-struct queue keycode_queue;
+struct queue {
+	unsigned char buf[QUEUE_BUF_SIZE];
+	unsigned char start, end;
+	unsigned char is_full;
+} keycode_queue;
 
 struct cursor_position cursor_pos;
 
 static unsigned char error_status;
-
-/* static unsigned int kb_intr_count = 0; */
-
-static unsigned char _flag;
 
 static void enqueue(struct queue *q, unsigned char data)
 {
@@ -52,8 +54,6 @@ static void enqueue_ir(struct queue *q, unsigned char data)
 		error_status = 1;
 	} else {
 		error_status = 0;
-		/* if ((data != 0x1e) && (data != 0x9e)) */
-		/* 	while (1); */
 		q->buf[q->end] = data;
 		q->end++;
 		if (q->start == q->end) q->is_full = 1;
@@ -99,22 +99,8 @@ void do_ir_keyboard(void)
 	unsigned char status, data;
 
 	status = inb_p(IOADR_KBC_STATUS);
-
 	if (status & IOADR_KBC_STATUS_BIT_OBF) {
-		/* static unsigned char x = 0, y = 0; */
-		/* unsigned char data = get_keydata_noir(); */
 		data = inb_p(IOADR_KBC_DATA);
-		/* if (keymap[data & ~IOADR_KBC_DATA_BIT_BRAKE] != 'a') */
-		/* 	while (1); */
-		/* char c; */
-		/* if (data & IOADR_KBC_DATA_BIT_BRAKE) { */
-		/* 	c = keymap[data & ~IOADR_KBC_DATA_BIT_BRAKE]; */
-			/* if (c != 'a') */
-			/* 	while (1); */
-		/* } */
-		/* kb_intr_count++; */
-		/* if (data & IOADR_KBC_DATA_BIT_BRAKE) */
-		/* 	put_char_pos(keymap[data & ~IOADR_KBC_DATA_BIT_BRAKE], x++, y); */
 		enqueue_ir(&keycode_queue, data);
 	}
 	outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_KB,
@@ -123,13 +109,8 @@ void do_ir_keyboard(void)
 
 void con_init(void)
 {
-	_flag = 0;
-	/* unsigned char i; */
-	/* for (i = 0; i < 50; i++) */
-	/* 	keycode_queue.buf[i] = 0x9e; */
 	keycode_queue.start = 0;
 	keycode_queue.end = 0;
-	/* keycode_queue.end = 50; */
 	keycode_queue.is_full = 0;
 	error_status = 0;
 }
@@ -270,14 +251,7 @@ void dump_hex_pos(unsigned int val, unsigned int num_digits, unsigned char x, un
 
 unsigned char get_keydata_noir(void)
 {
-	volatile unsigned char status;
-	while (1) {
-		status = inb_p(IOADR_KBC_STATUS);
-		if ((status & IOADR_KBC_STATUS_BIT_OBF) && !(status & 0x80))
-			break;
-		/* if (status & IOADR_KBC_STATUS_BIT_OBF) */
-		/* 	break; */
-	}
+	while (!(inb_p(IOADR_KBC_STATUS) & IOADR_KBC_STATUS_BIT_OBF));
 	return inb_p(IOADR_KBC_DATA);
 }
 
@@ -287,16 +261,8 @@ unsigned char get_keydata(void)
 
 	while (1) {
 		data = dequeue(&keycode_queue);
-		/* data = 0; */
 		if (!error_status) break;
-		/* if (_flag) break; */
 	}
-
-	/* if ((data != 0x1e) && (data != 0x9e)) */
-	/* 	while (1); */
-
-	/* if (keymap[data & ~IOADR_KBC_DATA_BIT_BRAKE] != 'a') */
-	/* 	while (1); */
 
 	return data;
 }
@@ -322,26 +288,15 @@ unsigned char get_keycode_released(void)
 
 char get_char(void)
 {
-	char c = keymap[get_keycode_released()];
-	/* if (c != 'a') */
-	/* 	while (1); */
-	return c;
+	return keymap[get_keycode_released()];
 }
 
 unsigned int get_line(char *buf, unsigned int buf_size)
 {
 	unsigned int i;
-	/* static unsigned char x = 0, y = 1; */
-	char c;
 
 	for (i = 0; i < buf_size - 1;) {
-		c = get_char();
-		/* if (c != 'a') */
-		/* 	while (1); */
-		buf[i] = c;
-		/* cli(); */
-		/* put_char_pos(buf[i], x++, y); */
-		/* sti(); */
+		buf[i] = get_char();
 		if (buf[i] == ASCII_BS) {
 			if (i == 0) continue;
 			cursor_pos.x--;
@@ -358,9 +313,6 @@ unsigned int get_line(char *buf, unsigned int buf_size)
 		}
 	}
 	buf[i] = '\0';
-	/* dump_hex(kb_intr_count, 2); */
-	/* kb_intr_count = 0; */
-	/* put_str("\r\n"); */
 
 	return i;
 }
