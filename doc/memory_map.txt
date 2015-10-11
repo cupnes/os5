@@ -4,6 +4,9 @@
 | base              | 0x0000 7c00 |
 | SS(stack segment) | 0x0000      |
 
+|-----------+------------------------------------------------------------|
+| 0000 0500 | Conventional Memory(first)                                 |
+| ...       | ...                                                        |
 | 0000 1000 | stack base                                                 |
 | ...       | ...                                                        |
 | 0000 7c00 | MBR                                                        |
@@ -17,14 +20,36 @@
 | 0009 0000 | GDT[0]                                                     |
 | 0009 0008 | GDT[1]                                                     |
 | 0009 0010 | GDT[2](last)                                               |
+| ...       | ...                                                        |
+| 0009 ffff | Conventional Memory(last)                                  |
+|-----------+------------------------------------------------------------|
 
-* kernel
+* kernel, app
 | CS    | GDT[1] |
 | DS,SS | GDT[2] |
 
+|-----------+-------------------------------------|
+| 0000 0500 | Conventional Memory(first)          |
+| ...       | ...                                 |
 | 0000 7e00 | loaded text and data section(first) |
 |           | text begin                          |
 |           | data begin                          |
+|           | bss begin                           |
 | 0001 0bff | loaded text and data section(last)  |
 | ...       | ...                                 |
-| 0008 0000 | stack base                          |
+| 0008 0000 | stack base(kernel boot, shell)      |
+| ...       | ...                                 |
+| 0008 5000 | stack base(uptime)                  |
+| ...       | ...                                 |
+| 0009 0000 | page directory(first)               |
+| 0009 0fff | page directory(last)                |
+| 0009 1000 | page table(first)                   |
+| 0009 1fff | page table(last)                    |
+| ...       | ...                                 |
+| 0009 ffff | Conventional Memory(last)           |
+|-----------+-------------------------------------|
+| ...       | ...                                 |
+|-----------+-------------------------------------|
+| 000b 8000 | Video Memory(first)                 |
+| 000b ffff | Video Memory(last)                  |
+|-----------+-------------------------------------|
