@@ -19,7 +19,7 @@ int main(void)
 	cli();
 
 	/* Setup exception handler */
-	for (i = 0; i < EXCEPTION_NUM; i++)
+	for (i = 0; i < EXCEPTION_MAX; i++)
 		intr_set_handler(i, (unsigned int)&exception_handler);
 	intr_set_handler(EXCP_NUM_PF, (unsigned int)&page_fault_handler);
 

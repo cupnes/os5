@@ -1,7 +1,7 @@
 #ifndef _EXCP_H_
 #define _EXCP_H_
 
-#define EXCEPTION_NUM	20
+#define EXCEPTION_MAX	20
 #define EXCP_NUM_PF	14
 
 extern unsigned char exception_handler;
