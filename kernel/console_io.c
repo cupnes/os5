@@ -64,16 +64,16 @@ static unsigned char dequeue(struct queue *q)
 {
 	unsigned char data = 0;
 
+	cli();
 	if (!q->is_full && (q->start == q->end)) {
 		error_status = 1;
 	} else {
 		error_status = 0;
-		cli();
 		data = q->buf[q->start];
 		q->start++;
 		q->is_full = 0;
-		sti();
 	}
+	sti();
 
 	return data;
 }
