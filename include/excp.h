@@ -2,9 +2,11 @@
 #define _EXCP_H_
 
 #define EXCEPTION_MAX	20
+#define EXCP_NUM_GP	13
 #define EXCP_NUM_PF	14
 
 extern unsigned char exception_handler;
+extern unsigned char general_protection_handler;
 extern unsigned char page_fault_handler;
 
 void do_exception(void);
