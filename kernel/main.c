@@ -21,8 +21,8 @@ int main(void)
 	/* Setup exception handler */
 	for (i = 0; i < EXCEPTION_MAX; i++)
 		intr_set_handler(i, (unsigned int)&exception_handler);
-	intr_set_handler(13, (unsigned int)&general_protection_handler);
-	intr_set_handler(14, (unsigned int)&page_fault_handler);
+	intr_set_handler(EXCP_NUM_GP, (unsigned int)&general_protection_handler);
+	intr_set_handler(EXCP_NUM_PF, (unsigned int)&page_fault_handler);
 
 	/* Setup devices */
 	con_init();
