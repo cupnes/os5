@@ -260,8 +260,10 @@ unsigned char get_keydata(void)
 	unsigned char data;
 
 	while (1) {
-		data = dequeue(&keycode_queue);
+		cli();
+		data = dequeue_ir(&keycode_queue);
 		if (!error_status) break;
+		sti();
 	}
 
 	return data;
