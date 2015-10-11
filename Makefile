@@ -17,8 +17,8 @@ fd.img: boot.bin sys.bin
 boot.bin: boot/boot.o
 	ld -o $@ $< -T boot/boot.ld
 
-sys.bin: kernel/sys.o kernel/cpu.o kernel/intr.o kernel/excp.o kernel/sched.o kernel/timer.o kernel/console_io.o kernel/common.o kernel/main.o apps/shell.o apps/uptime.o
-	ld -o $@ kernel/sys.o kernel/cpu.o kernel/intr.o kernel/excp.o kernel/sched.o kernel/timer.o kernel/console_io.o kernel/common.o kernel/main.o apps/shell.o apps/uptime.o -M -s -T kernel/sys.ld -x > System.map
+sys.bin: kernel/sys.o kernel/cpu.o kernel/intr.o kernel/excp.o kernel/memory.o kernel/sched.o kernel/timer.o kernel/console_io.o kernel/common.o kernel/main.o apps/shell.o apps/uptime.o
+	ld -o $@ kernel/sys.o kernel/cpu.o kernel/intr.o kernel/excp.o kernel/memory.o kernel/sched.o kernel/timer.o kernel/console_io.o kernel/common.o kernel/main.o apps/shell.o apps/uptime.o -M -s -T kernel/sys.ld -x > System.map
 
 boot/boot.o: boot/boot.s
 
@@ -29,6 +29,8 @@ kernel/cpu.o: kernel/cpu.c
 kernel/intr.o: kernel/intr.c
 
 kernel/excp.o: kernel/excp.c
+
+kernel/memory.o: kernel/memory.c
 
 kernel/sched.o: kernel/sched.c
 

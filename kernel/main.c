@@ -1,6 +1,7 @@
 #include <cpu.h>
 #include <intr.h>
 #include <excp.h>
+#include <memory.h>
 #include <console_io.h>
 #include <timer.h>
 #include <shell.h>
@@ -20,15 +21,20 @@ int main(void)
 	/* Setup exception handler */
 	for (i = 0; i < EXCEPTION_NUM; i++)
 		intr_set_handler(i, (unsigned int)&exception_handler);
+	intr_set_handler(EXCP_NUM_PF, (unsigned int)&page_fault_handler);
 
 	/* Setup devices */
 	con_init();
 	timer_init();
+	mem_init();
 
 	/* Setup tasks */
 	shell_init();
 	cli();
 	uptime_init();
+
+	/* Start paging */
+	mem_page_start();
 
 	/* Setup interrupt handler and mask register */
 	intr_set_handler(INTR_NUM_TIMER, (unsigned int)&timer_handler);
