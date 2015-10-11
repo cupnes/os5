@@ -96,21 +96,27 @@ static unsigned char dequeue_ir(struct queue *q)
 
 void do_ir_keyboard(void)
 {
-	/* static unsigned char x = 0, y = 0; */
-	/* unsigned char data = get_keydata_noir(); */
-	unsigned char data = inb_p(IOADR_KBC_DATA);
-	/* if (keymap[data & ~IOADR_KBC_DATA_BIT_BRAKE] != 'a') */
-	/* 	while (1); */
-	/* char c; */
-	/* if (data & IOADR_KBC_DATA_BIT_BRAKE) { */
-	/* 	c = keymap[data & ~IOADR_KBC_DATA_BIT_BRAKE]; */
-		/* if (c != 'a') */
+	unsigned char status, data;
+
+	status = inb_p(IOADR_KBC_STATUS);
+
+	if (status & IOADR_KBC_STATUS_BIT_OBF) {
+		/* static unsigned char x = 0, y = 0; */
+		/* unsigned char data = get_keydata_noir(); */
+		data = inb_p(IOADR_KBC_DATA);
+		/* if (keymap[data & ~IOADR_KBC_DATA_BIT_BRAKE] != 'a') */
 		/* 	while (1); */
-	/* } */
-	/* kb_intr_count++; */
-	/* if (data & IOADR_KBC_DATA_BIT_BRAKE) */
-	/* 	put_char_pos(keymap[data & ~IOADR_KBC_DATA_BIT_BRAKE], x++, y); */
-	enqueue_ir(&keycode_queue, data);
+		/* char c; */
+		/* if (data & IOADR_KBC_DATA_BIT_BRAKE) { */
+		/* 	c = keymap[data & ~IOADR_KBC_DATA_BIT_BRAKE]; */
+			/* if (c != 'a') */
+			/* 	while (1); */
+		/* } */
+		/* kb_intr_count++; */
+		/* if (data & IOADR_KBC_DATA_BIT_BRAKE) */
+		/* 	put_char_pos(keymap[data & ~IOADR_KBC_DATA_BIT_BRAKE], x++, y); */
+		enqueue_ir(&keycode_queue, data);
+	}
 	outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_KB,
 		IOADR_MPIC_OCW2);
 }
@@ -280,10 +286,10 @@ unsigned char get_keydata(void)
 	unsigned char data;
 
 	while (1) {
-		/* data = dequeue(&keycode_queue); */
-		data = 0;
-		/* if (!error_status) break; */
-		if (_flag) break;
+		data = dequeue(&keycode_queue);
+		/* data = 0; */
+		if (!error_status) break;
+		/* if (_flag) break; */
 	}
 
 	/* if ((data != 0x1e) && (data != 0x9e)) */
