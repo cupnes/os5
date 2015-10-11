@@ -25,4 +25,9 @@ __asm__ volatile ("inb %%dx,%%al\n" \
 _v; \
 })
 
+#define io_delay() ({				\
+unsigned char _v = 0;				\
+__asm__ volatile ("outb %0, $0x80"::"a" (_v));	\
+})
+
 #endif /* _IO_PORT_H_ */
