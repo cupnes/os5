@@ -96,7 +96,13 @@ static unsigned char dequeue_ir(struct queue *q)
 
 void do_ir_keyboard(void)
 {
-	enqueue_ir(&keycode_queue, get_keydata_noir());
+	unsigned char status, data;
+
+	status = inb_p(IOADR_KBC_STATUS);
+	if (status & IOADR_KBC_STATUS_BIT_OBF) {
+		data = inb_p(IOADR_KBC_DATA);
+		enqueue_ir(&keycode_queue, data);
+	}
 	outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_KB,
 		IOADR_MPIC_OCW2);
 }
