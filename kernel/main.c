@@ -27,6 +27,7 @@ int main(void)
 
 	/* Setup tasks */
 	shell_init();
+	cli();
 	uptime_init();
 
 	/* Setup interrupt handler and mask register */
