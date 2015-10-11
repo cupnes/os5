@@ -290,7 +290,7 @@ unsigned char get_keycode_released(void)
 
 char get_char(void)
 {
-	return keymap[get_keycode_released()];
+	return keymap[get_keycode_pressed()];
 }
 
 unsigned int get_line(char *buf, unsigned int buf_size)
