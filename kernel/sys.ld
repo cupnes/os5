@@ -4,6 +4,11 @@ SECTIONS
 {
 	. = 0x7e00;
 	.text	: {*(.text)}
+	.rodata	: {
+		*(.strings)
+		*(.rodata)
+		*(.rodata.*)
+	}
 	.data	: {*(.data)}
 	.bss	: {*(.bss)}
 
