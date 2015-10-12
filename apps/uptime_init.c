@@ -3,6 +3,9 @@
 #include <console_io.h>
 #include <sched.h>
 
+#define APP_ENTRY_POINT	0x20000000
+#define APP_STACK_BASE	0x90000000
+
 struct tss uptime_tss;
 
 void uptime_context_switch(void)
@@ -19,8 +22,8 @@ void uptime_init(void)
 	init_gdt(UPTIME_GDT_IDX, (unsigned int)&uptime_tss, sizeof(uptime_tss));
 
 	/* Setup uptime_tss */
-	uptime_tss.eip = (unsigned int)uptime_start;
-	uptime_tss.esp = 0x00085000;
+	uptime_tss.eip = APP_ENTRY_POINT;
+	uptime_tss.esp = APP_STACK_BASE;
 	uptime_tss.eflags = 0x00000200;
 	uptime_tss.es = 0x0010;
 	uptime_tss.cs = 0x0008;
