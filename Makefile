@@ -17,8 +17,8 @@ fd.img: boot.bin sys.bin
 boot.bin: boot/boot.o
 	ld -o $@ $< -T boot/boot.ld
 
-sys.bin: kernel/sys.o kernel/cpu.o kernel/intr.o kernel/excp.o kernel/memory.o kernel/sched.o kernel/timer.o kernel/console_io.o kernel/common.o kernel/debug.o kernel/main.o apps/shell.o apps/uptime_init.o apps/uptime.o
-	ld -o $@ kernel/sys.o kernel/cpu.o kernel/intr.o kernel/excp.o kernel/memory.o kernel/sched.o kernel/timer.o kernel/console_io.o kernel/common.o kernel/debug.o kernel/main.o apps/shell.o apps/uptime_init.o apps/uptime.o -Map System.map -s -T kernel/sys.ld -x
+sys.bin: kernel/sys.o kernel/cpu.o kernel/intr.o kernel/excp.o kernel/memory.o kernel/sched.o kernel/timer.o kernel/console_io.o kernel/common.o kernel/debug.o kernel/main.o apps/uptime_init.o apps/shell.o apps/uptime.o
+	ld -o $@ kernel/sys.o kernel/cpu.o kernel/intr.o kernel/excp.o kernel/memory.o kernel/sched.o kernel/timer.o kernel/console_io.o kernel/common.o kernel/debug.o kernel/main.o apps/uptime_init.o apps/shell.o apps/uptime.o -Map System.map -s -T kernel/sys.ld -x
 
 boot/boot.o: boot/boot.s
 
@@ -44,9 +44,9 @@ kernel/debug.o: kernel/debug.c
 
 kernel/main.o: kernel/main.c
 
-apps/shell.o: apps/shell.c
-
 apps/uptime_init.o: apps/uptime_init.c
+
+apps/shell.o: apps/shell.c
 
 apps/uptime.o: apps/uptime.c
 
