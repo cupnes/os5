@@ -36,20 +36,25 @@
 |           | data begin                                 |
 |           | bss begin                                  |
 | 0001 0fff | loaded kernel text and data section(last)  |
-| 0001 1000 | loaded uptime text and data section(first) |
+| 0001 1000 | loaded shell text and data section(first)  |
 | ...       | ...                                        |
-| 0001 1fff | loaded uptime text and data section(last)  |
+| 0001 1fff | loaded shell text and data section(last)   |
+| 0001 2000 | stack base(shell)                          |
+| 0001 2000 | loaded uptime text and data section(first) |
 | ...       | ...                                        |
-| 0008 0000 | stack base(kernel boot, shell)             |
+| 0001 2fff | loaded uptime text and data section(last)  |
+| 0001 3000 | stack base(uptime)                         |
 | ...       | ...                                        |
-| 0008 5000 | stack base(uptime)                         |
-| ...       | ...                                        |
-| 0009 0000 | page directory(first)                      |
-| 0009 0fff | page directory(last)                       |
-| 0009 1000 | kernel page table(first)                   |
-| 0009 1fff | kernel page table(last)                    |
-| 0009 2000 | uptime page table(first)                   |
-| 0009 2fff | uptime page table(last)                    |
+| 0009 0000 | kernel page table(first)                   |
+| 0009 0fff | kernel page table(last)                    |
+| 0009 1000 | shell page directory(first)                |
+| 0009 1fff | slell page directory(last)                 |
+| 0009 2000 | shell page table(first)                    |
+| 0009 2fff | shell page table(last)                     |
+| 0009 3000 | uptime page directory(first)               |
+| 0009 3fff | uptime page directory(last)                |
+| 0009 4000 | uptime page table(first)                   |
+| 0009 4fff | uptime page table(last)                    |
 | ...       | ...                                        |
 | 0009 ffff | Conventional Memory(last)                  |
 |-----------+--------------------------------------------|
