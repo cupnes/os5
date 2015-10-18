@@ -35,7 +35,7 @@ void mem_init(void)
 	pde->pt_base = 0x00091;
 	pde++;
 
-	for (i = 0; i < 0x080; i++) {
+	for (i = 1; i < 0x080; i++) {
 		pde->all = 0;
 		pde++;
 	}
@@ -48,7 +48,7 @@ void mem_init(void)
 	pde->pt_base = 0x00092;
 	pde++;
 
-	for (i = 0; i < 0x400; i++) {
+	for (; i < 0x400; i++) {
 		pde->all = 0;
 		pde++;
 	}

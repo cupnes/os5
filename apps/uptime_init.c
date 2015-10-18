@@ -4,7 +4,7 @@
 #include <sched.h>
 
 #define APP_ENTRY_POINT	0x20000000
-#define APP_STACK_BASE	0x90000000
+#define APP_STACK_BASE	0x20000ff0
 
 struct tss uptime_tss;
 
