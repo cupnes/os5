@@ -119,6 +119,21 @@ load_track1_head1_2:
 	int	$0x13
 	jc	load_track1_head1_2
 
+	/* トラック2, ヘッド0, セクタ1 - 10
+	 * src: トラック2, ヘッド0の10セクタ
+	 *      (10セクタ = 5120バイト = 0x1400バイト)
+	 * dst: 0x0001 0c00 〜 0x0001 1fff
+	 */
+load_track2_head0:
+	movw	$0x1000, %ax
+	movw	%ax, %es
+	movw	$0x0c00, %bx
+	movw	$0x0000, %dx
+	movw	$0x0201, %cx
+	movw	$0x020a, %ax
+	int	$0x13
+	jc	load_track2_head0
+
 	movw	$msg_completed, %si
 	call	print_msg
 
