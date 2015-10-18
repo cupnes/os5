@@ -15,7 +15,7 @@ fd.img: boot.bin sys.bin uptime.bin
 	cat boot.bin sys.bin uptime.bin > $@
 
 boot.bin: boot/boot.o
-	ld -o $@ $< -T boot/boot.ld
+	ld -o $@ $< -T boot/boot.ld -Map boot/boot.map
 
 uptime.bin: apps/uptime.o symbol_address.map
 	ld -o $@ $< $$(cat symbol_address.map) -Map apps/uptime.map -s -T apps/app.ld -x
