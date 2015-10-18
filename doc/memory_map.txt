@@ -28,28 +28,33 @@
 | CS    | GDT[1] |
 | DS,SS | GDT[2] |
 
-|-----------+-------------------------------------|
-| 0000 0500 | Conventional Memory(first)          |
-| ...       | ...                                 |
-| 0000 7e00 | loaded text and data section(first) |
-|           | text begin                          |
-|           | data begin                          |
-|           | bss begin                           |
-| 0001 0bff | loaded text and data section(last)  |
-| ...       | ...                                 |
-| 0008 0000 | stack base(kernel boot, shell)      |
-| ...       | ...                                 |
-| 0008 5000 | stack base(uptime)                  |
-| ...       | ...                                 |
-| 0009 0000 | page directory(first)               |
-| 0009 0fff | page directory(last)                |
-| 0009 1000 | page table(first)                   |
-| 0009 1fff | page table(last)                    |
-| ...       | ...                                 |
-| 0009 ffff | Conventional Memory(last)           |
-|-----------+-------------------------------------|
-| ...       | ...                                 |
-|-----------+-------------------------------------|
-| 000b 8000 | Video Memory(first)                 |
-| 000b ffff | Video Memory(last)                  |
-|-----------+-------------------------------------|
+|-----------+--------------------------------------------|
+| 0000 0500 | Conventional Memory(first)                 |
+| ...       | ...                                        |
+| 0000 7e00 | loaded kernel text and data section(first) |
+|           | text begin                                 |
+|           | data begin                                 |
+|           | bss begin                                  |
+| 0001 0fff | loaded kernel text and data section(last)  |
+| 0001 1000 | loaded uptime text and data section(first) |
+| ...       | ...                                        |
+| 0001 1fff | loaded uptime text and data section(last)  |
+| ...       | ...                                        |
+| 0008 0000 | stack base(kernel boot, shell)             |
+| ...       | ...                                        |
+| 0008 5000 | stack base(uptime)                         |
+| ...       | ...                                        |
+| 0009 0000 | page directory(first)                      |
+| 0009 0fff | page directory(last)                       |
+| 0009 1000 | kernel page table(first)                   |
+| 0009 1fff | kernel page table(last)                    |
+| 0009 2000 | uptime page table(first)                   |
+| 0009 2fff | uptime page table(last)                    |
+| ...       | ...                                        |
+| 0009 ffff | Conventional Memory(last)                  |
+|-----------+--------------------------------------------|
+| ...       | ...                                        |
+|-----------+--------------------------------------------|
+| 000b 8000 | Video Memory(first)                        |
+| 000b ffff | Video Memory(last)                         |
+|-----------+--------------------------------------------|
