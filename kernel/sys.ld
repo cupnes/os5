@@ -12,6 +12,6 @@ SECTIONS
 	.data	: {*(.data)}
 	.bss	: {*(.bss)}
 
-	. = 0x7e00 + 36350;
+	. = 0x7e00 + 0x91fe;
 	.sign	: {SHORT(0xbeef)}
 }
