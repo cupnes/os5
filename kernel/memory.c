@@ -25,6 +25,7 @@ void mem_init(void)
 	unsigned int paging_base_addr;
 	unsigned int i;
 
+	/* Initialize page directory */
 	pde = (struct page_directory_entry *)0x00090000;
 	pde->all = 0;
 	pde->p = 1;
@@ -33,11 +34,26 @@ void mem_init(void)
 	pde->pcd = 1;
 	pde->pt_base = 0x00091;
 	pde++;
-	for (i = 0; i < 1023; i++) {
+
+	for (i = 0; i < 0x080; i++) {
 		pde->all = 0;
 		pde++;
 	}
 
+	pde->all = 0;
+	pde->p = 1;
+	pde->r_w = 1;
+	pde->pwt = 1;
+	pde->pcd = 1;
+	pde->pt_base = 0x00092;
+	pde++;
+
+	for (i = 0; i < 0x400; i++) {
+		pde->all = 0;
+		pde++;
+	}
+
+	/* Initialize kernel page table */
 	pte = (struct page_table_entry *)0x00091000;
 	for (i = 0x000; i < 0x007; i++) {
 		pte->all = 0;
@@ -69,7 +85,24 @@ void mem_init(void)
 		paging_base_addr += 0x00001;
 		pte++;
 	}
-	for (; i < 0x1000; i++) {
+	for (; i < 0x400; i++) {
+		pte->all = 0;
+		pte++;
+	}
+
+	/* Initialize uptime page table */
+	pte = (struct page_table_entry *)0x00092000;
+	paging_base_addr = 0x00011;
+	pte->all = 0;
+	pte->p = 1;
+	pte->r_w = 1;
+	pte->pwt = 1;
+	pte->pcd = 1;
+	pte->page_base = paging_base_addr;
+	paging_base_addr += 0x00001;
+	pte++;
+
+	for (i = 1; i < 0x400; i++) {
 		pte->all = 0;
 		pte++;
 	}
