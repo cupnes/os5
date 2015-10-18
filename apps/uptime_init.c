@@ -31,5 +31,5 @@ void uptime_init(void)
 	uptime_tss.ds = 0x0010;
 	uptime_tss.fs = 0x0010;
 	uptime_tss.gs = 0x0010;
-	uptime_tss.__cr3 = 0x00090018;
+	uptime_tss.__cr3 = 0x00093018;
 }
