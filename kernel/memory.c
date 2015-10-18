@@ -45,7 +45,7 @@ void mem_init(void)
 	pde->r_w = 1;
 	pde->pwt = 1;
 	pde->pcd = 1;
-	pde->pt_base = 0x00092;
+	pde->pt_base = 0x00094;
 	pde++;
 
 	for (; i < 0x400; i++) {
@@ -91,8 +91,8 @@ void mem_init(void)
 	}
 
 	/* Initialize uptime page table */
-	pte = (struct page_table_entry *)0x00092000;
-	paging_base_addr = 0x00011;
+	pte = (struct page_table_entry *)0x00094000;
+	paging_base_addr = 0x00012;
 	pte->all = 0;
 	pte->p = 1;
 	pte->r_w = 1;
