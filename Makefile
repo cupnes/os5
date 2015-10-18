@@ -11,8 +11,8 @@ CFLAGS	+=	-Iinclude
 
 all: fd.img
 
-fd.img: boot.bin sys.bin uptime.bin
-	cat boot.bin sys.bin uptime.bin > $@
+fd.img: boot.bin sys.bin blank4kb.bin uptime.bin
+	cat boot.bin sys.bin blank4kb.bin uptime.bin > $@
 
 boot.bin: boot/boot.o
 	ld -o $@ $< -T boot/boot.ld -Map boot/boot.map
@@ -25,6 +25,9 @@ symbol_address.map: sys.bin
 
 sys.bin: kernel/sys.o kernel/cpu.o kernel/intr.o kernel/excp.o kernel/memory.o kernel/sched.o kernel/timer.o kernel/console_io.o kernel/common.o kernel/debug.o kernel/main.o apps/uptime_init.o apps/shell.o
 	ld -o $@ kernel/sys.o kernel/cpu.o kernel/intr.o kernel/excp.o kernel/memory.o kernel/sched.o kernel/timer.o kernel/console_io.o kernel/common.o kernel/debug.o kernel/main.o apps/uptime_init.o apps/shell.o -Map System.map -s -T kernel/sys.ld -x
+
+blank4kb.bin:
+	dd if=/dev/zero of=blank4kb.bin count=4 bs=K
 
 boot/boot.o: boot/boot.s
 
