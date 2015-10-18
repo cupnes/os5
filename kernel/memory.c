@@ -71,7 +71,6 @@ void mem_init(void)
 	pde->pcd = 1;
 	pde->pt_base = 0x00090;
 	pde++;
-
 	for (i = 1; i < 0x400; i++) {
 		pde->all = 0;
 		pde++;
@@ -86,12 +85,10 @@ void mem_init(void)
 	pde->pcd = 1;
 	pde->pt_base = 0x00090;
 	pde++;
-
 	for (i = 1; i < 0x080; i++) {
 		pde->all = 0;
 		pde++;
 	}
-
 	pde->all = 0;
 	pde->p = 1;
 	pde->r_w = 1;
@@ -99,7 +96,6 @@ void mem_init(void)
 	pde->pcd = 1;
 	pde->pt_base = 0x00094;
 	pde++;
-
 	for (; i < 0x400; i++) {
 		pde->all = 0;
 		pde++;
@@ -116,7 +112,6 @@ void mem_init(void)
 	pte->page_base = paging_base_addr;
 	paging_base_addr += 0x00001;
 	pte++;
-
 	for (i = 1; i < 0x400; i++) {
 		pte->all = 0;
 		pte++;
