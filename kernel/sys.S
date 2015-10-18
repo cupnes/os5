@@ -43,7 +43,6 @@ timer_handler:
 	iret
 
 exception_handler:
-	jmp	exception_handler
 	call	do_exception
 	iret
 
