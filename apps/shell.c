@@ -19,6 +19,13 @@ enum {
 	COMMAND_NUM
 } _COMMAND_SET;
 
+static void shell_main(void);
+
+void shell_start(void)
+{
+	shell_main();
+}
+
 static int command_echo(char *args)
 {
 	put_str(args);
@@ -188,7 +195,7 @@ static unsigned char get_command_id(const char *command)
 	return COMMAND_NUM;
 }
 
-void shell_start(void)
+static void shell_main(void)
 {
 	while (1) {
 		char buf[MAX_LINE_SIZE];
