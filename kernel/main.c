@@ -44,7 +44,6 @@ int main(void)
 	intr_init();
 	mask = intr_get_mask_master();
 	mask &= ~(INTR_MASK_BIT_TIMER | INTR_MASK_BIT_KB);
-	/* mask &= ~INTR_MASK_BIT_KB; */
 	intr_set_mask_master(mask);
 	sti();
 
