@@ -11,14 +11,23 @@ CFLAGS	+=	-Iinclude
 
 all: fd.img
 
-fd.img: boot.bin sys.bin
-	cat boot.bin sys.bin > $@
+fd.img: boot.bin sys.bin shell.bin uptime.bin
+	cat boot.bin sys.bin shell.bin uptime.bin > $@
 
 boot.bin: boot/boot.o
 	ld -o $@ $< -T boot/boot.ld -Map boot/boot.map
 
-sys.bin: kernel/sys.o kernel/cpu.o kernel/intr.o kernel/excp.o kernel/memory.o kernel/sched.o kernel/timer.o kernel/console_io.o kernel/common.o kernel/debug.o kernel/main.o apps/shell.o apps/uptime.o
-	ld -o $@ kernel/sys.o kernel/cpu.o kernel/intr.o kernel/excp.o kernel/memory.o kernel/sched.o kernel/timer.o kernel/console_io.o kernel/common.o kernel/debug.o kernel/main.o apps/shell.o apps/uptime.o -Map System.map -s -T kernel/sys.ld -x
+shell.bin: apps/shell.o symbol_address.map
+	ld -o $@ $< $$(cat symbol_address.map) -Map apps/shell.map -s -T apps/app.ld -x
+
+uptime.bin: apps/uptime.o symbol_address.map
+	ld -o $@ $< $$(cat symbol_address.map) -Map apps/uptime.map -s -T apps/app.ld -x
+
+symbol_address.map: sys.bin
+	awk 'NF==2&&$$1~/^0/&&$$2!~/^0/{print "-defsym "$$2"="$$1}' System.map > $@
+
+sys.bin: kernel/sys.o kernel/cpu.o kernel/intr.o kernel/excp.o kernel/memory.o kernel/sched.o kernel/timer.o kernel/console_io.o kernel/common.o kernel/debug.o kernel/main.o apps/shell_init.o apps/uptime_init.o
+	ld -o $@ kernel/sys.o kernel/cpu.o kernel/intr.o kernel/excp.o kernel/memory.o kernel/sched.o kernel/timer.o kernel/console_io.o kernel/common.o kernel/debug.o kernel/main.o apps/shell_init.o apps/uptime_init.o -Map System.map -s -T kernel/sys.ld -x
 
 boot/boot.o: boot/boot.s
 
@@ -43,6 +52,10 @@ kernel/common.o: kernel/common.c
 kernel/debug.o: kernel/debug.c
 
 kernel/main.o: kernel/main.c
+
+apps/shell_init.o: apps/shell_init.c
+
+apps/uptime_init.o: apps/uptime_init.c
 
 apps/shell.o: apps/shell.c
 

@@ -2,7 +2,7 @@ OUTPUT_FORMAT("binary");
 
 SECTIONS
 {
-	. = 0x7e00;
+	. = 0x20000000;
 	.text	: {*(.text)}
 	.rodata	: {
 		*(.strings)
@@ -12,6 +12,6 @@ SECTIONS
 	.data	: {*(.data)}
 	.bss	: {*(.bss)}
 
-	. = 0x7e00 + 0x91fe;
-	.sign	: {SHORT(0xbeef)}
+	. = 0x20000000 + 4094;
+	.sign	: {SHORT(0xcafe)}
 }

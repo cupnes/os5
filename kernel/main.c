@@ -11,6 +11,7 @@ int main(void)
 {
 	unsigned char mask;
 	unsigned char i;
+	void (*app_start)(void) = (void *)0x20000000;
 
 	/* Setup console */
 	cli();
@@ -47,7 +48,7 @@ int main(void)
 	sti();
 
 	/* Start main task */
-	shell_start();
+	app_start();
 
 	return 0;
 }
