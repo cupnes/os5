@@ -28,38 +28,123 @@
 | CS    | GDT[1] |
 | DS,SS | GDT[2] |
 
-|-----------+--------------------------------------------|
-| 0000 0500 | Conventional Memory(first)                 |
-| ...       | ...                                        |
-| 0000 7e00 | loaded kernel text and data section(first) |
-|           | text begin                                 |
-|           | data begin                                 |
-|           | bss begin                                  |
-| 0001 0fff | loaded kernel text and data section(last)  |
-| 0001 1000 | loaded shell text and data section(first)  |
-| ...       | ...                                        |
-| 0001 1fff | loaded shell text and data section(last)   |
-| 0001 2000 | stack base(shell)                          |
-| 0001 2000 | loaded uptime text and data section(first) |
-| ...       | ...                                        |
-| 0001 2fff | loaded uptime text and data section(last)  |
-| 0001 3000 | stack base(uptime)                         |
-| ...       | ...                                        |
-| 0009 0000 | kernel page table(first)                   |
-| 0009 0fff | kernel page table(last)                    |
-| 0009 1000 | shell page directory(first)                |
-| 0009 1fff | slell page directory(last)                 |
-| 0009 2000 | shell page table(first)                    |
-| 0009 2fff | shell page table(last)                     |
-| 0009 3000 | uptime page directory(first)               |
-| 0009 3fff | uptime page directory(last)                |
-| 0009 4000 | uptime page table(first)                   |
-| 0009 4fff | uptime page table(last)                    |
-| ...       | ...                                        |
-| 0009 ffff | Conventional Memory(last)                  |
-|-----------+--------------------------------------------|
-| ...       | ...                                        |
-|-----------+--------------------------------------------|
-| 000b 8000 | Video Memory(first)                        |
-| 000b ffff | Video Memory(last)                         |
-|-----------+--------------------------------------------|
+** Physical Address Space
+|-----------+------------------------------|
+| 0000 0500 | Conventional Memory(first)   |
+| ...       | ...                          |
+| 0000 7e00 | loaded kernel binary(first)  |
+|           | - text                       |
+|           | - rodata                     |
+|           | - data                       |
+|           | - bss                        |
+| ...       | ...                          |
+| 0001 0ffe | - sign(0xbeef)               |
+| 0001 0fff | loaded kernel binary(last)   |
+| 0001 1000 | loaded shell binary(first)   |
+|           | - text                       |
+|           | - rodata                     |
+|           | - data                       |
+|           | - bss                        |
+| ...       | ...                          |
+| 0001 1ffe | - sign(0xcafe)               |
+| 0001 1fff | loaded shell binary(last)    |
+| 0001 2000 | loaded uptime binary(first)  |
+|           | - text                       |
+|           | - rodata                     |
+|           | - data                       |
+|           | - bss                        |
+| ...       | ...                          |
+| 0001 2ffe | - sign(0xcafe)               |
+| 0001 2fff | loaded uptime binary(last)   |
+| 0001 3000 | uptime stack base            |
+| ...       | ...                          |
+| 0008 0000 | kernel and shell stack base  |
+| ...       | ...                          |
+| 0009 0000 | kernel page table(first)     |
+| ...       | ...                          |
+| 0009 0fff | kernel page table(last)      |
+| 0009 1000 | shell page directory(first)  |
+| ...       | ...                          |
+| 0009 1fff | slell page directory(last)   |
+| 0009 2000 | shell page table(first)      |
+| ...       | ...                          |
+| 0009 2fff | shell page table(last)       |
+| 0009 3000 | uptime page directory(first) |
+| ...       | ...                          |
+| 0009 3fff | uptime page directory(last)  |
+| 0009 4000 | uptime page table(first)     |
+| ...       | ...                          |
+| 0009 4fff | uptime page table(last)      |
+| ...       | ...                          |
+| 0009 ffff | Conventional Memory(last)    |
+|-----------+------------------------------|
+| ...       | ...                          |
+|-----------+------------------------------|
+| 000b 8000 | Video Memory(first)          |
+| ...       | ...                          |
+| 000b ffff | Video Memory(last)           |
+|-----------+------------------------------|
+
+** Virtual Address Space
+|-----------+-----------------------------|
+| 0000 0000 | Kernel Address Space(first) |
+| ...       | ...                         |
+| 0000 7000 | kernel PT map(first)        |
+| ...       | ...                         |
+| 0000 7e00 | loaded kernel binary(first) |
+|           | - text                      |
+|           | - rodata                    |
+|           | - data                      |
+|           | - bss                       |
+| ...       | ...                         |
+| 0001 0ffe | - sign(0xbeef)              |
+| 0001 0fff | loaded kernel binary(last)  |
+| 0001 1000 | loaded shell binary(first)  |
+|           | - text                      |
+|           | - rodata                    |
+|           | - data                      |
+|           | - bss                       |
+| ...       | ...                         |
+| 0001 1ffe | - sign(0xcafe)              |
+| 0001 1fff | loaded shell binary(last)   |
+| 0001 2000 | loaded uptime binary(first) |
+|           | - text                      |
+|           | - rodata                    |
+|           | - data                      |
+|           | - bss                       |
+| ...       | ...                         |
+| 0001 2ffe | - sign(0xcafe)              |
+| 0001 2fff | loaded uptime binary(last)  |
+| 0001 3000 | uptime stack base           |
+| ...       | ...                         |
+| 0008 0000 | kernel and shell stack base |
+| ...       | ...                         |
+| 0008 5fff | kernel PT map(last)         |
+| ...       | ...                         |
+| 000b 8000 | kernel PT map(first)        |
+| 000b 8000 | Video Memory(first)         |
+| ...       | ...                         |
+| 000b ffff | Video Memory(last)          |
+| 000b ffff | kernel PT map(last)         |
+| ...       | ...                         |
+| 1fff ffff | Kernel Address Space(last)  |
+|-----------+-----------------------------|
+| 2000 0000 | User Address Space(first)   |
+| 2000 0000 | loaded app binary(first)    |
+|           | - text                      |
+|           | - rodata                    |
+|           | - data                      |
+|           | - bss                       |
+| ...       | ...                         |
+| 2000 0ffe | - sign(0xcafe)              |
+| 2000 0fff | loaded app binary(last)     |
+| 2000 1000 | app stack base(uptime only) |
+| ffff ffff | User Address Space(last)    |
+|-----------+-----------------------------|
+
+** ref. x86 convert address PA <-> VA
+|    | PA        |           |             |
+|    | 31 - 22   | 21 - 12   | 11 - 0      |
+|    | PD offset | PT offset | Page offset |
+|----+-----------+-----------+-------------|
+| VA |           |           |             |
