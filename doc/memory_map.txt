@@ -63,6 +63,9 @@
 | ...       | ...                          |
 | 0008 0000 | kernel stack base            |
 | ...       | ...                          |
+| 0008 f000 | kernel page directory(first) |
+| ...       | ...                          |
+| 0008 ffff | kernel page directory(last)  |
 | 0009 0000 | kernel page table(first)     |
 | ...       | ...                          |
 | 0009 0fff | kernel page table(last)      |
