@@ -71,7 +71,7 @@
 | 0009 0fff | kernel page table(last)      |
 | 0009 1000 | shell page directory(first)  |
 | ...       | ...                          |
-| 0009 1fff | slell page directory(last)   |
+| 0009 1fff | shell page directory(last)   |
 | 0009 2000 | shell page table(first)      |
 | ...       | ...                          |
 | 0009 2fff | shell page table(last)       |
