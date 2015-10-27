@@ -55,8 +55,8 @@ int main(void)
 	__asm__("ltr %0"::"r"(segment_selector));
 	put_str("task loaded.\r\n");
 
-	/* shell_init(); */
-	/* cli(); */
+	shell_init();
+	cli();
 	uptime_init();
 
 	/* Start paging */
