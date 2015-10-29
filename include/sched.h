@@ -3,7 +3,7 @@
 
 #include <cpu.h>
 
-#define TASK_NUM	3
+#define TASK_NUM	2
 
 struct task {
 	struct tss tss;
