@@ -20,7 +20,6 @@ int main(void)
 {
 	unsigned char mask;
 	unsigned char i;
-	void (*app_start)(void) = (void *)0x20000000;
 
 	struct tss kern_task_tss;
 	unsigned int old_cr3, cr3 = 0x0008f018;
@@ -69,8 +68,7 @@ int main(void)
 	intr_set_mask_master(mask);
 	sti();
 
-	/* Start main task */
-	/* app_start(); */
+	/* End of kernel initialization process */
 	while (1);
 
 	return 0;
