@@ -4,6 +4,7 @@
 #include <memory.h>
 #include <console_io.h>
 #include <timer.h>
+#include <kern_task.h>
 #include <shell.h>
 #include <uptime.h>
 
@@ -11,7 +12,6 @@ int main(void)
 {
 	unsigned char mask;
 	unsigned char i;
-	void (*app_start)(void) = (void *)0x20000000;
 
 	/* Setup console */
 	cli();
@@ -31,6 +31,7 @@ int main(void)
 	mem_init();
 
 	/* Setup tasks */
+	kern_task_init();
 	shell_init();
 	cli();
 	uptime_init();
@@ -47,8 +48,8 @@ int main(void)
 	intr_set_mask_master(mask);
 	sti();
 
-	/* Start main task */
-	app_start();
+	/* End of kernel initialization process */
+	while (1);
 
 	return 0;
 }

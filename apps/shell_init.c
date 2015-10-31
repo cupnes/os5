@@ -3,6 +3,9 @@
 #include <console_io.h>
 #include <sched.h>
 
+#define APP_ENTRY_POINT	0x20000000
+#define APP_STACK_BASE	0x20002000
+
 struct tss shell_tss;
 
 void shell_context_switch(void)
@@ -12,22 +15,21 @@ void shell_context_switch(void)
 
 void shell_init(void)
 {
-	unsigned short segment_selector = 8 * SHELL_GDT_IDX;
-	unsigned int old_cr3, cr3 = 0x00091018;
-
 	/* Setup context switch function */
 	run_queue[SHELL_ID].context_switch = shell_context_switch;
 
 	/* Setup GDT for shell_tss */
-	shell_tss.__cr3 = 0x00091018;
 	init_gdt(SHELL_GDT_IDX, (unsigned int)&shell_tss, sizeof(shell_tss));
 
-	/* Setup CR3(PDBR) */
-	__asm__("movl	%%cr3, %0":"=r"(old_cr3):);
-	cr3 |= old_cr3 & 0x00000fe7;
-	__asm__("movl	%0, %%cr3"::"r"(cr3));
-
-	/* Setup Task Register */
-	__asm__("ltr %0"::"r"(segment_selector));
-	put_str("task loaded.\r\n");
+	/* Setup shell_tss */
+	shell_tss.eip = APP_ENTRY_POINT;
+	shell_tss.esp = APP_STACK_BASE;
+	shell_tss.eflags = 0x00000200;
+	shell_tss.es = 0x0010;
+	shell_tss.cs = 0x0008;
+	shell_tss.ss = 0x0010;
+	shell_tss.ds = 0x0010;
+	shell_tss.fs = 0x0010;
+	shell_tss.gs = 0x0010;
+	shell_tss.__cr3 = 0x00091018;
 }

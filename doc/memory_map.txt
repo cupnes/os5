@@ -57,16 +57,21 @@
 | 0001 2ffe | - sign(0xcafe)               |
 | 0001 2fff | loaded uptime binary(last)   |
 | ...       | ...                          |
+| 0007 1000 | shell stack base             |
+| ...       | ...                          |
 | 0007 2000 | uptime stack base            |
 | ...       | ...                          |
-| 0008 0000 | kernel and shell stack base  |
+| 0008 0000 | kernel stack base            |
 | ...       | ...                          |
+| 0008 f000 | kernel page directory(first) |
+| ...       | ...                          |
+| 0008 ffff | kernel page directory(last)  |
 | 0009 0000 | kernel page table(first)     |
 | ...       | ...                          |
 | 0009 0fff | kernel page table(last)      |
 | 0009 1000 | shell page directory(first)  |
 | ...       | ...                          |
-| 0009 1fff | slell page directory(last)   |
+| 0009 1fff | shell page directory(last)   |
 | 0009 2000 | shell page table(first)      |
 | ...       | ...                          |
 | 0009 2fff | shell page table(last)       |
@@ -117,9 +122,11 @@
 | 0001 2ffe | - sign(0xcafe)              |
 | 0001 2fff | loaded uptime binary(last)  |
 | ...       | ...                         |
+| 0007 1000 | shell stack base            |
+| ...       | ...                         |
 | 0007 2000 | uptime stack base           |
 | ...       | ...                         |
-| 0008 0000 | kernel and shell stack base |
+| 0008 0000 | kernel stack base           |
 | ...       | ...                         |
 | 0008 5fff | kernel PT map(last)         |
 | ...       | ...                         |
@@ -140,7 +147,7 @@
 | ...       | ...                         |
 | 2000 0ffe | - sign(0xcafe)              |
 | 2000 0fff | loaded app binary(last)     |
-| 2000 2000 | app stack base(uptime only) |
+| 2000 2000 | app stack base              |
 | ffff ffff | User Address Space(last)    |
 |-----------+-----------------------------|
 
