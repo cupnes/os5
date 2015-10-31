@@ -56,7 +56,8 @@
 | ...       | ...                          |
 | 0001 2ffe | - sign(0xcafe)               |
 | 0001 2fff | loaded uptime binary(last)   |
-| 0001 3000 | uptime stack base            |
+| ...       | ...                          |
+| 0007 2000 | uptime stack base            |
 | ...       | ...                          |
 | 0008 0000 | kernel and shell stack base  |
 | ...       | ...                          |
@@ -115,7 +116,8 @@
 | ...       | ...                         |
 | 0001 2ffe | - sign(0xcafe)              |
 | 0001 2fff | loaded uptime binary(last)  |
-| 0001 3000 | uptime stack base           |
+| ...       | ...                         |
+| 0007 2000 | uptime stack base           |
 | ...       | ...                         |
 | 0008 0000 | kernel and shell stack base |
 | ...       | ...                         |
@@ -138,7 +140,7 @@
 | ...       | ...                         |
 | 2000 0ffe | - sign(0xcafe)              |
 | 2000 0fff | loaded app binary(last)     |
-| 2000 1000 | app stack base(uptime only) |
+| 2000 2000 | app stack base(uptime only) |
 | ffff ffff | User Address Space(last)    |
 |-----------+-----------------------------|
 

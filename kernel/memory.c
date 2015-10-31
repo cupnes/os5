@@ -137,9 +137,16 @@ void mem_init(void)
 	pte->pwt = 1;
 	pte->pcd = 1;
 	pte->page_base = paging_base_addr;
-	paging_base_addr += 0x00001;
 	pte++;
-	for (i = 1; i < 0x400; i++) {
+	paging_base_addr = 0x00071;
+	pte->all = 0;
+	pte->p = 1;
+	pte->r_w = 1;
+	pte->pwt = 1;
+	pte->pcd = 1;
+	pte->page_base = paging_base_addr;
+	pte++;
+	for (i = 2; i < 0x400; i++) {
 		pte->all = 0;
 		pte++;
 	}
