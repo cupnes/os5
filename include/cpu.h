@@ -13,6 +13,11 @@ __asm__ volatile ("\tpushf\n"				\
 		  "\tpopl	%0\n":"=r"(_v):);	\
 _v;							\
 })
+#define x86_get_tr()		({			\
+unsigned short _v;					\
+__asm__ volatile ("\tstr	%0\n":"=r"(_v):);	\
+_v;							\
+})
 
 struct segment_descriptor {
 	union {
