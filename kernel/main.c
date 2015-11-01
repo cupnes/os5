@@ -32,10 +32,8 @@ int main(void)
 	unsigned char i;
 
 	/* Setup console */
-	cli();
 	cursor_pos.y += 2;
 	update_cursor();
-	cli();
 
 	/* Setup exception handler */
 	for (i = 0; i < EXCEPTION_MAX; i++)
@@ -51,7 +49,6 @@ int main(void)
 	/* Setup tasks */
 	kern_task_init();
 	shell_init();
-	cli();
 	uptime_init();
 
 	/* Start paging */

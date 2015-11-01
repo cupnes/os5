@@ -2,6 +2,7 @@
 #include <intr.h>
 #include <io_port.h>
 #include <console_io.h>
+#include <kernel.h>
 
 #define QUEUE_BUF_SIZE	256
 
@@ -36,15 +37,17 @@ static unsigned char error_status;
 
 static void enqueue(struct queue *q, unsigned char data)
 {
+	unsigned char if_bit;
+
 	if (q->is_full) {
 		error_status = 1;
 	} else {
 		error_status = 0;
-		cli();
+		kern_lock(&if_bit);
 		q->buf[q->end] = data;
 		q->end++;
 		if (q->start == q->end) q->is_full = 1;
-		sti();
+		kern_unlock(&if_bit);
 	}
 }
 
@@ -63,8 +66,9 @@ static void enqueue_ir(struct queue *q, unsigned char data)
 static unsigned char dequeue(struct queue *q)
 {
 	unsigned char data = 0;
+	unsigned char if_bit;
 
-	cli();
+	kern_lock(&if_bit);
 	if (!q->is_full && (q->start == q->end)) {
 		error_status = 1;
 	} else {
@@ -73,7 +77,7 @@ static unsigned char dequeue(struct queue *q)
 		q->start++;
 		q->is_full = 0;
 	}
-	sti();
+	kern_unlock(&if_bit);
 
 	return data;
 }
@@ -120,25 +124,26 @@ void update_cursor(void)
 	unsigned int cursor_address = (cursor_pos.y * 80) + cursor_pos.x;
 	unsigned char cursor_address_msb = (unsigned char)(cursor_address >> 8);
 	unsigned char cursor_address_lsb = (unsigned char)cursor_address;
+	unsigned char if_bit;
 
-	cli();
+	kern_lock(&if_bit);
 	outb_p(0x0e, 0x3d4);
 	outb_p(cursor_address_msb, 0x3d5);
 	outb_p(0x0f, 0x3d4);
 	outb_p(cursor_address_lsb, 0x3d5);
-	sti();
+	kern_unlock(&if_bit);
 
 	if (cursor_pos.y >= ROWS) {
 		unsigned int start_address = (cursor_pos.y - ROWS + 1) * 80;
 		unsigned char start_address_msb = (unsigned char)(start_address >> 8);
 		unsigned char start_address_lsb = (unsigned char)start_address;
 
-		cli();
+		kern_lock(&if_bit);
 		outb_p(0x0c, 0x3d4);
 		outb_p(start_address_msb, 0x3d5);
 		outb_p(0x0d, 0x3d4);
 		outb_p(start_address_lsb, 0x3d5);
-		sti();
+		kern_unlock(&if_bit);
 	}
 }
 
@@ -258,12 +263,15 @@ unsigned char get_keydata_noir(void)
 unsigned char get_keydata(void)
 {
 	unsigned char data;
+	unsigned char dequeuing = 1;
+	unsigned char if_bit;
 
-	while (1) {
-		cli();
+	while (dequeuing) {
+		kern_lock(&if_bit);
 		data = dequeue_ir(&keycode_queue);
-		if (!error_status) break;
-		sti();
+		if (!error_status)
+			dequeuing = 0;
+		kern_unlock(&if_bit);
 	}
 
 	return data;
