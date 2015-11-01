@@ -3,8 +3,16 @@
 
 #include <asm/cpu.h>
 
+#define X86_EFLAGS_IF	0x00000200
+
 #define sti()	__asm__ ("sti"::)
 #define cli()	__asm__ ("cli"::)
+#define x86_get_eflags()	({			\
+unsigned int _v;					\
+__asm__ volatile ("\tpushf\n"				\
+		  "\tpopl	%0\n":"=r"(_v):);	\
+_v;							\
+})
 
 struct segment_descriptor {
 	union {
