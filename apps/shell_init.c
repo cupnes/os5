@@ -10,7 +10,7 @@ struct tss shell_tss;
 
 void shell_context_switch(void)
 {
-	__asm__("ljmp	$0x18, $0");
+	__asm__("ljmp	$0x20, $0");
 }
 
 void shell_init(void)

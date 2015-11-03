@@ -10,7 +10,7 @@ struct tss uptime_tss;
 
 void uptime_context_switch(void)
 {
-	__asm__("ljmp	$0x20, $0");
+	__asm__("ljmp	$0x28, $0");
 }
 
 void uptime_init(void)
