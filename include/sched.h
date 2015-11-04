@@ -6,10 +6,10 @@
 #define TASK_NUM	2
 
 struct task {
+	struct task *next;
 	struct tss tss;
 	unsigned short task_id;
 	void (*context_switch)(void);
-	struct task *next;
 };
 
 extern struct task task_list[TASK_NUM];
