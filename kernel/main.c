@@ -5,7 +5,6 @@
 #include <console_io.h>
 #include <timer.h>
 #include <kernel.h>
-#include <sched.h>
 #include <kern_task.h>
 #include <shell.h>
 #include <uptime.h>
@@ -51,9 +50,6 @@ int main(void)
 	kern_task_init();
 	shell_init();
 	uptime_init();
-
-	/* Setup scheduler */
-	sched_init();
 
 	/* Start paging */
 	mem_page_start();
