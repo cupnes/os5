@@ -7,6 +7,7 @@
 
 struct task {
 	struct tss tss;
+	unsigned short task_id;
 	void (*context_switch)(void);
 };
 
