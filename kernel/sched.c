@@ -1,3 +1,4 @@
+#include <stddef.h>
 #include <sched.h>
 #include <cpu.h>
 #include <io_port.h>
@@ -7,12 +8,12 @@
 
 struct task task_list[TASK_NUM];
 
-static struct task *current_task = 0;
+static struct task *current_task = NULL;
 static struct {
 	struct task *head;
 	struct task *tail;
 	unsigned int len;
-} run_queue = {0, 0, 0};
+} run_queue = {NULL, NULL, 0};
 
 void sched_init(void)
 {
