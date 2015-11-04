@@ -7,7 +7,6 @@
 
 struct task {
 	struct task *next;
-	struct tss tss;
 	unsigned short task_id;
 	void (*context_switch)(void);
 };

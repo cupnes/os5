@@ -8,7 +8,7 @@
 struct task task_list[TASK_NUM];
 
 static struct task *current_task = 0;
-/* static */ struct {
+static struct {
 	struct task *head;
 	struct task *tail;
 	unsigned int len;

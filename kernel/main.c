@@ -9,8 +9,6 @@
 #include <shell.h>
 #include <uptime.h>
 
-#include <sched.h>
-
 void kern_lock(unsigned char *if_bit)
 {
 	/* Save EFlags.IF */
@@ -52,10 +50,6 @@ int main(void)
 	kern_task_init();
 	shell_init();
 	uptime_init();
-
-	sched_runq_enq(&task_list[SHELL_ID]);
-	sched_runq_enq(&task_list[UPTIME_ID]);
-	while (1);
 
 	/* Start paging */
 	mem_page_start();
