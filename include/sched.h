@@ -9,9 +9,10 @@ struct task {
 	struct tss tss;
 	unsigned short task_id;
 	void (*context_switch)(void);
+	struct task *next;
 };
 
-extern struct task run_queue[TASK_NUM];
+extern struct task task_list[TASK_NUM];
 
 unsigned short sched_get_current(void);
 void schedule(void);

@@ -16,7 +16,7 @@ void uptime_context_switch(void)
 void uptime_init(void)
 {
 	/* Setup context switch function */
-	run_queue[UPTIME_ID].context_switch = uptime_context_switch;
+	task_list[UPTIME_ID].context_switch = uptime_context_switch;
 
 	/* Setup GDT for uptime_tss */
 	init_gdt(UPTIME_GDT_IDX, (unsigned int)&uptime_tss, sizeof(uptime_tss));

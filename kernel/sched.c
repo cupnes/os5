@@ -4,7 +4,13 @@
 #include <intr.h>
 #include <timer.h>
 
-struct task run_queue[TASK_NUM];
+struct task task_list[TASK_NUM];
+
+static struct task *current_task;
+static struct {
+	struct task *head;
+	struct task *tail;
+} run_queue = {0, 0};
 
 unsigned short sched_get_current(void)
 {
@@ -15,5 +21,5 @@ void schedule(void)
 {
 	outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_TIMER,
 	       IOADR_MPIC_OCW2);
-	run_queue[global_counter % TASK_NUM].context_switch();
+	task_list[global_counter % TASK_NUM].context_switch();
 }

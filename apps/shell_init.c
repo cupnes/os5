@@ -16,7 +16,7 @@ void shell_context_switch(void)
 void shell_init(void)
 {
 	/* Setup context switch function */
-	run_queue[SHELL_ID].context_switch = shell_context_switch;
+	task_list[SHELL_ID].context_switch = shell_context_switch;
 
 	/* Setup GDT for shell_tss */
 	init_gdt(SHELL_GDT_IDX, (unsigned int)&shell_tss, sizeof(shell_tss));
