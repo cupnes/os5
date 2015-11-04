@@ -14,6 +14,11 @@ static struct {
 	unsigned int len;
 } run_queue = {0, 0, 0};
 
+void sched_init(void)
+{
+	current_task = run_queue.tail;
+}
+
 unsigned short sched_get_current(void)
 {
 	return x86_get_tr() / 8;
@@ -40,7 +45,8 @@ int sched_runq_enq(struct task *t)
 
 void schedule(void)
 {
+	current_task = current_task->next;
 	outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_TIMER,
 	       IOADR_MPIC_OCW2);
-	task_list[global_counter % TASK_NUM].context_switch();
+	current_task->context_switch();
 }

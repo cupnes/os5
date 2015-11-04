@@ -32,4 +32,7 @@ void shell_init(void)
 	shell_tss.fs = 0x0010;
 	shell_tss.gs = 0x0010;
 	shell_tss.__cr3 = 0x00091018;
+
+	/* Add shell to run_queue */
+	sched_runq_enq(&task_list[SHELL_ID]);
 }

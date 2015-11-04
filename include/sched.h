@@ -13,6 +13,7 @@ struct task {
 
 extern struct task task_list[TASK_NUM];
 
+void sched_init(void);
 unsigned short sched_get_current(void);
 int sched_runq_enq(struct task *t);
 void schedule(void);

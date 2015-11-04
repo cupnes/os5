@@ -32,4 +32,7 @@ void uptime_init(void)
 	uptime_tss.fs = 0x0010;
 	uptime_tss.gs = 0x0010;
 	uptime_tss.__cr3 = 0x00093018;
+
+	/* Add uptime to run_queue */
+	sched_runq_enq(&task_list[UPTIME_ID]);
 }
