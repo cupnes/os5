@@ -25,12 +25,12 @@ int sched_runq_enq(struct task *t)
 
 	kern_lock(&if_bit);
 
-	t->next = 0;
+	if (!run_queue.head)
+		run_queue.head = t;
+	t->next = run_queue.head;
 	if (run_queue.tail)
 		run_queue.tail->next = t;
 	run_queue.tail = t;
-	if (!run_queue.head)
-		run_queue.head = t;
 	run_queue.len++;
 
 	kern_unlock(&if_bit);
