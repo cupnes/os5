@@ -15,6 +15,7 @@ struct task {
 extern struct task task_list[TASK_NUM];
 
 unsigned short sched_get_current(void);
+int sched_runq_enq(struct task *t);
 void schedule(void);
 
 #endif /* _SCHED_H_ */
