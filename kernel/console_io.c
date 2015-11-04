@@ -51,18 +51,6 @@ static void enqueue(struct queue *q, unsigned char data)
 	}
 }
 
-static void enqueue_ir(struct queue *q, unsigned char data)
-{
-	if (q->is_full) {
-		error_status = 1;
-	} else {
-		error_status = 0;
-		q->buf[q->end] = data;
-		q->end++;
-		if (q->start == q->end) q->is_full = 1;
-	}
-}
-
 static unsigned char dequeue(struct queue *q)
 {
 	unsigned char data = 0;
@@ -82,22 +70,6 @@ static unsigned char dequeue(struct queue *q)
 	return data;
 }
 
-static unsigned char dequeue_ir(struct queue *q)
-{
-	unsigned char data = 0;
-
-	if (!q->is_full && (q->start == q->end)) {
-		error_status = 1;
-	} else {
-		error_status = 0;
-		data = q->buf[q->start];
-		q->start++;
-		q->is_full = 0;
-	}
-
-	return data;
-}
-
 void do_ir_keyboard(void)
 {
 	unsigned char status, data;
@@ -105,7 +77,7 @@ void do_ir_keyboard(void)
 	status = inb_p(IOADR_KBC_STATUS);
 	if (status & IOADR_KBC_STATUS_BIT_OBF) {
 		data = inb_p(IOADR_KBC_DATA);
-		enqueue_ir(&keycode_queue, data);
+		enqueue(&keycode_queue, data);
 	}
 	outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_KB,
 		IOADR_MPIC_OCW2);
@@ -268,7 +240,7 @@ unsigned char get_keydata(void)
 
 	while (dequeuing) {
 		kern_lock(&if_bit);
-		data = dequeue_ir(&keycode_queue);
+		data = dequeue(&keycode_queue);
 		if (!error_status)
 			dequeuing = 0;
 		kern_unlock(&if_bit);
