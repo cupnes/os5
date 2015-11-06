@@ -18,6 +18,7 @@ unsigned short _v;					\
 __asm__ volatile ("\tstr	%0\n":"=r"(_v):);	\
 _v;							\
 })
+#define x86_halt()	__asm__ ("hlt"::)
 
 struct segment_descriptor {
 	union {
