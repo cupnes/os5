@@ -1,7 +1,9 @@
 #include <kern_task.h>
 #include <cpu.h>
+#include <sched.h>
 
 #define KERN_TASK_GDT_IDX	3
+#define KERN_TASK_ID		0
 
 static void kern_task_context_switch(void)
 {
@@ -20,4 +22,7 @@ void kern_task_init(void)
 	cr3 |= old_cr3 & 0x00000fe7;
 	__asm__("movl	%0, %%cr3"::"r"(cr3));
 	__asm__("ltr %0"::"r"(segment_selector));
+
+	/* Setup context switch function */
+	task_list[KERN_TASK_ID].context_switch = kern_task_context_switch;
 }
