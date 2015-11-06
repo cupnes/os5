@@ -5,6 +5,7 @@
 #include <intr.h>
 #include <timer.h>
 #include <kernel.h>
+#include <kern_task.h>
 
 struct task task_list[TASK_NUM];
 
@@ -41,7 +42,17 @@ int sched_runq_enq(struct task *t)
 
 void schedule(void)
 {
-	if (current_task) {
+	if (!run_queue.head) {
+		if (!current_task) {
+			outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_TIMER,
+			       IOADR_MPIC_OCW2);
+		} else {
+			current_task = NULL;
+			outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_TIMER,
+			       IOADR_MPIC_OCW2);
+			task_list[KERN_TASK_ID].context_switch();
+		}
+	} else if (current_task) {
 		if (current_task != current_task->next) {
 			current_task = current_task->next;
 			outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_TIMER,

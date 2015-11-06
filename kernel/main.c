@@ -64,7 +64,9 @@ int main(void)
 	sti();
 
 	/* End of kernel initialization process */
-	while (1);
+	while (1) {
+		x86_halt();
+	}
 
 	return 0;
 }

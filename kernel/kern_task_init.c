@@ -3,7 +3,6 @@
 #include <sched.h>
 
 #define KERN_TASK_GDT_IDX	3
-#define KERN_TASK_ID		0
 
 static void kern_task_context_switch(void)
 {
