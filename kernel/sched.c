@@ -47,6 +47,29 @@ int sched_runq_enq(struct task *t)
 	return 0;
 }
 
+int sched_runq_del(struct task *t)
+{
+	unsigned char if_bit;
+
+	if (!run_queue.head)
+		return -1;
+
+	kern_lock(&if_bit);
+
+	if (run_queue.head->next != run_queue.head) {
+		if (run_queue.head == t)
+			run_queue.head = run_queue.head->next;
+		t->prev->next = t->next;
+		t->next->prev = t->prev;
+	} else
+		run_queue.head = NULL;
+	run_queue.len--;
+
+	kern_unlock(&if_bit);
+
+	return 0;
+}
+
 void schedule(void)
 {
 	if (!run_queue.head) {
@@ -74,4 +97,18 @@ void schedule(void)
 		       IOADR_MPIC_OCW2);
 		current_task->context_switch();
 	}
+}
+
+void wakeup_after_msec(unsigned int msec)
+{
+	unsigned char if_bit;
+
+	kern_lock(&if_bit);
+
+	current_task->wakeup_after_msec = msec;
+	sched_runq_del(current_task);
+
+	kern_unlock(&if_bit);
+
+	schedule();
 }
