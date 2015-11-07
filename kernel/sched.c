@@ -99,7 +99,7 @@ void schedule(void)
 	}
 }
 
-int sched_update_wakeup_queue(void)
+int sched_update_wakeupq(void)
 {
 	struct task *t = run_queue.head;
 	unsigned char if_bit;
