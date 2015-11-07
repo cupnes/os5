@@ -9,6 +9,7 @@ struct task {
 	struct task *next;
 	unsigned short task_id;
 	void (*context_switch)(void);
+	unsigned int wakeup_after_msec;
 };
 
 extern struct task task_list[TASK_NUM];

@@ -8,6 +8,11 @@
 #include <kern_task.h>
 
 struct task task_list[TASK_NUM];
+struct {
+	struct task *head;
+	struct task *tail;
+	unsigned int len;
+} wakeup_queue = {NULL, NULL, 0};
 
 static struct task *current_task = NULL;
 static struct {
