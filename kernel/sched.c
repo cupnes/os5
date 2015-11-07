@@ -99,6 +99,26 @@ void schedule(void)
 	}
 }
 
+int sched_update_wakeup_queue(void)
+{
+	struct task *t = run_queue.head;
+	unsigned char if_bit;
+
+	if (!wakeup_queue.head)
+		return -1;
+
+	kern_lock(&if_bit);
+
+	do {
+		t->wakeup_after_msec -= TIMER_TICK_MS;
+		t = t->next;
+	} while (t != run_queue.head);
+
+	kern_unlock(&if_bit);
+
+	return 0;
+}
+
 void wakeup_after_msec(unsigned int msec)
 {
 	unsigned char if_bit;
