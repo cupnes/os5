@@ -8,6 +8,7 @@ unsigned int global_counter = 0;
 void do_ir_timer(void)
 {
 	global_counter++;
+	sched_update_wakeupq();
 	schedule();
 }
 
