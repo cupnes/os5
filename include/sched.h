@@ -6,6 +6,7 @@
 #define TASK_NUM	3
 
 struct task {
+	struct task *prev;
 	struct task *next;
 	unsigned short task_id;
 	void (*context_switch)(void);

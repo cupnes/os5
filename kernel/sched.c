@@ -10,16 +10,14 @@
 struct task task_list[TASK_NUM];
 struct {
 	struct task *head;
-	struct task *tail;
 	unsigned int len;
-} wakeup_queue = {NULL, NULL, 0};
+} wakeup_queue = {NULL, 0};
 
 static struct task *current_task = NULL;
 static struct {
 	struct task *head;
-	struct task *tail;
 	unsigned int len;
-} run_queue = {NULL, NULL, 0};
+} run_queue = {NULL, 0};
 
 unsigned short sched_get_current(void)
 {
@@ -32,12 +30,16 @@ int sched_runq_enq(struct task *t)
 
 	kern_lock(&if_bit);
 
-	if (!run_queue.head)
+	if (run_queue.head) {
+		t->prev = run_queue.head->prev;
+		t->next = run_queue.head;
+		run_queue.head->prev->next = t;
+		run_queue.head->prev = t;
+	} else {
+		t->prev = t;
+		t->next = t;
 		run_queue.head = t;
-	t->next = run_queue.head;
-	if (run_queue.tail)
-		run_queue.tail->next = t;
-	run_queue.tail = t;
+	}
 	run_queue.len++;
 
 	kern_unlock(&if_bit);
