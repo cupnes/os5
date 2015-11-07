@@ -18,6 +18,7 @@ static struct {
 	struct task *head;
 	unsigned int len;
 } run_queue = {NULL, 0};
+static struct task dummy_task;
 
 unsigned short sched_get_current(void)
 {
@@ -99,6 +100,29 @@ void schedule(void)
 	}
 }
 
+int sched_wakeupq_enq(struct task *t)
+{
+	unsigned char if_bit;
+
+	kern_lock(&if_bit);
+
+	if (wakeup_queue.head) {
+		t->prev = wakeup_queue.head->prev;
+		t->next = wakeup_queue.head;
+		wakeup_queue.head->prev->next = t;
+		wakeup_queue.head->prev = t;
+	} else {
+		t->prev = t;
+		t->next = t;
+		wakeup_queue.head = t;
+	}
+	wakeup_queue.len++;
+
+	kern_unlock(&if_bit);
+
+	return 0;
+}
+
 int sched_update_wakeupq(void)
 {
 	struct task *t = run_queue.head;
@@ -125,10 +149,13 @@ void wakeup_after_msec(unsigned int msec)
 
 	kern_lock(&if_bit);
 
+	if (current_task->next != current_task)
+		dummy_task.next = current_task->next;
 	current_task->wakeup_after_msec = msec;
 	sched_runq_del(current_task);
+	sched_wakeupq_enq(current_task);
+	current_task = &dummy_task;
+	schedule();
 
 	kern_unlock(&if_bit);
-
-	schedule();
 }
