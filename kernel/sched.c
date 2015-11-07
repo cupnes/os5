@@ -123,9 +123,8 @@ int sched_wakeupq_enq(struct task *t)
 	return 0;
 }
 
-int sched_update_wakeupq(void)
+int sched_wakeupq_del(struct task *t)
 {
-	struct task *t = run_queue.head;
 	unsigned char if_bit;
 
 	if (!wakeup_queue.head)
@@ -133,6 +132,31 @@ int sched_update_wakeupq(void)
 
 	kern_lock(&if_bit);
 
+	if (wakeup_queue.head->next != wakeup_queue.head) {
+		if (wakeup_queue.head == t)
+			wakeup_queue.head = wakeup_queue.head->next;
+		t->prev->next = t->next;
+		t->next->prev = t->prev;
+	} else
+		wakeup_queue.head = NULL;
+	wakeup_queue.len--;
+
+	kern_unlock(&if_bit);
+
+	return 0;
+}
+
+int sched_update_wakeupq(void)
+{
+	struct task *t;
+	unsigned char if_bit;
+
+	if (!wakeup_queue.head)
+		return -1;
+
+	kern_lock(&if_bit);
+
+	t = run_queue.head;
 	do {
 		t->wakeup_after_msec -= TIMER_TICK_MS;
 		t = t->next;
