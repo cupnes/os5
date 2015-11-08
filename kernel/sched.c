@@ -240,3 +240,29 @@ int sched_wakeupevq_del(struct task *t)
 
 	return 0;
 }
+
+int sched_update_wakeupevq(unsigned char event_type)
+{
+	struct task *t, *next;
+	unsigned char if_bit;
+
+	if (!wakeup_event_queue.head)
+		return -1;
+
+	kern_lock(&if_bit);
+
+	t = wakeup_event_queue.head;
+	do {
+		next = t->next;
+		if (t->wakeup_after_event == event_type) {
+			t->wakeup_after_event = 0;
+			sched_wakeupevq_del(t);
+			sched_runq_enq(t);
+		}
+		t = next;
+	} while (wakeup_event_queue.head && t != wakeup_event_queue.head);
+
+	kern_unlock(&if_bit);
+
+	return 0;
+}
