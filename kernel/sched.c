@@ -8,16 +8,16 @@
 #include <kern_task.h>
 
 struct task task_list[TASK_NUM];
-struct {
-	struct task *head;
-	unsigned int len;
-} wakeup_queue = {NULL, 0};
 
 static struct task *current_task = NULL;
 static struct {
 	struct task *head;
 	unsigned int len;
 } run_queue = {NULL, 0};
+static struct {
+	struct task *head;
+	unsigned int len;
+} wakeup_queue = {NULL, 0};
 static struct task dummy_task;
 
 unsigned short sched_get_current(void)
