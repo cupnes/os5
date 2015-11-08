@@ -217,3 +217,26 @@ int sched_wakeupevq_enq(struct task *t)
 
 	return 0;
 }
+
+int sched_wakeupevq_del(struct task *t)
+{
+	unsigned char if_bit;
+
+	if (!wakeup_event_queue.head)
+		return -1;
+
+	kern_lock(&if_bit);
+
+	if (wakeup_event_queue.head->next != wakeup_event_queue.head) {
+		if (wakeup_event_queue.head == t)
+			wakeup_event_queue.head = wakeup_event_queue.head->next;
+		t->prev->next = t->next;
+		t->next->prev = t->prev;
+	} else
+		wakeup_event_queue.head = NULL;
+	wakeup_event_queue.len--;
+
+	kern_unlock(&if_bit);
+
+	return 0;
+}
