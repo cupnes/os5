@@ -19,6 +19,8 @@
 #define ASCII_BS					0x08
 #define ASCII_HT					0x09
 
+#define EVENT_TYPE_KBD			1
+
 struct cursor_position {
 	unsigned int x, y;
 };

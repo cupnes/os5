@@ -3,6 +3,7 @@
 #include <io_port.h>
 #include <console_io.h>
 #include <kernel.h>
+#include <sched.h>
 
 #define QUEUE_BUF_SIZE	256
 
@@ -79,6 +80,7 @@ void do_ir_keyboard(void)
 		data = inb_p(IOADR_KBC_DATA);
 		enqueue(&keycode_queue, data);
 	}
+	sched_update_wakeupevq(EVENT_TYPE_KBD);
 	outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_KB,
 		IOADR_MPIC_OCW2);
 }
@@ -244,6 +246,8 @@ unsigned char get_keydata(void)
 		if (!error_status)
 			dequeuing = 0;
 		kern_unlock(&if_bit);
+		if (dequeuing)
+			wakeup_after_event(EVENT_TYPE_KBD);
 	}
 
 	return data;
