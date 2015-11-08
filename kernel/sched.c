@@ -194,3 +194,26 @@ void wakeup_after_msec(unsigned int msec)
 
 	kern_unlock(&if_bit);
 }
+
+int sched_wakeupevq_enq(struct task *t)
+{
+	unsigned char if_bit;
+
+	kern_lock(&if_bit);
+
+	if (wakeup_event_queue.head) {
+		t->prev = wakeup_event_queue.head->prev;
+		t->next = wakeup_event_queue.head;
+		wakeup_event_queue.head->prev->next = t;
+		wakeup_event_queue.head->prev = t;
+	} else {
+		t->prev = t;
+		t->next = t;
+		wakeup_event_queue.head = t;
+	}
+	wakeup_event_queue.len++;
+
+	kern_unlock(&if_bit);
+
+	return 0;
+}
