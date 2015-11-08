@@ -266,3 +266,20 @@ int sched_update_wakeupevq(unsigned char event_type)
 
 	return 0;
 }
+
+void wakeup_after_event(unsigned char event_type)
+{
+	unsigned char if_bit;
+
+	kern_lock(&if_bit);
+
+	if (current_task->next != current_task)
+		dummy_task.next = current_task->next;
+	current_task->wakeup_after_event = event_type;
+	sched_runq_del(current_task);
+	sched_wakeupevq_enq(current_task);
+	current_task = &dummy_task;
+	schedule();
+
+	kern_unlock(&if_bit);
+}

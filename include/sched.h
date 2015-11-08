@@ -22,5 +22,6 @@ void schedule(void);
 int sched_update_wakeupq(void);
 void wakeup_after_msec(unsigned int msec);
 int sched_update_wakeupevq(unsigned char event_type);
+void wakeup_after_event(unsigned char event_type);
 
 #endif /* _SCHED_H_ */
