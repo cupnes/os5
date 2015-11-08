@@ -11,6 +11,7 @@ struct task {
 	unsigned short task_id;
 	void (*context_switch)(void);
 	unsigned int wakeup_after_msec;
+	unsigned char wakeup_after_event;
 };
 
 extern struct task task_list[TASK_NUM];

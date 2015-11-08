@@ -18,6 +18,10 @@ static struct {
 	struct task *head;
 	unsigned int len;
 } wakeup_queue = {NULL, 0};
+static struct {
+	struct task *head;
+	unsigned int len;
+} wakeup_event_queue = {NULL, 0};
 static struct task dummy_task;
 
 unsigned short sched_get_current(void)
