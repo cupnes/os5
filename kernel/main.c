@@ -9,6 +9,8 @@
 #include <shell.h>
 #include <uptime.h>
 
+#define INTR_NUM_USER128	0x80
+
 void kern_lock(unsigned char *if_bit)
 {
 	/* Save EFlags.IF */
@@ -26,8 +28,15 @@ void kern_unlock(unsigned char *if_bit)
 		sti();
 }
 
+void do_syscall(void)
+{
+	put_str("syscall\r\n");
+}
+
 int main(void)
 {
+	extern unsigned char syscall_handler;
+
 	unsigned char mask;
 	unsigned char i;
 
@@ -57,6 +66,7 @@ int main(void)
 	/* Setup interrupt handler and mask register */
 	intr_set_handler(INTR_NUM_TIMER, (unsigned int)&timer_handler);
 	intr_set_handler(INTR_NUM_KB, (unsigned int)&keyboard_handler);
+	intr_set_handler(INTR_NUM_USER128, (unsigned int)&syscall_handler);
 	intr_init();
 	mask = intr_get_mask_master();
 	mask &= ~(INTR_MASK_BIT_TIMER | INTR_MASK_BIT_KB);

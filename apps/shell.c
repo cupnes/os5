@@ -146,6 +146,7 @@ static int command_iowriteb(char *args)
 static int command_test(char *args)
 {
 	put_str("test\r\n");
+	__asm__ ("int $0x80"::);
 
 	return 0;
 }
