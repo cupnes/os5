@@ -26,6 +26,35 @@ void shell_start(void)
 	shell_main();
 }
 
+static void str_get_first_entry(const char *line, char *first, char *other)
+{
+	int line_len, first_len, other_len;
+
+	line_len = str_get_len(line);
+	first_len = str_find_char(line, ' ');
+	if (first_len < 0) {
+		copy_mem((void *)line, (void *)first, line_len);
+		first_len = line_len;
+		other_len = 0;
+		other[other_len] = '\0';
+	} else {
+		copy_mem((void *)line, (void *)first, first_len);
+		first[first_len] = '\0';
+		first_len++;
+		other_len = line_len - first_len;
+		copy_mem((void *)(line + first_len), (void *)other, other_len);
+	}
+
+#ifdef DEBUG
+	put_str(line);
+	put_str("|");
+	put_str(first);
+	put_str(":");
+	put_str(other);
+	put_str("\r\n");
+#endif /* DEBUG */
+}
+
 static int command_echo(char *args)
 {
 	put_str(args);
