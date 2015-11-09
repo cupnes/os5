@@ -55,6 +55,22 @@ static void str_get_first_entry(const char *line, char *first, char *other)
 #endif /* DEBUG */
 }
 
+static int str_conv_ahex_int(const char *hex_str)
+{
+	int len = str_get_len(hex_str);
+	int val = 0, i;
+
+	for (i = 0; hex_str[i] != '\0'; i++) {
+		if (('0' <= hex_str[i]) && (hex_str[i] <= '9')) {
+			val += (hex_str[i] - '0') * pow(16, len - 2 - i);
+		} else {
+			val += (hex_str[i] - 'a' + 10) * pow(16, len - 2 - i);
+		}
+	}
+
+	return val;
+}
+
 static int command_echo(char *args)
 {
 	put_str(args);
