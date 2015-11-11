@@ -35,15 +35,21 @@ end:
 	jmp	end
 
 keyboard_handler:
+	pushal
 	call	do_ir_keyboard
+	popal
 	iret
 
 timer_handler:
+	pushal
 	call	do_ir_timer
+	popal
 	iret
 
 exception_handler:
+	pushal
 	call	do_exception
+	popal
 	iret
 
 general_protection_handler:
