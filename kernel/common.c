@@ -31,10 +31,3 @@ int str_find_char(const char *src, char key)
 
 	return i;
 }
-
-int str_get_len(const char *src)
-{
-	int len;
-	for (len = 0; src[len] != '\0'; len++);
-	return len + 1;
-}

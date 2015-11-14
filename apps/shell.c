@@ -26,6 +26,13 @@ void shell_start(void)
 	shell_main();
 }
 
+static int str_get_len(const char *src)
+{
+	int len;
+	for (len = 0; src[len] != '\0'; len++);
+	return len + 1;
+}
+
 static void str_get_first_entry(const char *line, char *first, char *other)
 {
 	int line_len, first_len, other_len;
