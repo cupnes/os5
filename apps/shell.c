@@ -1,7 +1,6 @@
 #include <shell.h>
 #include <io_port.h>
 #include <console_io.h>
-#include <common.h>
 
 #define MAX_LINE_SIZE	512
 
@@ -24,6 +23,12 @@ static void shell_main(void);
 void shell_start(void)
 {
 	shell_main();
+}
+
+static int pow(int num, int multer)
+{
+	if (multer == 0) return 1;
+	return pow(num, multer - 1) * num;
 }
 
 static void copy_mem(const void *src, void *dst, unsigned int size)

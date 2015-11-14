@@ -26,8 +26,8 @@ uptime.bin: apps/uptime.o
 symbol_address.map: sys.bin
 	awk 'NF==2&&$$1~/^0/&&$$2!~/^0/{print "-defsym "$$2"="$$1}' System.map > $@
 
-sys.bin: kernel/sys.o kernel/cpu.o kernel/intr.o kernel/excp.o kernel/memory.o kernel/sched.o kernel/timer.o kernel/console_io.o kernel/common.o kernel/debug.o kernel/main.o kernel/kern_task_init.o apps/shell_init.o apps/uptime_init.o
-	ld -o $@ kernel/sys.o kernel/cpu.o kernel/intr.o kernel/excp.o kernel/memory.o kernel/sched.o kernel/timer.o kernel/console_io.o kernel/common.o kernel/debug.o kernel/main.o kernel/kern_task_init.o apps/shell_init.o apps/uptime_init.o -Map System.map -s -T kernel/sys.ld -x
+sys.bin: kernel/sys.o kernel/cpu.o kernel/intr.o kernel/excp.o kernel/memory.o kernel/sched.o kernel/timer.o kernel/console_io.o kernel/debug.o kernel/main.o kernel/kern_task_init.o apps/shell_init.o apps/uptime_init.o
+	ld -o $@ kernel/sys.o kernel/cpu.o kernel/intr.o kernel/excp.o kernel/memory.o kernel/sched.o kernel/timer.o kernel/console_io.o kernel/debug.o kernel/main.o kernel/kern_task_init.o apps/shell_init.o apps/uptime_init.o -Map System.map -s -T kernel/sys.ld -x
 
 boot/boot.o: boot/boot.s
 
@@ -46,8 +46,6 @@ kernel/sched.o: kernel/sched.c
 kernel/timer.o: kernel/timer.c
 
 kernel/console_io.o: kernel/console_io.c
-
-kernel/common.o: kernel/common.c
 
 kernel/debug.o: kernel/debug.c
 
