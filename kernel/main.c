@@ -43,6 +43,9 @@ unsigned int do_syscall(unsigned int syscall_id, unsigned int arg1, unsigned int
 	case SYSCALL_CON_PUT_STR_POS:
 		put_str_pos((char *)arg1, (unsigned char)arg2, (unsigned char)arg3);
 		return 0;
+	case SYSCALL_CON_DUMP_HEX_POS:
+		dump_hex_pos(arg1, arg2, (unsigned char)(arg3 >> 16), (unsigned char)(arg3 & 0x0000ffff));
+		return 0;
 	}
 
 	return -1;
