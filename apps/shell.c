@@ -33,6 +33,20 @@ static int str_get_len(const char *src)
 	return len + 1;
 }
 
+static int str_find_char(const char *src, char key)
+{
+	int i;
+
+	for (i = 0; src[i] != key; i++) {
+		if (src[i] == '\0') {
+			i = -1;
+			break;
+		}
+	}
+
+	return i;
+}
+
 static void str_get_first_entry(const char *line, char *first, char *other)
 {
 	int line_len, first_len, other_len;

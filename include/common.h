@@ -3,6 +3,5 @@
 
 void copy_mem(const void *src, void *dst, unsigned int size);
 int pow(int num, int multer);
-int str_find_char(const char *src, char key);
 
 #endif /* _COMMON_H_ */
