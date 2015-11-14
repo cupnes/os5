@@ -5,6 +5,7 @@
 #include <console_io.h>
 #include <timer.h>
 #include <kernel.h>
+#include <sched.h>
 #include <kern_task.h>
 #include <shell.h>
 #include <uptime.h>
@@ -34,6 +35,9 @@ unsigned int do_syscall(unsigned int syscall_id, unsigned int arg1, unsigned int
 	case SYSCALL_TIMER_GET_GLOBAL_COUNTER:
 		return timer_get_global_counter();
 		break;
+	case SYSCALL_SCHED_WAKEUP_MSEC:
+		wakeup_after_msec(arg1);
+		return 0;
 	}
 
 	return -1;

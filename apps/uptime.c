@@ -19,7 +19,7 @@ void uptime_start(void)
 			put_str_pos("uptime:", COLUMNS - (7 + 4), cursor_pos.y - ROWS + 1);
 			dump_hex_pos(uptime, 4, COLUMNS - 4, cursor_pos.y - ROWS + 1);
 		}
-		wakeup_after_msec(33);
+		syscall(SYSCALL_SCHED_WAKEUP_MSEC, 33, 0, 0);
 	}
 }
 
