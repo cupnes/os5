@@ -38,6 +38,8 @@ unsigned int do_syscall(unsigned int syscall_id, unsigned int arg1, unsigned int
 	case SYSCALL_SCHED_WAKEUP_MSEC:
 		wakeup_after_msec(arg1);
 		return 0;
+	case SYSCALL_CON_GET_CURSOR_POS_Y:
+		return (unsigned int)cursor_pos.y;
 	}
 
 	return -1;

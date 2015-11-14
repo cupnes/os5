@@ -3,7 +3,8 @@
 
 enum {
 	SYSCALL_TIMER_GET_GLOBAL_COUNTER = 1,
-	SYSCALL_SCHED_WAKEUP_MSEC
+	SYSCALL_SCHED_WAKEUP_MSEC,
+	SYSCALL_CON_GET_CURSOR_POS_Y
 };
 
 void kern_lock(unsigned char *if_bit);
