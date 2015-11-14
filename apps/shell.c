@@ -43,6 +43,11 @@ static void shell_put_str(char *str)
 	syscall(SYSCALL_CON_PUT_STR, (unsigned int)str, 0, 0);
 }
 
+static void shell_dump_hex(unsigned int val, unsigned int num_digits)
+{
+	syscall(SYSCALL_CON_DUMP_HEX, val, num_digits, 0);
+}
+
 static int pow(int num, int multer)
 {
 	if (multer == 0) return 1;
@@ -166,7 +171,7 @@ static int command_readb(char *args)
 
 	str_get_first_entry(args, first, other);
 	addr = (unsigned char *)str_conv_ahex_int(first);
-	dump_hex(*addr, 2);
+	shell_dump_hex(*addr, 2);
 	shell_put_str("\r\n");
 
 	return 0;
@@ -179,7 +184,7 @@ static int command_readw(char *args)
 
 	str_get_first_entry(args, first, other);
 	addr = (unsigned short *)str_conv_ahex_int(first);
-	dump_hex(*addr, 4);
+	shell_dump_hex(*addr, 4);
 	shell_put_str("\r\n");
 
 	return 0;
@@ -192,7 +197,7 @@ static int command_readl(char *args)
 
 	str_get_first_entry(args, first, other);
 	addr = (unsigned int *)str_conv_ahex_int(first);
-	dump_hex(*addr, 8);
+	shell_dump_hex(*addr, 8);
 	shell_put_str("\r\n");
 
 	return 0;
@@ -205,7 +210,7 @@ static int command_ioreadb(char *args)
 
 	str_get_first_entry(args, first, other);
 	addr = (unsigned short)str_conv_ahex_int(first);
-	dump_hex(inb_p(addr), 2);
+	shell_dump_hex(inb_p(addr), 2);
 	shell_put_str("\r\n");
 
 	return 0;
