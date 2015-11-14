@@ -22,3 +22,8 @@ void timer_init(void)
 	outb_p(0x9c, IOADR_PIT_COUNTER0);
 	outb_p(0x2e, IOADR_PIT_COUNTER0);
 }
+
+unsigned int timer_get_global_counter(void)
+{
+	return global_counter;
+}

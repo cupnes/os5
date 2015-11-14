@@ -28,9 +28,15 @@ void kern_unlock(unsigned char *if_bit)
 		sti();
 }
 
-void do_syscall(void)
+unsigned int do_syscall(unsigned int syscall_id, unsigned int arg1, unsigned int arg2, unsigned int arg3)
 {
-	put_str("syscall\r\n");
+	switch (syscall_id) {
+	case SYSCALL_TIMER_GET_GLOBAL_COUNTER:
+		return timer_get_global_counter();
+		break;
+	}
+
+	return -1;
 }
 
 int main(void)

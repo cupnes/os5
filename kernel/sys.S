@@ -61,7 +61,15 @@ page_fault_handler:
 	iret
 
 syscall_handler:
+	pushl	%edx
+	pushl	%ecx
+	pushl	%ebx
+	pushl	%eax
 	call	do_syscall
+	popl	%ecx
+	popl	%ecx
+	popl	%ecx
+	popl	%ecx
 	iret
 
 ignore_int:

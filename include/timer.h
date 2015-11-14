@@ -17,5 +17,6 @@ extern unsigned char timer_handler;
 extern unsigned int global_counter;
 
 void timer_init(void);
+unsigned int timer_get_global_counter(void);
 
 #endif /* _TIMER_H_ */
