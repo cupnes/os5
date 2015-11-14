@@ -60,6 +60,9 @@ unsigned int do_syscall(unsigned int syscall_id, unsigned int arg1, unsigned int
 		dump_hex_pos(arg1, arg2, (unsigned char)(arg3 >> 16), (unsigned char)(arg3 & 0x0000ffff));
 		result= 0;
 		break;
+	case SYSCALL_CON_GET_LINE:
+		result = get_line((char *)arg1, arg2);
+		break;
 	}
 
 	return result;

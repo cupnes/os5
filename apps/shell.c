@@ -334,7 +334,7 @@ static void shell_main(void)
 		unsigned char command_id;
 
 		shell_put_str("OS5> ");
-		if (get_line(buf, MAX_LINE_SIZE) <= 0) {
+		if (syscall(SYSCALL_CON_GET_LINE, (unsigned int)buf, MAX_LINE_SIZE, 0) <= 0) {
 			continue;
 		}
 		str_get_first_entry(buf, command, args);
