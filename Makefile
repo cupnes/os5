@@ -20,8 +20,8 @@ boot.bin: boot/boot.o
 shell.bin: apps/shell.o symbol_address.map
 	ld -o $@ $< $$(cat symbol_address.map) -Map apps/shell.map -s -T apps/app.ld -x
 
-uptime.bin: apps/uptime.o symbol_address.map
-	ld -o $@ $< $$(cat symbol_address.map) -Map apps/uptime.map -s -T apps/app.ld -x
+uptime.bin: apps/uptime.o
+	ld -o $@ $< -Map apps/uptime.map -s -T apps/app.ld -x
 
 symbol_address.map: sys.bin
 	awk 'NF==2&&$$1~/^0/&&$$2!~/^0/{print "-defsym "$$2"="$$1}' System.map > $@
