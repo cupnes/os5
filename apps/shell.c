@@ -1,6 +1,7 @@
 #include <shell.h>
 #include <io_port.h>
 #include <console_io.h>
+#include <kernel.h>
 
 #define MAX_LINE_SIZE	512
 
@@ -23,6 +24,23 @@ static void shell_main(void);
 void shell_start(void)
 {
 	shell_main();
+}
+
+static unsigned int syscall(unsigned int syscall_id, unsigned int arg1, unsigned int arg2, unsigned int arg3)
+{
+	unsigned int result;
+
+	__asm__ (
+		"\tint $0x80\n"
+	:"=a"(result)
+	:"a"(syscall_id), "b"(arg1), "c"(arg2), "d"(arg3));
+
+	return result;
+}
+
+static void shell_put_str(char *str)
+{
+	syscall(SYSCALL_CON_PUT_STR, (unsigned int)str, 0, 0);
 }
 
 static int pow(int num, int multer)
@@ -84,12 +102,12 @@ static void str_get_first_entry(const char *line, char *first, char *other)
 	}
 
 #ifdef DEBUG
-	put_str(line);
-	put_str("|");
-	put_str(first);
-	put_str(":");
-	put_str(other);
-	put_str("\r\n");
+	shell_put_str(line);
+	shell_put_str("|");
+	shell_put_str(first);
+	shell_put_str(":");
+	shell_put_str(other);
+	shell_put_str("\r\n");
 #endif /* DEBUG */
 }
 
@@ -135,8 +153,8 @@ static int str_compare(const char *src, const char *dst)
 
 static int command_echo(char *args)
 {
-	put_str(args);
-	put_str("\r\n");
+	shell_put_str(args);
+	shell_put_str("\r\n");
 
 	return 0;
 }
@@ -149,7 +167,7 @@ static int command_readb(char *args)
 	str_get_first_entry(args, first, other);
 	addr = (unsigned char *)str_conv_ahex_int(first);
 	dump_hex(*addr, 2);
-	put_str("\r\n");
+	shell_put_str("\r\n");
 
 	return 0;
 }
@@ -162,7 +180,7 @@ static int command_readw(char *args)
 	str_get_first_entry(args, first, other);
 	addr = (unsigned short *)str_conv_ahex_int(first);
 	dump_hex(*addr, 4);
-	put_str("\r\n");
+	shell_put_str("\r\n");
 
 	return 0;
 }
@@ -175,7 +193,7 @@ static int command_readl(char *args)
 	str_get_first_entry(args, first, other);
 	addr = (unsigned int *)str_conv_ahex_int(first);
 	dump_hex(*addr, 8);
-	put_str("\r\n");
+	shell_put_str("\r\n");
 
 	return 0;
 }
@@ -188,7 +206,7 @@ static int command_ioreadb(char *args)
 	str_get_first_entry(args, first, other);
 	addr = (unsigned short)str_conv_ahex_int(first);
 	dump_hex(inb_p(addr), 2);
-	put_str("\r\n");
+	shell_put_str("\r\n");
 
 	return 0;
 }
@@ -252,7 +270,7 @@ static int command_iowriteb(char *args)
 
 static int command_test(char *args)
 {
-	put_str("test\r\n");
+	shell_put_str("test\r\n");
 	__asm__ ("int $0x80"::);
 
 	return 0;
@@ -310,7 +328,7 @@ static void shell_main(void)
 		char command[256], args[256];
 		unsigned char command_id;
 
-		put_str("OS5> ");
+		shell_put_str("OS5> ");
 		if (get_line(buf, MAX_LINE_SIZE) <= 0) {
 			continue;
 		}
@@ -348,7 +366,7 @@ static void shell_main(void)
 			command_test(args);
 			break;
 		default:
-			put_str("Command not found.\r\n");
+			shell_put_str("Command not found.\r\n");
 			break;
 		}
 	}

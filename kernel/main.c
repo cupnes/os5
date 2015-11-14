@@ -40,6 +40,9 @@ unsigned int do_syscall(unsigned int syscall_id, unsigned int arg1, unsigned int
 		return 0;
 	case SYSCALL_CON_GET_CURSOR_POS_Y:
 		return (unsigned int)cursor_pos.y;
+	case SYSCALL_CON_PUT_STR:
+		put_str((char *)arg1);
+		return 0;
 	case SYSCALL_CON_PUT_STR_POS:
 		put_str_pos((char *)arg1, (unsigned char)arg2, (unsigned char)arg3);
 		return 0;
