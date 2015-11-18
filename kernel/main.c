@@ -92,7 +92,7 @@ int main(void)
 
 	/* Setup tasks */
 	kern_task_init();
-	shell_init();
+	/* shell_init(); */
 	uptime_init();
 
 	/* Start paging */

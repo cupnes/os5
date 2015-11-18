@@ -90,6 +90,18 @@ idt:
 
 gdt:
 	.quad	0x0000000000000000	/* NULL descriptor */
-	.quad	0x00cf9a000000ffff	/* 4GB(r-x:Code) */
-	.quad	0x00cf92000000ffff	/* 4GB(rw-:Data) */
+
+	/* 4GB(r-x:Code) */
+	/* 4GB(rw-:Data) */
+
+	/* DPL=0 */
+	.quad	0x00cf9a000000ffff
+	.quad	0x00cf92000000ffff
+
+	/* DPL=3 */
+	/*
+	.quad	0x00cffa000000ffff
+	.quad	0x00cff2000000ffff
+	*/
+
 	.fill	GDT_SIZE-3, 8, 0
