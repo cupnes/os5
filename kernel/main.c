@@ -10,8 +10,6 @@
 #include <shell.h>
 #include <uptime.h>
 
-#define INTR_NUM_USER128	0x80
-
 void kern_lock(unsigned char *if_bit)
 {
 	/* Save EFlags.IF */
@@ -110,7 +108,7 @@ int main(void)
 
 	/* Setup tasks */
 	kern_task_init();
-	shell_init();
+	/* shell_init(); */
 	uptime_init();
 
 	/* Start paging */

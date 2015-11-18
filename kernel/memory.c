@@ -140,6 +140,7 @@ void mem_init(void)
 	pde->all = 0;
 	pde->p = 1;
 	pde->r_w = 1;
+	pde->u_s = 1;
 	pde->pwt = 1;
 	pde->pcd = 1;
 	pde->pt_base = 0x00094;
@@ -155,6 +156,7 @@ void mem_init(void)
 	pte->all = 0;
 	pte->p = 1;
 	pte->r_w = 1;
+	pte->u_s = 1;
 	pte->pwt = 1;
 	pte->pcd = 1;
 	pte->page_base = paging_base_addr;
@@ -163,6 +165,7 @@ void mem_init(void)
 	pte->all = 0;
 	pte->p = 1;
 	pte->r_w = 1;
+	pte->u_s = 1;
 	pte->pwt = 1;
 	pte->pcd = 1;
 	pte->page_base = paging_base_addr;

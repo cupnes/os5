@@ -15,6 +15,8 @@ void kern_task_init(void)
 	unsigned int old_cr3, cr3 = 0x0008f018;
 	unsigned short segment_selector = 8 * KERN_TASK_GDT_IDX;
 
+	kern_task_tss.esp0 = 0x0007f800;
+	kern_task_tss.ss0 = 0x0010;
 	kern_task_tss.__cr3 = 0x0008f018;
 	init_gdt(KERN_TASK_GDT_IDX, (unsigned int)&kern_task_tss, sizeof(kern_task_tss));
 	__asm__("movl	%%cr3, %0":"=r"(old_cr3):);
