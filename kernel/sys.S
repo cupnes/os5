@@ -4,7 +4,7 @@
 
 	.text
 
-	.global	main, idt, gdt, keyboard_handler, timer_handler, exception_handler, general_protection_handler, page_fault_handler, syscall_handler
+	.global	main, idt, gdt, keyboard_handler, timer_handler, exception_handler, divide_error_handler, debug_handler, nmi_handler, breakpoint_handler, overflow_handler, bound_range_exceeded_handler, invalid_opcode_handler, device_not_available_handler, double_fault_handler, coprocessor_segment_overrun_handler, invalid_tss_handler, segment_not_present_handler, stack_fault_handler, general_protection_handler, page_fault_handler, x87_fpu_floating_point_error_handler, alignment_check_handler, machine_check_handler, simd_floating_point_handler, virtualization_handler, syscall_handler
 
 	movl	$0x00080000, %esp
 
@@ -52,14 +52,107 @@ exception_handler:
 	popal
 	iret
 
+/* interrupt 0 (#DE) */
+divide_error_handler:
+	jmp	divide_error_handler
+	iret
+
+/* interrupt 1 (#DB) */
+debug_handler:
+	jmp	debug_handler
+	iret
+
+/* interrupt 2 */
+nmi_handler:
+	jmp	nmi_handler
+	iret
+
+/* interrupt 3 (#BP) */
+breakpoint_handler:
+	jmp	breakpoint_handler
+	iret
+
+/* interrupt 4 (#OF) */
+overflow_handler:
+	jmp	overflow_handler
+	iret
+
+/* interrupt 5 (#BR) */
+bound_range_exceeded_handler:
+	jmp	bound_range_exceeded_handler
+	iret
+
+/* interrupt 6 (#UD) */
+invalid_opcode_handler:
+	jmp	invalid_opcode_handler
+	iret
+
+/* interrupt 7 (#NM) */
+device_not_available_handler:
+	jmp	device_not_available_handler
+	iret
+
+/* interrupt 8 (#DF) */
+double_fault_handler:
+	jmp	double_fault_handler
+	iret
+
+/* interrupt 9 */
+coprocessor_segment_overrun_handler:
+	jmp	coprocessor_segment_overrun_handler
+	iret
+
+/* interrupt 10 (#TS) */
+invalid_tss_handler:
+	jmp	invalid_tss_handler
+	iret
+
+/* interrupt 11 (#NP) */
+segment_not_present_handler:
+	jmp	segment_not_present_handler
+	iret
+
+/* interrupt 12 (#SS) */
+stack_fault_handler:
+	jmp	stack_fault_handler
+	iret
+
+/* interrupt 13 (#GP) */
 general_protection_handler:
 	jmp	general_protection_handler
 	iret
 
+/* interrupt 14 (#PF) */
 page_fault_handler:
 	jmp	page_fault_handler
 	iret
 
+/* interrupt 16 (#MF) */
+x87_fpu_floating_point_error_handler:
+	jmp	x87_fpu_floating_point_error_handler
+	iret
+
+/* interrupt 17 (#AC) */
+alignment_check_handler:
+	jmp	alignment_check_handler
+	iret
+
+/* interrupt 18 (#MC) */
+machine_check_handler:
+	jmp	machine_check_handler
+	iret
+
+/* interrupt 19 (#XM) */
+simd_floating_point_handler:
+	jmp	simd_floating_point_handler
+	iret
+
+/* interrupt 20 (#VE) */
+virtualization_handler:
+	jmp	virtualization_handler
+	iret
+
+/* interrupt 128 */
 syscall_handler:
 	pushl	%edx
 	pushl	%ecx
