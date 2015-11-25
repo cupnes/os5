@@ -4,7 +4,7 @@
 
 	.text
 
-	.global	main, idt, gdt, keyboard_handler, timer_handler, exception_handler, general_protection_handler, page_fault_handler, syscall_handler
+	.global	main, idt, gdt, keyboard_handler, timer_handler, exception_handler, divide_error_handler, debug_handler, nmi_handler, breakpoint_handler, overflow_handler, bound_range_exceeded_handler, invalid_opcode_handler, device_not_available_handler, double_fault_handler, coprocessor_segment_overrun_handler, invalid_tss_handler, segment_not_present_handler, stack_fault_handler, general_protection_handler, page_fault_handler, x87_fpu_floating_point_error_handler, alignment_check_handler, machine_check_handler, simd_floating_point_handler, virtualization_handler, syscall_handler
 
 	movl	$0x00080000, %esp
 
