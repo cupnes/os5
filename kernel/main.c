@@ -82,26 +82,26 @@ int main(void)
 	/* Setup exception handler */
 	for (i = 0; i < EXCEPTION_MAX; i++)
 		intr_set_handler(i, (unsigned int)&exception_handler);
-	intr_set_handler(0, (unsigned int)&divide_error_handler);
-	intr_set_handler(1, (unsigned int)&debug_handler);
-	intr_set_handler(2, (unsigned int)&nmi_handler);
-	intr_set_handler(3, (unsigned int)&breakpoint_handler);
-	intr_set_handler(4, (unsigned int)&overflow_handler);
-	intr_set_handler(5, (unsigned int)&bound_range_exceeded_handler);
-	intr_set_handler(6, (unsigned int)&invalid_opcode_handler);
-	intr_set_handler(7, (unsigned int)&device_not_available_handler);
-	intr_set_handler(8, (unsigned int)&double_fault_handler);
-	intr_set_handler(9, (unsigned int)&coprocessor_segment_overrun_handler);
-	intr_set_handler(10, (unsigned int)&invalid_tss_handler);
-	intr_set_handler(11, (unsigned int)&segment_not_present_handler);
-	intr_set_handler(12, (unsigned int)&stack_fault_handler);
+	intr_set_handler(EXCP_NUM_DE, (unsigned int)&divide_error_handler);
+	intr_set_handler(EXCP_NUM_DB, (unsigned int)&debug_handler);
+	intr_set_handler(EXCP_NUM_NMI, (unsigned int)&nmi_handler);
+	intr_set_handler(EXCP_NUM_BP, (unsigned int)&breakpoint_handler);
+	intr_set_handler(EXCP_NUM_OF, (unsigned int)&overflow_handler);
+	intr_set_handler(EXCP_NUM_BR, (unsigned int)&bound_range_exceeded_handler);
+	intr_set_handler(EXCP_NUM_UD, (unsigned int)&invalid_opcode_handler);
+	intr_set_handler(EXCP_NUM_NM, (unsigned int)&device_not_available_handler);
+	intr_set_handler(EXCP_NUM_DF, (unsigned int)&double_fault_handler);
+	intr_set_handler(EXCP_NUM_CSO, (unsigned int)&coprocessor_segment_overrun_handler);
+	intr_set_handler(EXCP_NUM_TS, (unsigned int)&invalid_tss_handler);
+	intr_set_handler(EXCP_NUM_NP, (unsigned int)&segment_not_present_handler);
+	intr_set_handler(EXCP_NUM_SS, (unsigned int)&stack_fault_handler);
 	intr_set_handler(EXCP_NUM_GP, (unsigned int)&general_protection_handler);
 	intr_set_handler(EXCP_NUM_PF, (unsigned int)&page_fault_handler);
-	intr_set_handler(16, (unsigned int)&x87_fpu_floating_point_error_handler);
-	intr_set_handler(17, (unsigned int)&alignment_check_handler);
-	intr_set_handler(18, (unsigned int)&machine_check_handler);
-	intr_set_handler(19, (unsigned int)&simd_floating_point_handler);
-	intr_set_handler(20, (unsigned int)&virtualization_handler);
+	intr_set_handler(EXCP_NUM_MF, (unsigned int)&x87_fpu_floating_point_error_handler);
+	intr_set_handler(EXCP_NUM_AC, (unsigned int)&alignment_check_handler);
+	intr_set_handler(EXCP_NUM_MC, (unsigned int)&machine_check_handler);
+	intr_set_handler(EXCP_NUM_XM, (unsigned int)&simd_floating_point_handler);
+	intr_set_handler(EXCP_NUM_VE, (unsigned int)&virtualization_handler);
 
 	/* Setup devices */
 	con_init();
