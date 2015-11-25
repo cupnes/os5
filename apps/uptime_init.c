@@ -26,19 +26,19 @@ void uptime_init(void)
 	uptime_tss.esp = APP_STACK_BASE;
 	uptime_tss.eflags = 0x00000200;
 
-	uptime_tss.es = 0x0010;
+	/* uptime_tss.es = 0x0010; */
 	uptime_tss.cs = 0x0008;
 	uptime_tss.ss = 0x0010;
-	uptime_tss.ds = 0x0010;
-	uptime_tss.fs = 0x0010;
-	uptime_tss.gs = 0x0010;
+	/* uptime_tss.ds = 0x0010; */
+	/* uptime_tss.fs = 0x0010; */
+	/* uptime_tss.gs = 0x0010; */
 
-	/* uptime_tss.es = 0x0010 | 0x0003; */
+	uptime_tss.es = 0x0010 | 0x0003;
 	/* uptime_tss.cs = 0x0008 | 0x0003; */
 	/* uptime_tss.ss = 0x0010 | 0x0003; */
-	/* uptime_tss.ds = 0x0010 | 0x0003; */
-	/* uptime_tss.fs = 0x0010 | 0x0003; */
-	/* uptime_tss.gs = 0x0010 | 0x0003; */
+	uptime_tss.ds = 0x0010 | 0x0003;
+	uptime_tss.fs = 0x0010 | 0x0003;
+	uptime_tss.gs = 0x0010 | 0x0003;
 
 	uptime_tss.__cr3 = 0x00093018;
 
