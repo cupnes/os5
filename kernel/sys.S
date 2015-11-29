@@ -47,6 +47,7 @@ timer_handler:
 	iret
 
 exception_handler:
+	popl	excp_error_code
 	pushal
 	call	do_exception
 	popal
@@ -191,3 +192,6 @@ gdt:
 	.quad	0x00cffa000000ffff	/* 4GB(r-x:Code, DPL=3) */
 	.quad	0x00cff2000000ffff	/* 4GB(rw-:Data, DPL=3) */
 	.fill	GDT_SIZE-8, 8, 0
+
+excp_error_code:
+	.long	0x00000000
