@@ -188,8 +188,10 @@ gdt:
 	/* 4GB(rw-:Data) */
 
 	/* DPL=0 */
+
 	.quad	0x00cf9a000000ffff
 	.quad	0x00cf92000000ffff
+
 
 	/* DPL=3 */
 	/*
@@ -197,4 +199,7 @@ gdt:
 	.quad	0x00cff2000000ffff
 	*/
 
-	.fill	GDT_SIZE-3, 8, 0
+	.fill	GDT_SIZE-5, 8, 0
+
+	.quad	0x00cffa000000ffff
+	.quad	0x00cff2000000ffff
