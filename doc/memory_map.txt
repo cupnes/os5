@@ -25,8 +25,17 @@
 |-----------+------------------------------------------------------------|
 
 * kernel, app
-| CS    | GDT[1] |
-| DS,SS | GDT[2] |
+GDT
+| idx |  ofs |               |
+|-----+------+---------------|
+|   0 | 0x00 | NULL          |
+|   1 | 0x08 | Code(Sup)     |
+|   2 | 0x10 | Data(Sup)     |
+|   3 | 0x18 | kern_task_tss |
+|   4 | 0x20 | shell_tss     |
+|   5 | 0x28 | uptime_tss    |
+|   6 | 0x30 | Code(Usr)     |
+|   7 | 0x38 | Data(Usr)     |
 
 ** Physical Address Space
 |-----------+------------------------------|
