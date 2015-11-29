@@ -1,4 +1,5 @@
 #include <cpu.h>
+#include <shell.h>
 #include <uptime.h>
 
 void init_gdt(unsigned int idx, unsigned int base, unsigned int limit)
@@ -10,7 +11,7 @@ void init_gdt(unsigned int idx, unsigned int base, unsigned int limit)
 	gdt[idx].base1 = (base & 0x00ff0000) >> 16;
 	gdt[idx].base2 = (base & 0xff000000) >> 24;
 
-	if (idx == UPTIME_GDT_IDX)
+	if (idx == SHELL_GDT_IDX || idx == UPTIME_GDT_IDX)
 		gdt[idx].dpl = 3;
 
 	gdt[idx].type = 9;

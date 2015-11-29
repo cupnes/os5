@@ -23,14 +23,16 @@ void shell_init(void)
 
 	/* Setup shell_tss */
 	shell_tss.eip = APP_ENTRY_POINT;
-	shell_tss.esp = APP_STACK_BASE;
+	shell_tss.esp = 0x20001800;
 	shell_tss.eflags = 0x00000200;
-	shell_tss.es = 0x0010;
-	shell_tss.cs = 0x0008;
-	shell_tss.ss = 0x0010;
-	shell_tss.ds = 0x0010;
-	shell_tss.fs = 0x0010;
-	shell_tss.gs = 0x0010;
+	shell_tss.esp0 = APP_STACK_BASE;
+	shell_tss.ss0 = 0x0010;
+	shell_tss.es = 0x0038 | 0x0003;
+	shell_tss.cs = 0x0030 | 0x0003;
+	shell_tss.ss = 0x0038 | 0x0003;
+	shell_tss.ds = 0x0038 | 0x0003;
+	shell_tss.fs = 0x0038 | 0x0003;
+	shell_tss.gs = 0x0038 | 0x0003;
 	shell_tss.__cr3 = 0x00091018;
 
 	/* Add shell to run_queue */
