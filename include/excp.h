@@ -46,5 +46,6 @@ extern unsigned char simd_floating_point_handler;
 extern unsigned char virtualization_handler;
 
 void do_exception(void);
+void do_page_fault(unsigned int error_code, unsigned int address);
 
 #endif /* _EXCP_H_ */

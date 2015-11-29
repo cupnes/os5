@@ -125,7 +125,15 @@ general_protection_handler:
 
 /* interrupt 14 (#PF) */
 page_fault_handler:
-	jmp	page_fault_handler
+	popl	excp_error_code
+	pushal
+	movl	%cr2, %eax
+	pushl	%eax
+	pushl	excp_error_code
+	call	do_page_fault
+	popl	%eax
+	popl	%eax
+	popal
 	iret
 
 /* interrupt 16 (#MF) */
