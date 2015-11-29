@@ -10,8 +10,6 @@
 #include <shell.h>
 #include <uptime.h>
 
-#define INTR_NUM_USER128	0x80
-
 void kern_lock(unsigned char *if_bit)
 {
 	/* Save EFlags.IF */

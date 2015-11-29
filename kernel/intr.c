@@ -50,6 +50,8 @@ void intr_set_handler(unsigned char intr_num, unsigned int handler_addr)
 	intr_dscr_top_half = (intr_dscr_top_half & 0xffff0000)
 		| (intr_dscr_bottom_half & 0x0000ffff);
 	intr_dscr_bottom_half = (intr_dscr_bottom_half & 0xffff0000) | 0x00008e00;
+	if (intr_num == INTR_NUM_USER128)
+		intr_dscr_bottom_half |= 3 << 13;
 	idt_ptr += intr_num * 2;
 	*idt_ptr = intr_dscr_top_half;
 	*(idt_ptr + 1) = intr_dscr_bottom_half;

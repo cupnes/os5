@@ -14,6 +14,8 @@
 #define IOADR_SPIC_ICW4	0x00a1
 #define IOADR_SPIC_OCW1	0x00a1
 
+#define INTR_NUM_USER128	0x80
+
 void intr_init(void);
 void intr_set_mask_master(unsigned char mask);
 unsigned char intr_get_mask_master(void);
