@@ -163,15 +163,23 @@ virtualization_handler:
 
 /* interrupt 128 */
 syscall_handler:
+	pushl	%esp
+	pushl	%ebp
+	pushl	%esi
+	pushl	%edi
 	pushl	%edx
 	pushl	%ecx
 	pushl	%ebx
 	pushl	%eax
 	call	do_syscall
+	popl	%ebx
+	popl	%ebx
 	popl	%ecx
-	popl	%ecx
-	popl	%ecx
-	popl	%ecx
+	popl	%edx
+	popl	%edi
+	popl	%esi
+	popl	%ebp
+	popl	%esp
 	iret
 
 ignore_int:
