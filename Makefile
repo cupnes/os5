@@ -12,7 +12,7 @@ CFLAGS	+=	-Iinclude
 all: fd.img
 
 fd.img: boot/boot.bin sys.bin shell.bin uptime.bin
-	cat boot/boot.bin sys.bin shell.bin uptime.bin > $@
+	cat $+ > $@
 
 boot/boot.bin: FORCE
 	make -C boot
@@ -24,7 +24,7 @@ uptime.bin: apps/uptime.o
 	ld -o $@ $< -Map apps/uptime.map -s -T apps/app.ld -x
 
 sys.bin: kernel/sys.o kernel/cpu.o kernel/intr.o kernel/excp.o kernel/memory.o kernel/sched.o kernel/timer.o kernel/console_io.o kernel/debug.o kernel/main.o kernel/kern_task_init.o apps/shell_init.o apps/uptime_init.o
-	ld -o $@ kernel/sys.o kernel/cpu.o kernel/intr.o kernel/excp.o kernel/memory.o kernel/sched.o kernel/timer.o kernel/console_io.o kernel/debug.o kernel/main.o kernel/kern_task_init.o apps/shell_init.o apps/uptime_init.o -Map System.map -s -T kernel/sys.ld -x
+	ld -o $@ $+ -Map System.map -s -T kernel/sys.ld -x
 
 kernel/sys.o: kernel/sys.S
 
@@ -61,7 +61,7 @@ clean:
 	rm -f *~ *.o *.bin *.dat *.img *.map include/*~ include/*.o kernel/*~ kernel/*.o apps/*~ apps/*.o
 
 run: fd.img
-	qemu -fda fd.img
+	qemu -fda $<
 
 FORCE:
 .PHONY: clean FORCE
