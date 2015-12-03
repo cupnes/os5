@@ -59,7 +59,10 @@ apps/shell.o: apps/shell.c
 apps/uptime.o: apps/uptime.c
 
 clean:
+	make -C boot clean
 	rm -f *~ *.o *.bin *.dat *.img *.map boot/*~ boot/*.o include/*~ include/*.o kernel/*~ kernel/*.o apps/*~ apps/*.o
 
 run: fd.img
 	qemu -fda fd.img
+
+.PHONY: clean
