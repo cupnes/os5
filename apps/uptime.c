@@ -9,7 +9,7 @@ void uptime_start(void)
 	unsigned int cursor_pos_y;
 
 	while (1) {
-		uptime = syscall(SYSCALL_TIMER_GET_GLOBAL_COUNTER, 0, 0, 0) / 100;
+		uptime = syscall(SYSCALL_TIMER_GET_GLOBAL_COUNTER, 0, 0, 0) / 1000;
 		cursor_pos_y = syscall(SYSCALL_CON_GET_CURSOR_POS_Y, 0, 0, 0);
 		if (cursor_pos_y < ROWS) {
 			syscall(SYSCALL_CON_PUT_STR_POS, (unsigned int)"uptime:", COLUMNS - (7 + 4), 0);
