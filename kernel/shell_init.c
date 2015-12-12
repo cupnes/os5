@@ -1,4 +1,4 @@
-#include <shell.h>
+#include <shell_init.h>
 #include <cpu.h>
 #include <console_io.h>
 #include <sched.h>

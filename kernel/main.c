@@ -7,8 +7,8 @@
 #include <kernel.h>
 #include <sched.h>
 #include <kern_task.h>
-#include <shell.h>
-#include <uptime.h>
+#include <shell_init.h>
+#include <uptime_init.h>
 
 void kern_lock(unsigned char *if_bit)
 {

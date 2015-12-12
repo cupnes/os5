@@ -1,6 +1,4 @@
-#include <shell.h>
 #include <io_port.h>
-#include <console_io.h>
 #include <kernel.h>
 
 #define MAX_LINE_SIZE	512

@@ -1,4 +1,4 @@
-#include <uptime.h>
+#include <uptime_init.h>
 #include <cpu.h>
 #include <console_io.h>
 #include <sched.h>

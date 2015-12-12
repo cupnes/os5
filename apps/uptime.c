@@ -1,8 +1,5 @@
-#include <uptime.h>
-#include <timer.h>
-#include <console_io.h>
 #include <kernel.h>
-#include <sched.h>
+#include <console_io.h>
 
 unsigned int syscall(unsigned int syscall_id, unsigned int arg1, unsigned int arg2, unsigned int arg3);
 
