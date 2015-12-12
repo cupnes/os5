@@ -1,14 +1,6 @@
-KERNEL_PATH = kernel
-CFLAGS	=	-Wall -Wextra
-CFLAGS	+=	-nostdinc -nostdlib -fno-builtin -c
-CFLAGS	+=	-Iinclude -I$(KERNEL_PATH)/include
-
-.c.o:
-	gcc $(CFLAGS) -o $@ $<
-
 all: fd.img
 
-fd.img: boot/boot.bin kernel/kernel.bin shell.bin uptime.bin
+fd.img: boot/boot.bin kernel/kernel.bin apps/apps.img
 	cat $+ > $@
 
 boot/boot.bin: FORCE
@@ -17,20 +9,14 @@ boot/boot.bin: FORCE
 kernel/kernel.bin: FORCE
 	make -C kernel
 
-shell.bin: apps/shell.o
-	ld -o $@ $< -Map apps/shell.map -s -T apps/app.ld -x
-
-uptime.bin: apps/uptime.o
-	ld -o $@ $< -Map apps/uptime.map -s -T apps/app.ld -x
-
-apps/shell.o: apps/shell.c
-
-apps/uptime.o: apps/uptime.c
+apps/apps.img: FORCE
+	make -C apps
 
 clean:
 	make -C boot clean
 	make -C kernel clean
-	rm -f *~ *.o *.bin *.dat *.img *.map include/*~ include/*.o apps/*~ apps/*.o
+	make -C apps clean
+	rm -f *~ *.o *.bin *.dat *.img *.map
 
 run: fd.img
 	qemu -fda $<
