@@ -9,7 +9,7 @@ void do_ir_timer(void)
 {
 	global_counter += TIMER_TICK_MS;
 	sched_update_wakeupq();
-	schedule();
+	schedule(SCHED_CAUSE_TIMER);
 }
 
 void timer_init(void)
