@@ -1,5 +1,7 @@
 #include <memory.h>
 
+#define CR4_BIT_PGE	(1U << 7)
+
 void mem_init(void)
 {
 	struct page_directory_entry {
@@ -24,6 +26,12 @@ void mem_init(void)
 	} *pte;
 	unsigned int paging_base_addr;
 	unsigned int i;
+	unsigned int cr4;
+
+	/* Enable PGE(Page Global Enable) flag of CR4*/
+	__asm__("movl	%%cr4, %0":"=r"(cr4):);
+	cr4 |= CR4_BIT_PGE;
+	__asm__("movl	%0, %%cr4"::"r"(cr4));
 
 	/* Initialize kernel page directory */
 	pde = (struct page_directory_entry *)0x0008f000;
