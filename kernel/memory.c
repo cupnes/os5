@@ -60,6 +60,7 @@ void mem_init(void)
 		pte->r_w = 1;
 		pte->pwt = 1;
 		pte->pcd = 1;
+		pte->g = 1;
 		pte->page_base = paging_base_addr;
 		paging_base_addr += 0x00001;
 		pte++;
@@ -75,6 +76,7 @@ void mem_init(void)
 		pte->r_w = 1;
 		pte->pwt = 1;
 		pte->pcd = 1;
+		pte->g = 1;
 		pte->page_base = paging_base_addr;
 		paging_base_addr += 0x00001;
 		pte++;
