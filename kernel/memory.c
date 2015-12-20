@@ -38,8 +38,6 @@ void mem_init(void)
 	pde->all = 0;
 	pde->p = 1;
 	pde->r_w = 1;
-	pde->pwt = 1;
-	pde->pcd = 1;
 	pde->pt_base = 0x00090;
 	pde++;
 	for (i = 1; i < 0x400; i++) {
@@ -58,8 +56,6 @@ void mem_init(void)
 		pte->all = 0;
 		pte->p = 1;
 		pte->r_w = 1;
-		pte->pwt = 1;
-		pte->pcd = 1;
 		pte->g = 1;
 		pte->page_base = paging_base_addr;
 		paging_base_addr += 0x00001;
@@ -91,8 +87,6 @@ void mem_init(void)
 	pde->all = 0;
 	pde->p = 1;
 	pde->r_w = 1;
-	pde->pwt = 1;
-	pde->pcd = 1;
 	pde->pt_base = 0x00090;
 	pde++;
 	for (i = 1; i < 0x080; i++) {
@@ -103,8 +97,6 @@ void mem_init(void)
 	pde->p = 1;
 	pde->r_w = 1;
 	pde->u_s = 1;
-	pde->pwt = 1;
-	pde->pcd = 1;
 	pde->pt_base = 0x00092;
 	pde++;
 	for (; i < 0x400; i++) {
@@ -119,8 +111,6 @@ void mem_init(void)
 	pte->p = 1;
 	pte->r_w = 1;
 	pte->u_s = 1;
-	pte->pwt = 1;
-	pte->pcd = 1;
 	pte->page_base = paging_base_addr;
 	pte++;
 	paging_base_addr = 0x00070;
@@ -128,8 +118,6 @@ void mem_init(void)
 	pte->p = 1;
 	pte->r_w = 1;
 	pte->u_s = 1;
-	pte->pwt = 1;
-	pte->pcd = 1;
 	pte->page_base = paging_base_addr;
 	pte++;
 	for (i = 2; i < 0x400; i++) {
@@ -142,8 +130,6 @@ void mem_init(void)
 	pde->all = 0;
 	pde->p = 1;
 	pde->r_w = 1;
-	pde->pwt = 1;
-	pde->pcd = 1;
 	pde->pt_base = 0x00090;
 	pde++;
 	for (i = 1; i < 0x080; i++) {
@@ -154,8 +140,6 @@ void mem_init(void)
 	pde->p = 1;
 	pde->r_w = 1;
 	pde->u_s = 1;
-	pde->pwt = 1;
-	pde->pcd = 1;
 	pde->pt_base = 0x00094;
 	pde++;
 	for (; i < 0x400; i++) {
@@ -170,8 +154,6 @@ void mem_init(void)
 	pte->p = 1;
 	pte->r_w = 1;
 	pte->u_s = 1;
-	pte->pwt = 1;
-	pte->pcd = 1;
 	pte->page_base = paging_base_addr;
 	pte++;
 	paging_base_addr = 0x00071;
@@ -179,8 +161,6 @@ void mem_init(void)
 	pte->p = 1;
 	pte->r_w = 1;
 	pte->u_s = 1;
-	pte->pwt = 1;
-	pte->pcd = 1;
 	pte->page_base = paging_base_addr;
 	pte++;
 	for (i = 2; i < 0x400; i++) {
