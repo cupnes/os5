@@ -4,26 +4,8 @@
 
 void mem_init(void)
 {
-	struct page_directory_entry {
-		union {
-			struct {
-				unsigned int all;
-			};
-			struct {
-				unsigned int p: 1, r_w: 1, u_s: 1, pwt: 1, pcd: 1, a: 1, reserved: 1, ps: 1, g: 1, usable: 3, pt_base: 20;
-			};
-		};
-	} *pde;
-	struct page_table_entry {
-		union {
-			struct {
-				unsigned int all;
-			};
-			struct {
-				unsigned int p: 1, r_w: 1, u_s: 1, pwt: 1, pcd: 1, a: 1, d: 1, pat: 1, g: 1, usable: 3, page_base: 20;
-			};
-		};
-	} *pte;
+	struct page_directory_entry *pde;
+	struct page_table_entry *pte;
 	unsigned int paging_base_addr;
 	unsigned int i;
 	unsigned int cr4;
