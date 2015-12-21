@@ -63,49 +63,6 @@ void mem_init(void)
 		pte->all = 0;
 		pte++;
 	}
-
-	/* Initialize shell page directory */
-	pde = (struct page_directory_entry *)0x00091000;
-	pde->all = 0;
-	pde->p = 1;
-	pde->r_w = 1;
-	pde->pt_base = 0x00090;
-	pde++;
-	for (i = 1; i < 0x080; i++) {
-		pde->all = 0;
-		pde++;
-	}
-	pde->all = 0;
-	pde->p = 1;
-	pde->r_w = 1;
-	pde->u_s = 1;
-	pde->pt_base = 0x00092;
-	pde++;
-	for (; i < 0x400; i++) {
-		pde->all = 0;
-		pde++;
-	}
-
-	/* Initialize shell page table */
-	pte = (struct page_table_entry *)0x00092000;
-	paging_base_addr = 0x00011;
-	pte->all = 0;
-	pte->p = 1;
-	pte->r_w = 1;
-	pte->u_s = 1;
-	pte->page_base = paging_base_addr;
-	pte++;
-	paging_base_addr = 0x00070;
-	pte->all = 0;
-	pte->p = 1;
-	pte->r_w = 1;
-	pte->u_s = 1;
-	pte->page_base = paging_base_addr;
-	pte++;
-	for (i = 2; i < 0x400; i++) {
-		pte->all = 0;
-		pte++;
-	}
 }
 
 void mem_page_start(void)
