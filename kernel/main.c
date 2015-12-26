@@ -10,6 +10,10 @@
 #include <shell_init.h>
 #include <uptime_init.h>
 
+#define GDT_IDX_OFS	3
+#define APP_ENTRY_POINT	0x20000000
+#define APP_STACK_BASE	0x20002000
+
 void kern_lock(unsigned char *if_bit)
 {
 	/* Save EFlags.IF */
@@ -64,6 +68,81 @@ unsigned int do_syscall(unsigned int syscall_id, unsigned int arg1, unsigned int
 	}
 
 	return result;
+}
+
+static void task_init(unsigned short task_id, struct page_directory_entry *pd_base, struct page_table_entry *pt_base,
+		      unsigned int phys_base, void (*context_switch_fn)(void), struct tss *task_tss)
+{
+	struct page_directory_entry *pde;
+	struct page_table_entry *pte;
+	unsigned int paging_base_addr;
+	unsigned int i;
+
+	/* Initialize task page directory */
+	pde = pd_base;
+	pde->all = 0;
+	pde->p = 1;
+	pde->r_w = 1;
+	pde->pt_base = 0x00090;
+	pde++;
+	for (i = 1; i < 0x080; i++) {
+		pde->all = 0;
+		pde++;
+	}
+	pde->all = 0;
+	pde->p = 1;
+	pde->r_w = 1;
+	pde->u_s = 1;
+	pde->pt_base = (unsigned int)pt_base >> 12;
+	pde++;
+	for (; i < 0x400; i++) {
+		pde->all = 0;
+		pde++;
+	}
+
+	/* Initialize task page table */
+	pte = pt_base;
+	paging_base_addr = 0x00011;
+	pte->all = 0;
+	pte->p = 1;
+	pte->r_w = 1;
+	pte->u_s = 1;
+	pte->page_base = paging_base_addr;
+	pte++;
+	paging_base_addr = phys_base >> 12;
+	pte->all = 0;
+	pte->p = 1;
+	pte->r_w = 1;
+	pte->u_s = 1;
+	pte->page_base = paging_base_addr;
+	pte++;
+	for (i = 2; i < 0x400; i++) {
+		pte->all = 0;
+		pte++;
+	}
+
+	/* Setup context switch function */
+	task_list[task_id].context_switch = context_switch_fn;
+
+	/* Setup GDT for task_tss */
+	init_gdt(task_id + GDT_IDX_OFS, (unsigned int)&task_tss, sizeof(task_tss));
+
+	/* Setup task_tss */
+	task_tss->eip = APP_ENTRY_POINT;
+	task_tss->esp = 0x20001800;
+	task_tss->eflags = 0x00000200;
+	task_tss->esp0 = APP_STACK_BASE;
+	task_tss->ss0 = 0x0010;
+	task_tss->es = 0x0038 | 0x0003;
+	task_tss->cs = 0x0030 | 0x0003;
+	task_tss->ss = 0x0038 | 0x0003;
+	task_tss->ds = 0x0038 | 0x0003;
+	task_tss->fs = 0x0038 | 0x0003;
+	task_tss->gs = 0x0038 | 0x0003;
+	task_tss->__cr3 = (unsigned int)pd_base | 0x18;
+
+	/* Add task to run_queue */
+	sched_runq_enq(&task_list[task_id]);
 }
 
 int main(void)
