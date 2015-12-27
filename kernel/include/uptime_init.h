@@ -4,6 +4,8 @@
 #define UPTIME_GDT_IDX	5
 #define UPTIME_ID	2
 
+extern struct tss uptime_tss;
+
 void uptime_context_switch(void);
 void uptime_init(void);
 

@@ -70,8 +70,12 @@ unsigned int do_syscall(unsigned int syscall_id, unsigned int arg1, unsigned int
 	return result;
 }
 
-static void task_init(unsigned short task_id, struct page_directory_entry *pd_base, struct page_table_entry *pt_base,
-		      unsigned int phys_base, void (*context_switch_fn)(void), struct tss *task_tss)
+static void task_init(unsigned short task_id,
+		      struct page_directory_entry *pd_base_addr,
+		      struct page_table_entry *pt_base_addr,
+		      unsigned int phys_binary_base,
+		      unsigned int phys_stack_base,
+		      void (*context_switch_fn)(void), struct tss *task_tss)
 {
 	struct page_directory_entry *pde;
 	struct page_table_entry *pte;
@@ -79,7 +83,7 @@ static void task_init(unsigned short task_id, struct page_directory_entry *pd_ba
 	unsigned int i;
 
 	/* Initialize task page directory */
-	pde = pd_base;
+	pde = pd_base_addr;
 	pde->all = 0;
 	pde->p = 1;
 	pde->r_w = 1;
@@ -93,7 +97,7 @@ static void task_init(unsigned short task_id, struct page_directory_entry *pd_ba
 	pde->p = 1;
 	pde->r_w = 1;
 	pde->u_s = 1;
-	pde->pt_base = (unsigned int)pt_base >> 12;
+	pde->pt_base = (unsigned int)pt_base_addr >> 12;
 	pde++;
 	for (; i < 0x400; i++) {
 		pde->all = 0;
@@ -101,15 +105,15 @@ static void task_init(unsigned short task_id, struct page_directory_entry *pd_ba
 	}
 
 	/* Initialize task page table */
-	pte = pt_base;
-	paging_base_addr = 0x00011;
+	pte = pt_base_addr;
+	paging_base_addr = phys_binary_base >> 12;
 	pte->all = 0;
 	pte->p = 1;
 	pte->r_w = 1;
 	pte->u_s = 1;
 	pte->page_base = paging_base_addr;
 	pte++;
-	paging_base_addr = phys_base >> 12;
+	paging_base_addr = phys_stack_base >> 12;
 	pte->all = 0;
 	pte->p = 1;
 	pte->r_w = 1;
@@ -122,10 +126,10 @@ static void task_init(unsigned short task_id, struct page_directory_entry *pd_ba
 	}
 
 	/* Setup context switch function */
-	task_list[task_id].context_switch = context_switch_fn;
+	task_list[task_id].context_switch = *context_switch_fn;
 
 	/* Setup GDT for task_tss */
-	init_gdt(task_id + GDT_IDX_OFS, (unsigned int)&task_tss, sizeof(task_tss));
+	init_gdt(task_id + GDT_IDX_OFS, (unsigned int)task_tss, sizeof(struct tss));
 
 	/* Setup task_tss */
 	task_tss->eip = APP_ENTRY_POINT;
@@ -139,7 +143,7 @@ static void task_init(unsigned short task_id, struct page_directory_entry *pd_ba
 	task_tss->ds = 0x0038 | 0x0003;
 	task_tss->fs = 0x0038 | 0x0003;
 	task_tss->gs = 0x0038 | 0x0003;
-	task_tss->__cr3 = (unsigned int)pd_base | 0x18;
+	task_tss->__cr3 = (unsigned int)pd_base_addr | 0x18;
 
 	/* Add task to run_queue */
 	sched_runq_enq(&task_list[task_id]);
@@ -188,7 +192,9 @@ int main(void)
 	/* Setup tasks */
 	kern_task_init();
 	shell_init();
-	uptime_init();
+	task_init(UPTIME_ID, (struct page_directory_entry *)0x00093000,
+		  (struct page_table_entry *)0x00094000, 0x00012000, 0x00072000,
+		  &uptime_context_switch, &uptime_tss);
 
 	/* Start paging */
 	mem_page_start();
