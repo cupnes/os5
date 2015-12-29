@@ -70,6 +70,18 @@ unsigned int do_syscall(unsigned int syscall_id, unsigned int arg1, unsigned int
 	return result;
 }
 
+static void copy_mem(const void *src, void *dst, unsigned int size)
+{
+	unsigned char *d = (unsigned char *)dst;
+	unsigned char *s = (unsigned char *)src;
+
+	for (; size > 0; size--) {
+		*d = *s;
+		d++;
+		s++;
+	}
+}
+
 static void task_init(unsigned short task_id,
 		      struct page_directory_entry *pd_base_addr,
 		      struct page_table_entry *pt_base_addr,
@@ -126,7 +138,9 @@ static void task_init(unsigned short task_id,
 	}
 
 	/* Setup context switch function */
-	task_list[task_id].context_switch = *context_switch_fn;
+	copy_mem(context_switch_template, task_list[task_id].context_switch_func, CONTEXT_SWITCH_FN_SIZE);
+	task_list[task_id].context_switch_func[CONTEXT_SWITCH_FN_TSKNO_FIELD] = 8 * (task_id - 1) + 0x20;
+	task_list[task_id].context_switch = (void (*)(void))task_list[task_id].context_switch_func;
 
 	/* Setup GDT for task_tss */
 	init_gdt(task_id + GDT_IDX_OFS, (unsigned int)&task_list[task_id].tss, sizeof(struct tss));
