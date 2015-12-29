@@ -4,6 +4,8 @@
 #define SHELL_GDT_IDX	4
 #define SHELL_ID	1
 
+extern struct tss shell_tss;
+
 void shell_context_switch(void);
 void shell_init(void);
 
