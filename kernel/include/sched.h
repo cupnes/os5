@@ -15,6 +15,7 @@ struct task {
 	struct task *prev;
 	struct task *next;
 	unsigned short task_id;
+	struct tss tss;
 	void (*context_switch)(void);
 	char task_switched_in_time_slice;
 	unsigned int wakeup_after_msec;
