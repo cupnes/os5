@@ -86,8 +86,7 @@ static void task_init(unsigned short task_id,
 		      struct page_directory_entry *pd_base_addr,
 		      struct page_table_entry *pt_base_addr,
 		      unsigned int phys_binary_base,
-		      unsigned int phys_stack_base,
-		      void (*context_switch_fn)(void))
+		      unsigned int phys_stack_base)
 {
 	struct page_directory_entry *pde;
 	struct page_table_entry *pte;
@@ -206,11 +205,9 @@ int main(void)
 	/* Setup tasks */
 	kern_task_init();
 	task_init(SHELL_ID, (struct page_directory_entry *)0x00091000,
-		  (struct page_table_entry *)0x00092000, 0x00011000, 0x00070000,
-		  (void (*)(void))shell_context_switch);
+		  (struct page_table_entry *)0x00092000, 0x00011000, 0x00070000);
 	task_init(UPTIME_ID, (struct page_directory_entry *)0x00093000,
-		  (struct page_table_entry *)0x00094000, 0x00012000, 0x00071000,
-		  (void (*)(void))uptime_context_switch);
+		  (struct page_table_entry *)0x00094000, 0x00012000, 0x00071000);
 
 	/* Start paging */
 	mem_page_start();
