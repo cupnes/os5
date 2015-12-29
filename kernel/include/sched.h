@@ -4,6 +4,7 @@
 #include <cpu.h>
 
 #define TASK_NUM	3
+#define CONTEXT_SWITCH_FN_SIZE	12
 
 enum {
 	SCHED_CAUSE_TIMER,

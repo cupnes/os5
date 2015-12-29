@@ -196,7 +196,7 @@ int main(void)
 		  shell_context_switch, &shell_tss);
 	task_init(UPTIME_ID, (struct page_directory_entry *)0x00093000,
 		  (struct page_table_entry *)0x00094000, 0x00012000, 0x00071000,
-		  uptime_context_switch, &uptime_tss);
+		  (void (*)(void))uptime_context_switch, &uptime_tss);
 
 	/* Start paging */
 	mem_page_start();
