@@ -75,7 +75,7 @@ static void task_init(unsigned short task_id,
 		      struct page_table_entry *pt_base_addr,
 		      unsigned int phys_binary_base,
 		      unsigned int phys_stack_base,
-		      void (*context_switch_fn)(void), struct tss *task_tss)
+		      void (*context_switch_fn)(void))
 {
 	struct page_directory_entry *pde;
 	struct page_table_entry *pte;
@@ -129,21 +129,21 @@ static void task_init(unsigned short task_id,
 	task_list[task_id].context_switch = *context_switch_fn;
 
 	/* Setup GDT for task_tss */
-	init_gdt(task_id + GDT_IDX_OFS, (unsigned int)task_tss, sizeof(struct tss));
+	init_gdt(task_id + GDT_IDX_OFS, (unsigned int)&task_list[task_id].tss, sizeof(struct tss));
 
 	/* Setup task_tss */
-	task_tss->eip = APP_ENTRY_POINT;
-	task_tss->esp = 0x20001800;
-	task_tss->eflags = 0x00000200;
-	task_tss->esp0 = APP_STACK_BASE;
-	task_tss->ss0 = 0x0010;
-	task_tss->es = 0x0038 | 0x0003;
-	task_tss->cs = 0x0030 | 0x0003;
-	task_tss->ss = 0x0038 | 0x0003;
-	task_tss->ds = 0x0038 | 0x0003;
-	task_tss->fs = 0x0038 | 0x0003;
-	task_tss->gs = 0x0038 | 0x0003;
-	task_tss->__cr3 = (unsigned int)pd_base_addr | 0x18;
+	task_list[task_id].tss.eip = APP_ENTRY_POINT;
+	task_list[task_id].tss.esp = 0x20001800;
+	task_list[task_id].tss.eflags = 0x00000200;
+	task_list[task_id].tss.esp0 = APP_STACK_BASE;
+	task_list[task_id].tss.ss0 = 0x0010;
+	task_list[task_id].tss.es = 0x0038 | 0x0003;
+	task_list[task_id].tss.cs = 0x0030 | 0x0003;
+	task_list[task_id].tss.ss = 0x0038 | 0x0003;
+	task_list[task_id].tss.ds = 0x0038 | 0x0003;
+	task_list[task_id].tss.fs = 0x0038 | 0x0003;
+	task_list[task_id].tss.gs = 0x0038 | 0x0003;
+	task_list[task_id].tss.__cr3 = (unsigned int)pd_base_addr | 0x18;
 
 	/* Add task to run_queue */
 	sched_runq_enq(&task_list[task_id]);
@@ -193,10 +193,10 @@ int main(void)
 	kern_task_init();
 	task_init(SHELL_ID, (struct page_directory_entry *)0x00091000,
 		  (struct page_table_entry *)0x00092000, 0x00011000, 0x00070000,
-		  (void (*)(void))shell_context_switch, &shell_tss);
+		  (void (*)(void))shell_context_switch);
 	task_init(UPTIME_ID, (struct page_directory_entry *)0x00093000,
 		  (struct page_table_entry *)0x00094000, 0x00012000, 0x00071000,
-		  (void (*)(void))uptime_context_switch, &uptime_tss);
+		  (void (*)(void))uptime_context_switch);
 
 	/* Start paging */
 	mem_page_start();
