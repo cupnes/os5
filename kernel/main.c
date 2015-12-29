@@ -136,6 +136,9 @@ static void task_init(unsigned short task_id,
 		pte++;
 	}
 
+	/* Setup task_id */
+	task_list[task_id].task_id = task_id;
+
 	/* Setup context switch function */
 	copy_mem(context_switch_template, task_list[task_id].context_switch_func, CONTEXT_SWITCH_FN_SIZE);
 	task_list[task_id].context_switch_func[CONTEXT_SWITCH_FN_TSKNO_FIELD] = 8 * (task_id - 1) + 0x20;
