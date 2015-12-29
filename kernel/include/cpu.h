@@ -67,6 +67,6 @@ struct tss {
 
 extern struct segment_descriptor gdt[GDT_SIZE];
 
-void init_gdt(unsigned int idx, unsigned int base, unsigned int limit);
+void init_gdt(unsigned int idx, unsigned int base, unsigned int limit, unsigned char dpl);
 
 #endif /* _CPU_H_ */

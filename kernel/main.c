@@ -142,7 +142,7 @@ static void task_init(unsigned short task_id,
 	task_list[task_id].context_switch = (void (*)(void))task_list[task_id].context_switch_func;
 
 	/* Setup GDT for task_tss */
-	init_gdt(task_id + GDT_IDX_OFS, (unsigned int)&task_list[task_id].tss, sizeof(struct tss));
+	init_gdt(task_id + GDT_IDX_OFS, (unsigned int)&task_list[task_id].tss, sizeof(struct tss), 3);
 
 	/* Setup task_tss */
 	task_list[task_id].tss.eip = APP_ENTRY_POINT;

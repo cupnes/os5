@@ -2,7 +2,7 @@
 #include <shell_init.h>
 #include <uptime_init.h>
 
-void init_gdt(unsigned int idx, unsigned int base, unsigned int limit)
+void init_gdt(unsigned int idx, unsigned int base, unsigned int limit, unsigned char dpl)
 {
 	gdt[idx].limit0 = limit & 0x0000ffff;
 	gdt[idx].limit1 = (limit & 0x000f0000) >> 16;
@@ -11,8 +11,7 @@ void init_gdt(unsigned int idx, unsigned int base, unsigned int limit)
 	gdt[idx].base1 = (base & 0x00ff0000) >> 16;
 	gdt[idx].base2 = (base & 0xff000000) >> 24;
 
-	if (idx == SHELL_GDT_IDX || idx == UPTIME_GDT_IDX)
-		gdt[idx].dpl = 3;
+	gdt[idx].dpl = dpl;
 
 	gdt[idx].type = 9;
 	gdt[idx].p = 1;
