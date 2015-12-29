@@ -193,7 +193,7 @@ int main(void)
 	kern_task_init();
 	task_init(SHELL_ID, (struct page_directory_entry *)0x00091000,
 		  (struct page_table_entry *)0x00092000, 0x00011000, 0x00070000,
-		  shell_context_switch, &shell_tss);
+		  (void (*)(void))shell_context_switch, &shell_tss);
 	task_init(UPTIME_ID, (struct page_directory_entry *)0x00093000,
 		  (struct page_table_entry *)0x00094000, 0x00012000, 0x00071000,
 		  (void (*)(void))uptime_context_switch, &uptime_tss);
