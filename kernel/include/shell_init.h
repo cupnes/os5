@@ -1,8 +1,6 @@
 #ifndef _SHELL_INIT_H_
 #define _SHELL_INIT_H_
 
-#include <sched.h>
-
 #define SHELL_GDT_IDX	4
 #define SHELL_ID	1
 
