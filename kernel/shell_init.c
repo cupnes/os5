@@ -7,8 +7,6 @@
 #define APP_ENTRY_POINT	0x20000000
 #define APP_STACK_BASE	0x20002000
 
-struct tss shell_tss;
-
 /*
 00000000 <shell_context_switch>:
    0:   55                      push   %ebp
