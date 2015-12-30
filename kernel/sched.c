@@ -7,7 +7,7 @@
 #include <kernel.h>
 #include <kern_task.h>
 
-struct task task_list[TASK_NUM];
+struct task task_instance_table[TASK_NUM];
 
 static struct task *current_task = NULL;
 static struct {
@@ -112,7 +112,7 @@ void schedule(unsigned char cause_id)
 			current_task = NULL;
 			outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_TIMER,
 			       IOADR_MPIC_OCW2);
-			task_list[KERN_TASK_ID].context_switch();
+			task_instance_table[KERN_TASK_ID].context_switch();
 		}
 	} else if (current_task) {
 		if (current_task != current_task->next) {

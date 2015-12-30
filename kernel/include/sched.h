@@ -24,7 +24,7 @@ struct task {
 	unsigned char wakeup_after_event;
 };
 
-extern struct task task_list[TASK_NUM];
+extern struct task task_instance_table[TASK_NUM];
 extern unsigned char context_switch_template[CONTEXT_SWITCH_FN_SIZE];
 
 unsigned short sched_get_current(void);

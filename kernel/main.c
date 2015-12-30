@@ -137,32 +137,32 @@ static void task_init(unsigned short task_id,
 	}
 
 	/* Setup task_id */
-	task_list[task_id].task_id = task_id;
+	task_instance_table[task_id].task_id = task_id;
 
 	/* Setup context switch function */
-	copy_mem(context_switch_template, task_list[task_id].context_switch_func, CONTEXT_SWITCH_FN_SIZE);
-	task_list[task_id].context_switch_func[CONTEXT_SWITCH_FN_TSKNO_FIELD] = 8 * (task_id - 1) + 0x20;
-	task_list[task_id].context_switch = (void (*)(void))task_list[task_id].context_switch_func;
+	copy_mem(context_switch_template, task_instance_table[task_id].context_switch_func, CONTEXT_SWITCH_FN_SIZE);
+	task_instance_table[task_id].context_switch_func[CONTEXT_SWITCH_FN_TSKNO_FIELD] = 8 * (task_id - 1) + 0x20;
+	task_instance_table[task_id].context_switch = (void (*)(void))task_instance_table[task_id].context_switch_func;
 
 	/* Setup GDT for task_tss */
-	init_gdt(task_id + GDT_IDX_OFS, (unsigned int)&task_list[task_id].tss, sizeof(struct tss), 3);
+	init_gdt(task_id + GDT_IDX_OFS, (unsigned int)&task_instance_table[task_id].tss, sizeof(struct tss), 3);
 
 	/* Setup task_tss */
-	task_list[task_id].tss.eip = APP_ENTRY_POINT;
-	task_list[task_id].tss.esp = 0x20001800;
-	task_list[task_id].tss.eflags = 0x00000200;
-	task_list[task_id].tss.esp0 = APP_STACK_BASE;
-	task_list[task_id].tss.ss0 = 0x0010;
-	task_list[task_id].tss.es = 0x0038 | 0x0003;
-	task_list[task_id].tss.cs = 0x0030 | 0x0003;
-	task_list[task_id].tss.ss = 0x0038 | 0x0003;
-	task_list[task_id].tss.ds = 0x0038 | 0x0003;
-	task_list[task_id].tss.fs = 0x0038 | 0x0003;
-	task_list[task_id].tss.gs = 0x0038 | 0x0003;
-	task_list[task_id].tss.__cr3 = (unsigned int)pd_base_addr | 0x18;
+	task_instance_table[task_id].tss.eip = APP_ENTRY_POINT;
+	task_instance_table[task_id].tss.esp = 0x20001800;
+	task_instance_table[task_id].tss.eflags = 0x00000200;
+	task_instance_table[task_id].tss.esp0 = APP_STACK_BASE;
+	task_instance_table[task_id].tss.ss0 = 0x0010;
+	task_instance_table[task_id].tss.es = 0x0038 | 0x0003;
+	task_instance_table[task_id].tss.cs = 0x0030 | 0x0003;
+	task_instance_table[task_id].tss.ss = 0x0038 | 0x0003;
+	task_instance_table[task_id].tss.ds = 0x0038 | 0x0003;
+	task_instance_table[task_id].tss.fs = 0x0038 | 0x0003;
+	task_instance_table[task_id].tss.gs = 0x0038 | 0x0003;
+	task_instance_table[task_id].tss.__cr3 = (unsigned int)pd_base_addr | 0x18;
 
 	/* Add task to run_queue */
-	sched_runq_enq(&task_list[task_id]);
+	sched_runq_enq(&task_instance_table[task_id]);
 }
 
 int main(void)

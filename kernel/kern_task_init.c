@@ -25,5 +25,5 @@ void kern_task_init(void)
 	__asm__("ltr %0"::"r"(segment_selector));
 
 	/* Setup context switch function */
-	task_list[KERN_TASK_ID].context_switch = kern_task_context_switch;
+	task_instance_table[KERN_TASK_ID].context_switch = kern_task_context_switch;
 }
