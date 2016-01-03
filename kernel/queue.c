@@ -27,7 +27,9 @@ void queue_dump(struct list *head)
 	unsigned int n;
 	struct list *entry;
 
-	put_str("h : p=");
+	put_str("h =");
+	dump_hex((unsigned int)head, 8);
+	put_str(": p=");
 	dump_hex((unsigned int)head->prev, 8);
 	put_str(", n=");
 	dump_hex((unsigned int)head->next, 8);
@@ -35,6 +37,8 @@ void queue_dump(struct list *head)
 
 	for (entry = head->next, n = 0; entry != head; entry = entry->next, n++) {
 		dump_hex(n, 2);
+		put_str("=");
+		dump_hex((unsigned int)entry, 8);
 		put_str(": p=");
 		dump_hex((unsigned int)entry->prev, 8);
 		put_str(", n=");
