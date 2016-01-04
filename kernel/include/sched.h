@@ -13,8 +13,12 @@ enum {
 };
 
 struct task {
+	/* ランキュー・ウェイトキュー(時間経過待ち・イベント待ち)の
+	 * いずれかに繋がれる(同時に複数のキューに存在することが無いよう
+	 * 運用する) */
 	struct task *prev;
 	struct task *next;
+
 	unsigned short task_id;
 	struct tss tss;
 	void (*context_switch)(void);
