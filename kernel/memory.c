@@ -1,6 +1,12 @@
+#include <stddef.h>
 #include <memory.h>
 
 #define CR4_BIT_PGE	(1U << 7)
+#define MAX_HEAP_PAGES	11
+#define HEAP_START_ADDR	0x00095000
+#define PAGE_SIZE	0x1000
+
+static char heap_alloc_table[MAX_HEAP_PAGES] = {0};
 
 void mem_init(void)
 {
@@ -72,4 +78,23 @@ void mem_page_start(void)
 	__asm__("movl	%%cr0, %0":"=r"(cr0):);
 	cr0 |= 0x80000000;
 	__asm__("movl	%0, %%cr0"::"r"(cr0));
+}
+
+void *mem_alloc(void)
+{
+	unsigned int i;
+
+	for (i = 0; heap_alloc_table[i] && (i < MAX_HEAP_PAGES); i++);
+
+	if (i >= MAX_HEAP_PAGES)
+		return (void *)NULL;
+
+	heap_alloc_table[i] = 1;
+	return (void *)(HEAP_START_ADDR + i * PAGE_SIZE);
+}
+
+void mem_free(void *page)
+{
+	unsigned int i = ((unsigned int)page - HEAP_START_ADDR) / PAGE_SIZE;
+	heap_alloc_table[i] = 0;
 }

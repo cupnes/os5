@@ -24,5 +24,7 @@ struct page_table_entry {
 
 void mem_init(void);
 void mem_page_start(void);
+void *mem_alloc(void);
+void mem_free(void *page);
 
 #endif /* __MEMORY_H__ */
