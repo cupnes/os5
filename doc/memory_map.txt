@@ -90,7 +90,9 @@ GDT
 | 0009 4000 | uptime page table(first)     |
 | ...       | ...                          |
 | 0009 4fff | uptime page table(last)      |
+| 0009 5000 | heap memory(first)           |
 | ...       | ...                          |
+| 0009 ffff | heap memory(last)            |
 | 0009 ffff | Conventional Memory(last)    |
 |-----------+------------------------------|
 | ...       | ...                          |
@@ -138,6 +140,12 @@ GDT
 | 0008 0000 | kernel stack base           |
 | ...       | ...                         |
 | 0008 5fff | kernel PT map(last)         |
+| ...       | ...                         |
+| 0009 5000 | kernel PT map(first)        |
+| 0009 5000 | heap memory(first)          |
+| ...       | ...                         |
+| 0009 ffff | heap memory(last)           |
+| 0009 ffff | kernel PT map(last)         |
 | ...       | ...                         |
 | 000b 8000 | kernel PT map(first)        |
 | 000b 8000 | Video Memory(first)         |
