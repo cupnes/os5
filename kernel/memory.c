@@ -49,6 +49,20 @@ void mem_init(void)
 		paging_base_addr += 0x00001;
 		pte++;
 	}
+	for (; i < 0x095; i++) {
+		pte->all = 0;
+		pte++;
+	}
+	paging_base_addr = 0x00095;
+	for (; i <= 0x09f; i++) {
+		pte->all = 0;
+		pte->p = 1;
+		pte->r_w = 1;
+		pte->g = 1;
+		pte->page_base = paging_base_addr;
+		paging_base_addr += 0x00001;
+		pte++;
+	}
 	for (; i < 0x0b8; i++) {
 		pte->all = 0;
 		pte++;
