@@ -78,18 +78,7 @@ GDT
 | 0009 0000 | kernel page table(first)     |
 | ...       | ...                          |
 | 0009 0fff | kernel page table(last)      |
-| 0009 1000 | shell page directory(first)  |
 | ...       | ...                          |
-| 0009 1fff | shell page directory(last)   |
-| 0009 2000 | shell page table(first)      |
-| ...       | ...                          |
-| 0009 2fff | shell page table(last)       |
-| 0009 3000 | uptime page directory(first) |
-| ...       | ...                          |
-| 0009 3fff | uptime page directory(last)  |
-| 0009 4000 | uptime page table(first)     |
-| ...       | ...                          |
-| 0009 4fff | uptime page table(last)      |
 | 0009 5000 | heap memory(first)           |
 | ...       | ...                          |
 | 0009 ffff | heap memory(last)            |
