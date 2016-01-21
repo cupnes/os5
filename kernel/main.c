@@ -82,16 +82,19 @@ static void copy_mem(const void *src, void *dst, unsigned int size)
 	}
 }
 
-static void task_init(unsigned short task_id,
-		      struct page_directory_entry *pd_base_addr,
-		      struct page_table_entry *pt_base_addr,
-		      unsigned int phys_binary_base,
-		      unsigned int phys_stack_base)
+static void task_init(unsigned short task_id, unsigned int phys_binary_base)
 {
-	struct page_directory_entry *pde;
-	struct page_table_entry *pte;
-	unsigned int paging_base_addr;
+	struct page_directory_entry *pd_base_addr, *pde;
+	struct page_table_entry *pt_base_addr, *pte;
+	struct task *new_task;
+	unsigned int paging_base_addr, phys_stack_base;
 	unsigned int i;
+
+	/* Allocate task resources */
+	pd_base_addr = (struct page_directory_entry *)mem_alloc();
+	pt_base_addr = (struct page_table_entry *)mem_alloc();
+	new_task = (struct task *)mem_alloc();
+	phys_stack_base = (unsigned int)mem_alloc();
 
 	/* Initialize task page directory */
 	pde = pd_base_addr;
@@ -137,32 +140,32 @@ static void task_init(unsigned short task_id,
 	}
 
 	/* Setup task_id */
-	task_instance_table[task_id].task_id = task_id;
+	new_task->task_id = task_id;
 
 	/* Setup context switch function */
-	copy_mem(context_switch_template, task_instance_table[task_id].context_switch_func, CONTEXT_SWITCH_FN_SIZE);
-	task_instance_table[task_id].context_switch_func[CONTEXT_SWITCH_FN_TSKNO_FIELD] = 8 * (task_id - 1) + 0x20;
-	task_instance_table[task_id].context_switch = (void (*)(void))task_instance_table[task_id].context_switch_func;
+	copy_mem(context_switch_template, new_task->context_switch_func, CONTEXT_SWITCH_FN_SIZE);
+	new_task->context_switch_func[CONTEXT_SWITCH_FN_TSKNO_FIELD] = 8 * (task_id - 1) + 0x20;
+	new_task->context_switch = (void (*)(void))new_task->context_switch_func;
 
 	/* Setup GDT for task_tss */
-	init_gdt(task_id + GDT_IDX_OFS, (unsigned int)&task_instance_table[task_id].tss, sizeof(struct tss), 3);
+	init_gdt(task_id + GDT_IDX_OFS, (unsigned int)&new_task->tss, sizeof(struct tss), 3);
 
 	/* Setup task_tss */
-	task_instance_table[task_id].tss.eip = APP_ENTRY_POINT;
-	task_instance_table[task_id].tss.esp = 0x20001800;
-	task_instance_table[task_id].tss.eflags = 0x00000200;
-	task_instance_table[task_id].tss.esp0 = APP_STACK_BASE;
-	task_instance_table[task_id].tss.ss0 = 0x0010;
-	task_instance_table[task_id].tss.es = 0x0038 | 0x0003;
-	task_instance_table[task_id].tss.cs = 0x0030 | 0x0003;
-	task_instance_table[task_id].tss.ss = 0x0038 | 0x0003;
-	task_instance_table[task_id].tss.ds = 0x0038 | 0x0003;
-	task_instance_table[task_id].tss.fs = 0x0038 | 0x0003;
-	task_instance_table[task_id].tss.gs = 0x0038 | 0x0003;
-	task_instance_table[task_id].tss.__cr3 = (unsigned int)pd_base_addr | 0x18;
+	new_task->tss.eip = APP_ENTRY_POINT;
+	new_task->tss.esp = 0x20001800;
+	new_task->tss.eflags = 0x00000200;
+	new_task->tss.esp0 = APP_STACK_BASE;
+	new_task->tss.ss0 = 0x0010;
+	new_task->tss.es = 0x0038 | 0x0003;
+	new_task->tss.cs = 0x0030 | 0x0003;
+	new_task->tss.ss = 0x0038 | 0x0003;
+	new_task->tss.ds = 0x0038 | 0x0003;
+	new_task->tss.fs = 0x0038 | 0x0003;
+	new_task->tss.gs = 0x0038 | 0x0003;
+	new_task->tss.__cr3 = (unsigned int)pd_base_addr | 0x18;
 
 	/* Add task to run_queue */
-	sched_runq_enq(&task_instance_table[task_id]);
+	sched_runq_enq(new_task);
 }
 
 int main(void)
@@ -207,10 +210,8 @@ int main(void)
 
 	/* Setup tasks */
 	kern_task_init();
-	task_init(SHELL_ID, (struct page_directory_entry *)0x00091000,
-		  (struct page_table_entry *)0x00092000, 0x00011000, 0x00070000);
-	task_init(UPTIME_ID, (struct page_directory_entry *)0x00093000,
-		  (struct page_table_entry *)0x00094000, 0x00012000, 0x00071000);
+	task_init(SHELL_ID, 0x00011000);
+	task_init(UPTIME_ID, 0x00012000);
 
 	/* Start paging */
 	mem_page_start();
