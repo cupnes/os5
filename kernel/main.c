@@ -11,7 +11,7 @@
 #include <uptime_init.h>
 
 #define GDT_IDX_OFS	3
-#define APP_ENTRY_POINT	0x20000000
+#define APP_ENTRY_POINT	0x20000020
 #define APP_STACK_BASE	0x20002000
 
 void kern_lock(unsigned char *if_bit)

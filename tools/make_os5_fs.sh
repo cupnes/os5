@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # make control block
-echo $# | awk '{printf "%c", $1}'
-dd if=/dev/zero count=4095 bs=1
+# echo $# | awk '{printf "%c", $1}'
+# dd if=/dev/zero count=4095 bs=1
 
 # make data block(s)
 while [ -n "$1" ]; do
