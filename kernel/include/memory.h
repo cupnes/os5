@@ -1,6 +1,8 @@
 #ifndef __MEMORY_H__
 #define __MEMORY_H__
 
+#define PAGE_SIZE	0x1000
+
 struct page_directory_entry {
 	union {
 		struct {

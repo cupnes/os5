@@ -9,10 +9,24 @@
 #include <kern_task.h>
 #include <shell_init.h>
 #include <uptime_init.h>
+#include <list.h>
+#include <queue.h>
 
 #define GDT_IDX_OFS	3
 #define APP_ENTRY_POINT	0x20000020
 #define APP_STACK_BASE	0x20002000
+
+struct file_head {
+	struct list lst;
+	unsigned char num_files;
+} fhead;
+
+struct file {
+	struct list lst;
+	unsigned int fid;
+	char *name;
+	void *data_base_addr;
+} fshell, fuptime;
 
 void kern_lock(unsigned char *if_bit)
 {
@@ -168,6 +182,38 @@ static void task_init(unsigned short task_id, unsigned int phys_binary_base)
 	sched_runq_enq(new_task);
 }
 
+void fs_init(void *fs_base_addr)
+{
+	queue_init((struct list *)&fhead);
+	fhead.num_files = *(unsigned char *)fs_base_addr;
+
+	fshell.fid = 1;
+	fshell.name = (char *)fs_base_addr + PAGE_SIZE;
+	fshell.data_base_addr = (char *)fs_base_addr + PAGE_SIZE + 32;
+	queue_enq((struct list *)&fshell, (struct list *)&fhead);
+
+	fuptime.fid = 2;
+	fuptime.name = (char *)fs_base_addr + (PAGE_SIZE * 2);
+	fuptime.data_base_addr = (char *)fs_base_addr + (PAGE_SIZE * 2) + 32;
+	queue_enq((struct list *)&fuptime, (struct list *)&fhead);
+}
+
+int fs_open(const char *name)
+{
+	/* 将来的には、struct fileのtask_idメンバにopenしたタスクの
+	 * TASK_IDを入れるようにする。そして、openしようとしているファ
+	 * イルのtask_idが既に設定されていれば、fs_openはエラーを返す
+	 * ようにする */
+	return 0;
+}
+
+int fs_close(unsigned int fid)
+{
+	/* 将来的には、fidに対応するstruct fileのtask_idメンバーを設定
+	 * なし(0)にする。 */
+	return 0;
+}
+
 int main(void)
 {
 	extern unsigned char syscall_handler;
@@ -208,10 +254,13 @@ int main(void)
 	timer_init();
 	mem_init();
 
+	/* Setup File System */
+	fs_init((void *)0x00011000);
+
 	/* Setup tasks */
 	kern_task_init();
-	task_init(SHELL_ID, 0x00012000);
-	task_init(UPTIME_ID, 0x00013000);
+	task_init(SHELL_ID, (unsigned int)fshell.name);
+	task_init(UPTIME_ID, (unsigned int)fuptime.name);
 
 	/* Start paging */
 	mem_page_start();

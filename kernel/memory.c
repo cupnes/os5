@@ -4,7 +4,6 @@
 #define CR4_BIT_PGE	(1U << 7)
 #define MAX_HEAP_PAGES	11
 #define HEAP_START_ADDR	0x00095000
-#define PAGE_SIZE	0x1000
 
 static char heap_alloc_table[MAX_HEAP_PAGES] = {0};
 
