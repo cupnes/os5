@@ -221,6 +221,8 @@ int main(void)
 	unsigned char mask;
 	unsigned char i;
 
+	unsigned char uptime_inited_flag = 0;
+
 	/* Setup console */
 	cursor_pos.y += 2;
 	update_cursor();
@@ -260,7 +262,6 @@ int main(void)
 	/* Setup tasks */
 	kern_task_init();
 	task_init(SHELL_ID, (unsigned int)fshell.name);
-	task_init(UPTIME_ID, (unsigned int)fuptime.name);
 
 	/* Start paging */
 	mem_page_start();
@@ -277,6 +278,10 @@ int main(void)
 
 	/* End of kernel initialization process */
 	while (1) {
+		if (!uptime_inited_flag) {
+			task_init(UPTIME_ID, (unsigned int)fuptime.name);
+			uptime_inited_flag = 1;
+		}
 		x86_halt();
 	}
 
