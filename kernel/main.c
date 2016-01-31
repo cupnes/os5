@@ -210,8 +210,8 @@ int main(void)
 
 	/* Setup tasks */
 	kern_task_init();
-	task_init(SHELL_ID, 0x00011000);
-	task_init(UPTIME_ID, 0x00012000);
+	task_init(SHELL_ID, 0x00012000);
+	task_init(UPTIME_ID, 0x00013000);
 
 	/* Start paging */
 	mem_page_start();
