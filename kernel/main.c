@@ -142,9 +142,6 @@ static void task_init(struct file *f)
 
 	/* Setup task_id */
 	new_task->task_id = task_id_counter++;
-	put_str("task_init: task_id=");
-	dump_hex(new_task->task_id, 8);
-	put_str("\r\n");
 
 	/* Setup context switch function */
 	copy_mem(context_switch_template, new_task->context_switch_func, CONTEXT_SWITCH_FN_SIZE);
