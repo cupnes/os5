@@ -11,7 +11,4 @@ SECTIONS
 	}
 	.data	: {*(.data)}
 	.bss	: {*(.bss)}
-
-	/* . = 0x20000000 + 4094; */
-	/* .sign	: {SHORT(0xcafe)} */
 }

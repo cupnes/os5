@@ -5,6 +5,7 @@
 *.img
 *.map
 *#
+bin
 GPATH
 GRTAGS
 GTAGS
