@@ -30,6 +30,23 @@ struct file {
 
 unsigned short task_id_counter = 1;
 
+void kern_lock(unsigned char *if_bit)
+{
+	/* Save EFlags.IF */
+	*if_bit = (x86_get_eflags() & X86_EFLAGS_IF) ? 1 : 0;
+
+	/* if saved IF == true, then cli */
+	if (*if_bit)
+		cli();
+}
+
+void kern_unlock(unsigned char *if_bit)
+{
+	/* if saved IF == true, then sti */
+	if (*if_bit)
+		sti();
+}
+
 static int str_compare(const char *src, const char *dst)
 {
 	char is_equal = 1;
@@ -52,106 +69,6 @@ static int str_compare(const char *src, const char *dst)
 	} else {
 		return (int)(*src - *dst);
 	}
-}
-
-void kern_lock(unsigned char *if_bit)
-{
-	/* Save EFlags.IF */
-	*if_bit = (x86_get_eflags() & X86_EFLAGS_IF) ? 1 : 0;
-
-	/* if saved IF == true, then cli */
-	if (*if_bit)
-		cli();
-}
-
-void kern_unlock(unsigned char *if_bit)
-{
-	/* if saved IF == true, then sti */
-	if (*if_bit)
-		sti();
-}
-
-void fs_init(void *fs_base_addr)
-{
-	queue_init((struct list *)&fhead);
-	fhead.num_files = *(unsigned char *)fs_base_addr;
-
-	fshell.name = (char *)fs_base_addr + PAGE_SIZE;
-	fshell.data_base_addr = (char *)fs_base_addr + PAGE_SIZE + 32;
-	queue_enq((struct list *)&fshell, (struct list *)&fhead);
-
-	fuptime.name = (char *)fs_base_addr + (PAGE_SIZE * 2);
-	fuptime.data_base_addr = (char *)fs_base_addr + (PAGE_SIZE * 2) + 32;
-	queue_enq((struct list *)&fuptime, (struct list *)&fhead);
-}
-
-struct file *fs_open(const char *name)
-{
-	struct file *f;
-
-	/* 将来的には、struct fileのtask_idメンバにopenしたタスクの
-	 * TASK_IDを入れるようにする。そして、openしようとしているファ
-	 * イルのtask_idが既に設定されていれば、fs_openはエラーを返す
-	 * ようにする */
-
-	for (f = (struct file *)fhead.lst.next; f != (struct file *)&fhead; f = (struct file *)f->lst.next) {
-		if (!str_compare(name, f->name))
-			return f;
-	}
-
-	return NULL;
-}
-
-int fs_close(struct file *f)
-{
-	/* 将来的には、fidに対応するstruct fileのtask_idメンバーを設定
-	 * なし(0)にする。 */
-	return 0;
-}
-
-unsigned int do_syscall(unsigned int syscall_id, unsigned int arg1, unsigned int arg2, unsigned int arg3)
-{
-	unsigned int result = -1;
-
-	switch (syscall_id) {
-	case SYSCALL_TIMER_GET_GLOBAL_COUNTER:
-		result = timer_get_global_counter();
-		break;
-	case SYSCALL_SCHED_WAKEUP_MSEC:
-		wakeup_after_msec(arg1);
-		result = 0;
-		break;
-	case SYSCALL_CON_GET_CURSOR_POS_Y:
-		result = (unsigned int)cursor_pos.y;
-		break;
-	case SYSCALL_CON_PUT_STR:
-		put_str((char *)arg1);
-		result = 0;
-		break;
-	case SYSCALL_CON_PUT_STR_POS:
-		put_str_pos((char *)arg1, (unsigned char)arg2, (unsigned char)arg3);
-		result = 0;
-		break;
-	case SYSCALL_CON_DUMP_HEX:
-		dump_hex(arg1, arg2);
-		result = 0;
-		break;
-	case SYSCALL_CON_DUMP_HEX_POS:
-		dump_hex_pos(arg1, arg2, (unsigned char)(arg3 >> 16), (unsigned char)(arg3 & 0x0000ffff));
-		result= 0;
-		break;
-	case SYSCALL_CON_GET_LINE:
-		result = get_line((char *)arg1, arg2);
-		break;
-	case SYSCALL_OPEN:
-		result = (unsigned int)fs_open((char *)arg1);
-		break;
-	case SYSCALL_EXEC:
-		result = 0;
-		break;
-	}
-
-	return result;
 }
 
 static void copy_mem(const void *src, void *dst, unsigned int size)
@@ -255,14 +172,96 @@ static void task_init(struct file *f)
 	sched_runq_enq(new_task);
 }
 
+void fs_init(void *fs_base_addr)
+{
+	queue_init((struct list *)&fhead);
+	fhead.num_files = *(unsigned char *)fs_base_addr;
+
+	fshell.name = (char *)fs_base_addr + PAGE_SIZE;
+	fshell.data_base_addr = (char *)fs_base_addr + PAGE_SIZE + 32;
+	queue_enq((struct list *)&fshell, (struct list *)&fhead);
+
+	fuptime.name = (char *)fs_base_addr + (PAGE_SIZE * 2);
+	fuptime.data_base_addr = (char *)fs_base_addr + (PAGE_SIZE * 2) + 32;
+	queue_enq((struct list *)&fuptime, (struct list *)&fhead);
+}
+
+struct file *fs_open(const char *name)
+{
+	struct file *f;
+
+	/* 将来的には、struct fileのtask_idメンバにopenしたタスクの
+	 * TASK_IDを入れるようにする。そして、openしようとしているファ
+	 * イルのtask_idが既に設定されていれば、fs_openはエラーを返す
+	 * ようにする */
+
+	for (f = (struct file *)fhead.lst.next; f != (struct file *)&fhead; f = (struct file *)f->lst.next) {
+		if (!str_compare(name, f->name))
+			return f;
+	}
+
+	return NULL;
+}
+
+int fs_close(struct file *f)
+{
+	/* 将来的には、fidに対応するstruct fileのtask_idメンバーを設定
+	 * なし(0)にする。 */
+	return 0;
+}
+
+unsigned int do_syscall(unsigned int syscall_id, unsigned int arg1, unsigned int arg2, unsigned int arg3)
+{
+	unsigned int result = -1;
+
+	switch (syscall_id) {
+	case SYSCALL_TIMER_GET_GLOBAL_COUNTER:
+		result = timer_get_global_counter();
+		break;
+	case SYSCALL_SCHED_WAKEUP_MSEC:
+		wakeup_after_msec(arg1);
+		result = 0;
+		break;
+	case SYSCALL_CON_GET_CURSOR_POS_Y:
+		result = (unsigned int)cursor_pos.y;
+		break;
+	case SYSCALL_CON_PUT_STR:
+		put_str((char *)arg1);
+		result = 0;
+		break;
+	case SYSCALL_CON_PUT_STR_POS:
+		put_str_pos((char *)arg1, (unsigned char)arg2, (unsigned char)arg3);
+		result = 0;
+		break;
+	case SYSCALL_CON_DUMP_HEX:
+		dump_hex(arg1, arg2);
+		result = 0;
+		break;
+	case SYSCALL_CON_DUMP_HEX_POS:
+		dump_hex_pos(arg1, arg2, (unsigned char)(arg3 >> 16), (unsigned char)(arg3 & 0x0000ffff));
+		result= 0;
+		break;
+	case SYSCALL_CON_GET_LINE:
+		result = get_line((char *)arg1, arg2);
+		break;
+	case SYSCALL_OPEN:
+		result = (unsigned int)fs_open((char *)arg1);
+		break;
+	case SYSCALL_EXEC:
+		task_init((struct file *)arg1);
+		result = 0;
+		break;
+	}
+
+	return result;
+}
+
 int main(void)
 {
 	extern unsigned char syscall_handler;
 
 	unsigned char mask;
 	unsigned char i;
-
-	unsigned char uptime_inited_flag = 0;
 
 	/* Setup console */
 	cursor_pos.y += 2;
@@ -319,10 +318,6 @@ int main(void)
 
 	/* End of kernel initialization process */
 	while (1) {
-		if (!uptime_inited_flag) {
-			task_init(&fuptime);
-			uptime_inited_flag = 1;
-		}
 		x86_halt();
 	}
 
