@@ -10,7 +10,8 @@ enum {
 	SYSCALL_CON_DUMP_HEX,
 	SYSCALL_CON_DUMP_HEX_POS,
 	SYSCALL_CON_GET_LINE,
-	SYSCALL_OPEN
+	SYSCALL_OPEN,
+	SYSCALL_EXEC
 };
 
 void kern_lock(unsigned char *if_bit);

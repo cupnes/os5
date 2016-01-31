@@ -1,3 +1,4 @@
+#include <stddef.h>
 #include <cpu.h>
 #include <intr.h>
 #include <excp.h>
@@ -23,10 +24,11 @@ struct file_head {
 
 struct file {
 	struct list lst;
-	unsigned int fid;
 	char *name;
 	void *data_base_addr;
 } fshell, fuptime;
+
+unsigned short task_id_counter = 1;
 
 static int str_compare(const char *src, const char *dst)
 {
@@ -69,10 +71,23 @@ void kern_unlock(unsigned char *if_bit)
 		sti();
 }
 
-int fs_open(const char *name)
+void fs_init(void *fs_base_addr)
+{
+	queue_init((struct list *)&fhead);
+	fhead.num_files = *(unsigned char *)fs_base_addr;
+
+	fshell.name = (char *)fs_base_addr + PAGE_SIZE;
+	fshell.data_base_addr = (char *)fs_base_addr + PAGE_SIZE + 32;
+	queue_enq((struct list *)&fshell, (struct list *)&fhead);
+
+	fuptime.name = (char *)fs_base_addr + (PAGE_SIZE * 2);
+	fuptime.data_base_addr = (char *)fs_base_addr + (PAGE_SIZE * 2) + 32;
+	queue_enq((struct list *)&fuptime, (struct list *)&fhead);
+}
+
+struct file *fs_open(const char *name)
 {
 	struct file *f;
-	int fid = 0;
 
 	/* 将来的には、struct fileのtask_idメンバにopenしたタスクの
 	 * TASK_IDを入れるようにする。そして、openしようとしているファ
@@ -80,13 +95,18 @@ int fs_open(const char *name)
 	 * ようにする */
 
 	for (f = (struct file *)fhead.lst.next; f != (struct file *)&fhead; f = (struct file *)f->lst.next) {
-		if (!str_compare(name, f->name)) {
-			fid = f->fid;
-			break;
-		}
+		if (!str_compare(name, f->name))
+			return f;
 	}
 
-	return fid;
+	return NULL;
+}
+
+int fs_close(struct file *f)
+{
+	/* 将来的には、fidに対応するstruct fileのtask_idメンバーを設定
+	 * なし(0)にする。 */
+	return 0;
 }
 
 unsigned int do_syscall(unsigned int syscall_id, unsigned int arg1, unsigned int arg2, unsigned int arg3)
@@ -126,6 +146,9 @@ unsigned int do_syscall(unsigned int syscall_id, unsigned int arg1, unsigned int
 	case SYSCALL_OPEN:
 		result = (unsigned int)fs_open((char *)arg1);
 		break;
+	case SYSCALL_EXEC:
+		result = 0;
+		break;
 	}
 
 	return result;
@@ -143,7 +166,7 @@ static void copy_mem(const void *src, void *dst, unsigned int size)
 	}
 }
 
-static void task_init(unsigned short task_id, unsigned int phys_binary_base)
+static void task_init(struct file *f)
 {
 	struct page_directory_entry *pd_base_addr, *pde;
 	struct page_table_entry *pt_base_addr, *pte;
@@ -181,7 +204,7 @@ static void task_init(unsigned short task_id, unsigned int phys_binary_base)
 
 	/* Initialize task page table */
 	pte = pt_base_addr;
-	paging_base_addr = phys_binary_base >> 12;
+	paging_base_addr = (unsigned int)f->data_base_addr >> 12;
 	pte->all = 0;
 	pte->p = 1;
 	pte->r_w = 1;
@@ -201,15 +224,18 @@ static void task_init(unsigned short task_id, unsigned int phys_binary_base)
 	}
 
 	/* Setup task_id */
-	new_task->task_id = task_id;
+	new_task->task_id = task_id_counter++;
+	put_str("task_init: task_id=");
+	dump_hex(new_task->task_id, 8);
+	put_str("\r\n");
 
 	/* Setup context switch function */
 	copy_mem(context_switch_template, new_task->context_switch_func, CONTEXT_SWITCH_FN_SIZE);
-	new_task->context_switch_func[CONTEXT_SWITCH_FN_TSKNO_FIELD] = 8 * (task_id - 1) + 0x20;
+	new_task->context_switch_func[CONTEXT_SWITCH_FN_TSKNO_FIELD] = 8 * (new_task->task_id - 1) + 0x20;
 	new_task->context_switch = (void (*)(void))new_task->context_switch_func;
 
 	/* Setup GDT for task_tss */
-	init_gdt(task_id + GDT_IDX_OFS, (unsigned int)&new_task->tss, sizeof(struct tss), 3);
+	init_gdt(new_task->task_id + GDT_IDX_OFS, (unsigned int)&new_task->tss, sizeof(struct tss), 3);
 
 	/* Setup task_tss */
 	new_task->tss.eip = APP_ENTRY_POINT;
@@ -227,29 +253,6 @@ static void task_init(unsigned short task_id, unsigned int phys_binary_base)
 
 	/* Add task to run_queue */
 	sched_runq_enq(new_task);
-}
-
-void fs_init(void *fs_base_addr)
-{
-	queue_init((struct list *)&fhead);
-	fhead.num_files = *(unsigned char *)fs_base_addr;
-
-	fshell.fid = 1;
-	fshell.name = (char *)fs_base_addr + PAGE_SIZE;
-	fshell.data_base_addr = (char *)fs_base_addr + PAGE_SIZE + 32;
-	queue_enq((struct list *)&fshell, (struct list *)&fhead);
-
-	fuptime.fid = 2;
-	fuptime.name = (char *)fs_base_addr + (PAGE_SIZE * 2);
-	fuptime.data_base_addr = (char *)fs_base_addr + (PAGE_SIZE * 2) + 32;
-	queue_enq((struct list *)&fuptime, (struct list *)&fhead);
-}
-
-int fs_close(unsigned int fid)
-{
-	/* 将来的には、fidに対応するstruct fileのtask_idメンバーを設定
-	 * なし(0)にする。 */
-	return 0;
 }
 
 int main(void)
@@ -299,7 +302,7 @@ int main(void)
 
 	/* Setup tasks */
 	kern_task_init();
-	task_init(SHELL_ID, (unsigned int)fshell.name);
+	task_init(&fshell);
 
 	/* Start paging */
 	mem_page_start();
@@ -317,7 +320,7 @@ int main(void)
 	/* End of kernel initialization process */
 	while (1) {
 		if (!uptime_inited_flag) {
-			task_init(UPTIME_ID, (unsigned int)fuptime.name);
+			task_init(&fuptime);
 			uptime_inited_flag = 1;
 		}
 		x86_halt();
