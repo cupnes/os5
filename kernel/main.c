@@ -28,6 +28,30 @@ struct file {
 	void *data_base_addr;
 } fshell, fuptime;
 
+static int str_compare(const char *src, const char *dst)
+{
+	char is_equal = 1;
+
+	for (; (*src != '\0') && (*dst != '\0'); src++, dst++) {
+		if (*src != *dst) {
+			is_equal = 0;
+			break;
+		}
+	}
+
+	if (is_equal) {
+		if (*src != '\0') {
+			return 1;
+		} else if (*dst != '\0') {
+			return -1;
+		} else {
+			return 0;
+		}
+	} else {
+		return (int)(*src - *dst);
+	}
+}
+
 void kern_lock(unsigned char *if_bit)
 {
 	/* Save EFlags.IF */
@@ -43,6 +67,26 @@ void kern_unlock(unsigned char *if_bit)
 	/* if saved IF == true, then sti */
 	if (*if_bit)
 		sti();
+}
+
+int fs_open(const char *name)
+{
+	struct file *f;
+	int fid = 0;
+
+	/* 将来的には、struct fileのtask_idメンバにopenしたタスクの
+	 * TASK_IDを入れるようにする。そして、openしようとしているファ
+	 * イルのtask_idが既に設定されていれば、fs_openはエラーを返す
+	 * ようにする */
+
+	for (f = (struct file *)fhead.lst.next; f != (struct file *)&fhead; f = (struct file *)f->lst.next) {
+		if (!str_compare(name, f->name)) {
+			fid = f->fid;
+			break;
+		}
+	}
+
+	return fid;
 }
 
 unsigned int do_syscall(unsigned int syscall_id, unsigned int arg1, unsigned int arg2, unsigned int arg3)
@@ -78,6 +122,9 @@ unsigned int do_syscall(unsigned int syscall_id, unsigned int arg1, unsigned int
 		break;
 	case SYSCALL_CON_GET_LINE:
 		result = get_line((char *)arg1, arg2);
+		break;
+	case SYSCALL_OPEN:
+		result = (unsigned int)fs_open((char *)arg1);
 		break;
 	}
 
@@ -196,15 +243,6 @@ void fs_init(void *fs_base_addr)
 	fuptime.name = (char *)fs_base_addr + (PAGE_SIZE * 2);
 	fuptime.data_base_addr = (char *)fs_base_addr + (PAGE_SIZE * 2) + 32;
 	queue_enq((struct list *)&fuptime, (struct list *)&fhead);
-}
-
-int fs_open(const char *name)
-{
-	/* 将来的には、struct fileのtask_idメンバにopenしたタスクの
-	 * TASK_IDを入れるようにする。そして、openしようとしているファ
-	 * イルのtask_idが既に設定されていれば、fs_openはエラーを返す
-	 * ようにする */
-	return 0;
 }
 
 int fs_close(unsigned int fid)

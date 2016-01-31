@@ -274,6 +274,9 @@ static int command_iowriteb(char *args)
 static int command_test(char *args)
 {
 	shell_put_str("test\r\n");
+	shell_put_str("uptime: ");
+	shell_dump_hex(syscall(SYSCALL_OPEN, (unsigned int)"uptime", 0, 0), 8);
+	shell_put_str("\r\n");
 
 	return 0;
 }
