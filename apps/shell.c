@@ -333,6 +333,7 @@ static void shell_main(void)
 		char buf[MAX_LINE_SIZE];
 		char command[256], args[256];
 		unsigned char command_id;
+		unsigned int fp;
 
 		shell_put_str("OS5> ");
 		if (syscall(SYSCALL_CON_GET_LINE, (unsigned int)buf, MAX_LINE_SIZE, 0) <= 0) {
@@ -372,7 +373,11 @@ static void shell_main(void)
 			command_test(args);
 			break;
 		default:
-			shell_put_str("Command not found.\r\n");
+			fp = syscall(SYSCALL_OPEN, (unsigned int)command, 0, 0);
+			if (fp)
+				syscall(SYSCALL_EXEC, fp, 0, 0);
+			else
+				shell_put_str("Command not found.\r\n");
 			break;
 		}
 	}
