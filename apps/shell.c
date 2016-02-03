@@ -273,11 +273,7 @@ static int command_iowriteb(char *args)
 
 static int command_test(char *args)
 {
-	unsigned int fp;
 	shell_put_str("test\r\n");
-	shell_put_str("do uptime\r\n");
-	fp = syscall(SYSCALL_OPEN, (unsigned int)"uptime", 0, 0);
-	syscall(SYSCALL_EXEC, fp, 0, 0);
 
 	return 0;
 }
