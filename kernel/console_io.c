@@ -2,8 +2,8 @@
 #include <intr.h>
 #include <io_port.h>
 #include <console_io.h>
-#include <kernel.h>
 #include <sched.h>
+#include <lock.h>
 
 #define QUEUE_BUF_SIZE	256
 

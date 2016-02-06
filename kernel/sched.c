@@ -4,7 +4,7 @@
 #include <io_port.h>
 #include <intr.h>
 #include <timer.h>
-#include <kernel.h>
+#include <lock.h>
 #include <kern_task.h>
 
 static struct task *current_task = NULL;

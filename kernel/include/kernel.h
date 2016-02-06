@@ -14,7 +14,4 @@ enum {
 	SYSCALL_EXEC
 };
 
-void kern_lock(unsigned char *if_bit);
-void kern_unlock(unsigned char *if_bit);
-
 #endif /* _KERNEL_H_ */
