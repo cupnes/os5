@@ -7,7 +7,7 @@ CFLAGS	+=	-Iinclude
 .c.o:
 	gcc $(CFLAGS) -o $@ $<
 
-kernel.bin: sys.o cpu.o intr.o excp.o memory.o sched.o fs.o task.o timer.o console_io.o queue.o common.o debug.o main.o kern_task_init.o
+kernel.bin: sys.o cpu.o intr.o excp.o memory.o sched.o fs.o task.o syscall.o timer.o console_io.o queue.o common.o debug.o main.o kern_task_init.o
 	ld -o $@ $+ -Map System.map -s -T sys.ld -x
 
 sys.o: sys.S
@@ -25,6 +25,8 @@ sched.o: sched.c
 fs.o: fs.c
 
 task.o: task.c
+
+syscall.o: syscall.c
 
 timer.o: timer.c
 
