@@ -6,27 +6,18 @@
 #include <console_io.h>
 #include <timer.h>
 #include <kernel.h>
+#include <fs.h>
 #include <sched.h>
 #include <kern_task.h>
 #include <shell_init.h>
 #include <uptime_init.h>
 #include <list.h>
 #include <queue.h>
+#include <common.h>
 
 #define GDT_IDX_OFS	3
 #define APP_ENTRY_POINT	0x20000020
 #define APP_STACK_BASE	0x20002000
-
-struct file_head {
-	struct list lst;
-	unsigned char num_files;
-} fhead;
-
-struct file {
-	struct list lst;
-	char *name;
-	void *data_base_addr;
-} fshell, fuptime;
 
 unsigned short task_id_counter = 1;
 
@@ -45,42 +36,6 @@ void kern_unlock(unsigned char *if_bit)
 	/* if saved IF == true, then sti */
 	if (*if_bit)
 		sti();
-}
-
-static int str_compare(const char *src, const char *dst)
-{
-	char is_equal = 1;
-
-	for (; (*src != '\0') && (*dst != '\0'); src++, dst++) {
-		if (*src != *dst) {
-			is_equal = 0;
-			break;
-		}
-	}
-
-	if (is_equal) {
-		if (*src != '\0') {
-			return 1;
-		} else if (*dst != '\0') {
-			return -1;
-		} else {
-			return 0;
-		}
-	} else {
-		return (int)(*src - *dst);
-	}
-}
-
-static void copy_mem(const void *src, void *dst, unsigned int size)
-{
-	unsigned char *d = (unsigned char *)dst;
-	unsigned char *s = (unsigned char *)src;
-
-	for (; size > 0; size--) {
-		*d = *s;
-		d++;
-		s++;
-	}
 }
 
 static void task_init(struct file *f)
@@ -167,44 +122,6 @@ static void task_init(struct file *f)
 
 	/* Add task to run_queue */
 	sched_runq_enq(new_task);
-}
-
-void fs_init(void *fs_base_addr)
-{
-	queue_init((struct list *)&fhead);
-	fhead.num_files = *(unsigned char *)fs_base_addr;
-
-	fshell.name = (char *)fs_base_addr + PAGE_SIZE;
-	fshell.data_base_addr = (char *)fs_base_addr + PAGE_SIZE + 32;
-	queue_enq((struct list *)&fshell, (struct list *)&fhead);
-
-	fuptime.name = (char *)fs_base_addr + (PAGE_SIZE * 2);
-	fuptime.data_base_addr = (char *)fs_base_addr + (PAGE_SIZE * 2) + 32;
-	queue_enq((struct list *)&fuptime, (struct list *)&fhead);
-}
-
-struct file *fs_open(const char *name)
-{
-	struct file *f;
-
-	/* 将来的には、struct fileのtask_idメンバにopenしたタスクの
-	 * TASK_IDを入れるようにする。そして、openしようとしているファ
-	 * イルのtask_idが既に設定されていれば、fs_openはエラーを返す
-	 * ようにする */
-
-	for (f = (struct file *)fhead.lst.next; f != (struct file *)&fhead; f = (struct file *)f->lst.next) {
-		if (!str_compare(name, f->name))
-			return f;
-	}
-
-	return NULL;
-}
-
-int fs_close(struct file *f)
-{
-	/* 将来的には、fidに対応するstruct fileのtask_idメンバーを設定
-	 * なし(0)にする。 */
-	return 0;
 }
 
 unsigned int do_syscall(unsigned int syscall_id, unsigned int arg1, unsigned int arg2, unsigned int arg3)
