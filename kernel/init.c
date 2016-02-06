@@ -17,7 +17,7 @@
 #include <queue.h>
 #include <common.h>
 
-int main(void)
+int kern_init(void)
 {
 	extern unsigned char syscall_handler;
 
