@@ -221,9 +221,9 @@ print_msg:
 print_msg_ret:
 	ret
 waitkbdout:
+	inb	$0x60, %al
 	inb	$0x64, %al
 	andb	$0x02, %al
-	inb	$0x60, %al
 	jnz	waitkbdout
 	ret
 
