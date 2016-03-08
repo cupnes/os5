@@ -69,10 +69,6 @@ GDT
 | ...       | ...                            |
 | 0001 3fff | loaded uptime binary(last)     |
 | ...       | ...                            |
-| 0007 1000 | shell stack base               |
-| ...       | ...                            |
-| 0007 2000 | uptime stack base              |
-| ...       | ...                            |
 | 0008 0000 | kernel stack base              |
 | ...       | ...                            |
 | 0008 f000 | kernel page directory(first)   |
