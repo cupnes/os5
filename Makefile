@@ -19,7 +19,7 @@ clean:
 	rm -f *~ *.o *.bin *.dat *.img *.map
 
 run: fd.img
-	qemu -fda $<
+	qemu-system-i386 -fda $<
 
 FORCE:
 .PHONY: clean FORCE

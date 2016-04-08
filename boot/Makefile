@@ -1,8 +1,8 @@
 .s.o:
-	as -o $@ $<
+	as --32 -o $@ $<
 
 boot.bin: boot.o
-	ld -o $@ $< -T boot.ld -Map boot.map
+	ld -m elf_i386 -o $@ $< -T boot.ld -Map boot.map
 
 boot.o: boot.s
 
