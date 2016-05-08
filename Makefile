@@ -12,10 +12,14 @@ kernel/kernel.bin: FORCE
 apps/apps.img: FORCE
 	make -C apps
 
+aarch64: FORCE
+	make -C aarch64
+
 clean:
 	make -C boot clean
 	make -C kernel clean
 	make -C apps clean
+	make -C aarch64 clean
 	rm -f *~ *.o *.bin *.dat *.img *.map
 
 run: fd.img
