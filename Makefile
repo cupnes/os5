@@ -3,13 +3,13 @@ all: fd.img
 fd.img: boot/boot.bin kernel/kernel.bin apps/apps.img
 	cat $+ > $@
 
-boot/boot.bin: FORCE
+boot/boot.bin:
 	make -C boot
 
-kernel/kernel.bin: FORCE
+kernel/kernel.bin:
 	make -C kernel
 
-apps/apps.img: FORCE
+apps/apps.img:
 	make -C apps
 
 clean:
@@ -21,5 +21,4 @@ clean:
 run: fd.img
 	qemu-system-i386 -fda $<
 
-FORCE:
-.PHONY: clean FORCE
+.PHONY: boot/boot.bin kernel/kernel.bin apps/apps.img clean
