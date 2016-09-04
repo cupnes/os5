@@ -88,7 +88,7 @@ void task_init(struct file *f)
 
 	/* Setup context switch function */
 	copy_mem(context_switch_template, new_task->context_switch_func, CONTEXT_SWITCH_FN_SIZE);
-	new_task->context_switch_func[CONTEXT_SWITCH_FN_TSKNO_FIELD] = 8 * (new_task->task_id - 1) + 0x20;
+	new_task->context_switch_func[CONTEXT_SWITCH_FN_TSKNO_FIELD] = 8 * (new_task->task_id + GDT_IDX_OFS);
 	new_task->context_switch = (void (*)(void))new_task->context_switch_func;
 
 	/* Setup GDT for task_tss */
