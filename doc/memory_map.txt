@@ -33,11 +33,11 @@ GDT
 |   0 | 0x00 | NULL          |
 |   1 | 0x08 | Code(Sup)     |
 |   2 | 0x10 | Data(Sup)     |
-|   3 | 0x18 | kern_task_tss |
-|   4 | 0x20 | shell_tss     |
-|   5 | 0x28 | uptime_tss    |
-|   6 | 0x30 | Code(Usr)     |
-|   7 | 0x38 | Data(Usr)     |
+|   3 | 0x18 | Code(Usr)     |
+|   4 | 0x20 | Data(Usr)     |
+|   5 | 0x28 | kern_task_tss |
+|   6 | 0x30 | shell_tss     |
+|   7 | 0x38 | uptime_tss    |
 
 ** Physical Address Space
 |-----------+--------------------------------|

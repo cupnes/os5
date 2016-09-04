@@ -4,11 +4,11 @@
 #include <sched.h>
 #include <common.h>
 
-#define GDT_IDX_OFS	3
+#define GDT_IDX_OFS	5
 #define APP_ENTRY_POINT	0x20000020
 #define APP_STACK_BASE	0x20002000
-#define GDT_USER_CS_OFS	0x0030
-#define GDT_USER_DS_OFS	0x0038
+#define GDT_USER_CS_OFS	0x0018
+#define GDT_USER_DS_OFS	0x0020
 
 /*
 00000000 <context_switch>:

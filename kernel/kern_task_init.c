@@ -2,11 +2,11 @@
 #include <cpu.h>
 #include <sched.h>
 
-#define KERN_TASK_GDT_IDX	3
+#define KERN_TASK_GDT_IDX	5
 
 static void kern_task_context_switch(void)
 {
-	__asm__("ljmp	$0x18, $0");
+	__asm__("ljmp	$0x28, $0");
 }
 
 void kern_task_init(void)
