@@ -1,6 +1,4 @@
 #include <cpu.h>
-#include <shell_init.h>
-#include <uptime_init.h>
 
 void init_gdt(unsigned int idx, unsigned int base, unsigned int limit, unsigned char dpl)
 {
