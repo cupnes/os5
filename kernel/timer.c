@@ -9,7 +9,13 @@ void do_ir_timer(void)
 {
 	global_counter += TIMER_TICK_MS;
 	sched_update_wakeupq();
-	schedule(SCHED_CAUSE_TIMER);
+	if (!current_task || !current_task->task_switched_in_time_slice) {
+		/* タイムスライス中のコンテキストスイッチではない */
+		schedule();
+	} else {
+		/* タイムスライス中のコンテキストスイッチである */
+		current_task->task_switched_in_time_slice = 0;
+	}
 	outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_TIMER, IOADR_MPIC_OCW2);
 }
 

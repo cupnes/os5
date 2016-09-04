@@ -7,7 +7,6 @@
 #include <lock.h>
 #include <kern_task.h>
 
-static struct task *current_task = NULL;
 static struct {
 	struct task *head;
 	unsigned int len;
@@ -21,8 +20,10 @@ static struct {
 	unsigned int len;
 } wakeup_event_queue = {NULL, 0};
 static struct task dummy_task;
+static unsigned char is_task_switched_in_time_slice = 0;
 
 struct task task_instance_table[TASK_NUM];
+struct task *current_task = NULL;
 
 unsigned short sched_get_current(void)
 {
@@ -75,17 +76,8 @@ int sched_runq_del(struct task *t)
 	return 0;
 }
 
-void schedule(unsigned char cause_id)
+void schedule(void)
 {
-	if ((cause_id == SCHED_CAUSE_TIMER) && current_task
-	    && current_task->task_switched_in_time_slice) {
-		current_task->task_switched_in_time_slice = 0;
-		return;
-	}
-
-	if (current_task)
-		current_task->task_switched_in_time_slice = 0;
-
 	if (!run_queue.head) {
 		if (current_task) {
 			current_task = NULL;
@@ -96,16 +88,20 @@ void schedule(unsigned char cause_id)
 	} else if (current_task) {
 		if (current_task != current_task->next) {
 			current_task = current_task->next;
-			if (cause_id == SCHED_CAUSE_SYSCALL)
+			if (is_task_switched_in_time_slice) {
 				current_task->task_switched_in_time_slice = 1;
+				is_task_switched_in_time_slice = 0;
+			}
 			outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_TIMER,
 			       IOADR_MPIC_OCW2);
 			current_task->context_switch();
 		}
 	} else {
 		current_task = run_queue.head;
-		if (cause_id == SCHED_CAUSE_SYSCALL)
+		if (is_task_switched_in_time_slice) {
 			current_task->task_switched_in_time_slice = 1;
+			is_task_switched_in_time_slice = 0;
+		}
 		outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_TIMER,
 		       IOADR_MPIC_OCW2);
 		current_task->context_switch();
@@ -198,7 +194,8 @@ void wakeup_after_msec(unsigned int msec)
 	sched_runq_del(current_task);
 	sched_wakeupq_enq(current_task);
 	current_task = &dummy_task;
-	schedule(SCHED_CAUSE_SYSCALL);
+	is_task_switched_in_time_slice = 1;
+	schedule();
 
 	kern_unlock(&if_bit);
 }
@@ -287,7 +284,8 @@ void wakeup_after_event(unsigned char event_type)
 	sched_runq_del(current_task);
 	sched_wakeupevq_enq(current_task);
 	current_task = &dummy_task;
-	schedule(SCHED_CAUSE_SYSCALL);
+	is_task_switched_in_time_slice = 1;
+	schedule();
 
 	kern_unlock(&if_bit);
 }
