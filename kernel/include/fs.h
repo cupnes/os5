@@ -14,7 +14,7 @@ struct file {
 	void *data_base_addr;
 };
 
-extern struct file fshell;
+extern struct file *fshell;
 
 void fs_init(void *fs_base_addr);
 struct file *fs_open(const char *name);

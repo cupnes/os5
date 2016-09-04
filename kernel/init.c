@@ -60,7 +60,7 @@ int kern_init(void)
 
 	/* Setup tasks */
 	kern_task_init();
-	task_init(&fshell);
+	task_init(fshell);
 
 	/* Start paging */
 	mem_page_start();

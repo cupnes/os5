@@ -6,20 +6,23 @@
 #include <common.h>
 
 struct file_head fhead;
-struct file fshell, fuptime;
+struct file *fshell;
 
 void fs_init(void *fs_base_addr)
 {
+	struct file *f;
+	unsigned char i;
+
 	queue_init((struct list *)&fhead);
 	fhead.num_files = *(unsigned char *)fs_base_addr;
 
-	fshell.name = (char *)fs_base_addr + PAGE_SIZE;
-	fshell.data_base_addr = (char *)fs_base_addr + PAGE_SIZE + 32;
-	queue_enq((struct list *)&fshell, (struct list *)&fhead);
-
-	fuptime.name = (char *)fs_base_addr + (PAGE_SIZE * 2);
-	fuptime.data_base_addr = (char *)fs_base_addr + (PAGE_SIZE * 2) + 32;
-	queue_enq((struct list *)&fuptime, (struct list *)&fhead);
+	for (i = 1; i <= fhead.num_files; i++) {
+		f = (struct file *)mem_alloc();
+		f->name = (char *)fs_base_addr + (PAGE_SIZE * i);
+		f->data_base_addr = (char *)fs_base_addr + (PAGE_SIZE * i) + 32;
+		queue_enq((struct list *)f, (struct list *)&fhead);
+	}
+	fshell = (struct file *)fhead.lst.next;
 }
 
 struct file *fs_open(const char *name)
