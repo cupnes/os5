@@ -134,10 +134,10 @@ load_track2_head0:
 	int	$0x13
 	jc	load_track2_head0
 
-	/* トラック2, ヘッド1, セクタ1-8
-	 * src: トラック2, ヘッド0の8セクタ
-	 *      (8セクタ = 4096バイト = 0x1000バイト)
-	 * dst: 0x0001 3000 〜 0x0001 3fff
+	/* トラック2, ヘッド1, 全セクタ
+	 * src: トラック2, ヘッド0の全セクタ
+	 *      (18セクタ = 9216バイト = 0x2400バイト)
+	 * dst: 0x0001 3000 〜 0x0001 53ff
 	 */
 load_track2_head1:
 	movw	$0x1000, %ax
@@ -145,7 +145,7 @@ load_track2_head1:
 	movw	$0x3000, %bx
 	movw	$0x0100, %dx
 	movw	$0x0201, %cx
-	movw	$0x0208, %ax
+	movw	$0x0212, %ax
 	int	$0x13
 	jc	load_track2_head1
 
