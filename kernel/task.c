@@ -7,6 +7,8 @@
 #define GDT_IDX_OFS	3
 #define APP_ENTRY_POINT	0x20000020
 #define APP_STACK_BASE	0x20002000
+#define GDT_USER_CS_OFS	0x0030
+#define GDT_USER_DS_OFS	0x0038
 
 /*
 00000000 <context_switch>:
@@ -100,12 +102,12 @@ void task_init(struct file *f)
 	new_task->tss.eflags = 0x00000200;
 	new_task->tss.esp0 = APP_STACK_BASE;
 	new_task->tss.ss0 = 0x0010;
-	new_task->tss.es = 0x0038 | 0x0003;
-	new_task->tss.cs = 0x0030 | 0x0003;
-	new_task->tss.ss = 0x0038 | 0x0003;
-	new_task->tss.ds = 0x0038 | 0x0003;
-	new_task->tss.fs = 0x0038 | 0x0003;
-	new_task->tss.gs = 0x0038 | 0x0003;
+	new_task->tss.es = GDT_USER_DS_OFS | 0x0003;
+	new_task->tss.cs = GDT_USER_CS_OFS | 0x0003;
+	new_task->tss.ss = GDT_USER_DS_OFS | 0x0003;
+	new_task->tss.ds = GDT_USER_DS_OFS | 0x0003;
+	new_task->tss.fs = GDT_USER_DS_OFS | 0x0003;
+	new_task->tss.gs = GDT_USER_DS_OFS | 0x0003;
 	new_task->tss.__cr3 = (unsigned int)pd_base_addr | 0x18;
 
 	/* Add task to run_queue */
