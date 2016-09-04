@@ -80,8 +80,6 @@ void schedule(unsigned char cause_id)
 	if ((cause_id == SCHED_CAUSE_TIMER) && current_task
 	    && current_task->task_switched_in_time_slice) {
 		current_task->task_switched_in_time_slice = 0;
-		outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_TIMER,
-		       IOADR_MPIC_OCW2);
 		return;
 	}
 
@@ -89,10 +87,7 @@ void schedule(unsigned char cause_id)
 		current_task->task_switched_in_time_slice = 0;
 
 	if (!run_queue.head) {
-		if (!current_task) {
-			outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_TIMER,
-			       IOADR_MPIC_OCW2);
-		} else {
+		if (current_task) {
 			current_task = NULL;
 			outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_TIMER,
 			       IOADR_MPIC_OCW2);
@@ -106,9 +101,7 @@ void schedule(unsigned char cause_id)
 			outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_TIMER,
 			       IOADR_MPIC_OCW2);
 			current_task->context_switch();
-		} else
-			outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_TIMER,
-			       IOADR_MPIC_OCW2);
+		}
 	} else {
 		current_task = run_queue.head;
 		if (cause_id == SCHED_CAUSE_SYSCALL)

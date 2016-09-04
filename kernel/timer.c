@@ -10,6 +10,7 @@ void do_ir_timer(void)
 	global_counter += TIMER_TICK_MS;
 	sched_update_wakeupq();
 	schedule(SCHED_CAUSE_TIMER);
+	outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_TIMER, IOADR_MPIC_OCW2);
 }
 
 void timer_init(void)
