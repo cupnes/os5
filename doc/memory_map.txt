@@ -38,6 +38,7 @@ GDT
 |   5 | 0x28 | kern_task_tss |
 |   6 | 0x30 | shell_tss     |
 |   7 | 0x38 | uptime_tss    |
+|   8 | 0x40 | whoareyou_tss |
 
 ** Physical Address Space
 |-----------+--------------------------------|
