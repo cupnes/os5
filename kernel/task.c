@@ -3,6 +3,7 @@
 #include <fs.h>
 #include <sched.h>
 #include <common.h>
+#include <lock.h>
 
 #define GDT_IDX_OFS	5
 #define APP_ENTRY_POINT	0x20000020
@@ -112,4 +113,16 @@ void task_init(struct file *f)
 
 	/* Add task to run_queue */
 	sched_runq_enq(new_task);
+}
+
+void task_exit(struct task *t)
+{
+	unsigned char if_bit;
+
+	kern_lock(&if_bit);
+
+	sched_runq_del(t);
+	schedule();
+
+	kern_unlock(&if_bit);
 }

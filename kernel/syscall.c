@@ -5,10 +5,13 @@
 #include <fs.h>
 #include <task.h>
 #include <console_io.h>
+#include <cpu.h>
 
 unsigned int do_syscall(unsigned int syscall_id, unsigned int arg1, unsigned int arg2, unsigned int arg3)
 {
 	unsigned int result = -1;
+	unsigned int gdt_idx;
+	unsigned int tss_base_addr;
 
 	switch (syscall_id) {
 	case SYSCALL_TIMER_GET_GLOBAL_COUNTER:
@@ -45,6 +48,12 @@ unsigned int do_syscall(unsigned int syscall_id, unsigned int arg1, unsigned int
 		break;
 	case SYSCALL_EXEC:
 		task_init((struct file *)arg1);
+		result = 0;
+		break;
+	case SYSCALL_EXIT:
+		gdt_idx = x86_get_tr() / 8;
+		tss_base_addr = (gdt[gdt_idx].base2 << 24) | (gdt[gdt_idx].base1 << 16) | (gdt[gdt_idx].base0);
+		task_exit((struct task *)(tss_base_addr - 0x0000000c));
 		result = 0;
 		break;
 	}
