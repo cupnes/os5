@@ -5,8 +5,7 @@ unsigned int syscall(unsigned int syscall_id, unsigned int arg1, unsigned int ar
 void entry(void)
 {
 	syscall(SYSCALL_CON_PUT_STR, (unsigned int)"OS5\r\n", 0, 0);
-	while (1)
-		syscall(SYSCALL_SCHED_WAKEUP_MSEC, 1000, 0, 0);
+	syscall(SYSCALL_EXIT, 0, 0, 0);
 }
 
 unsigned int syscall(unsigned int syscall_id, unsigned int arg1, unsigned int arg2, unsigned int arg3)
