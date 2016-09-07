@@ -370,9 +370,10 @@ static void shell_main(void)
 			break;
 		default:
 			fp = syscall(SYSCALL_OPEN, (unsigned int)command, 0, 0);
-			if (fp)
+			if (fp) {
 				syscall(SYSCALL_EXEC, fp, 0, 0);
-			else
+				syscall(SYSCALL_SCHED_WAKEUP_EVENT, EVENT_TYPE_EXIT, 0, 0);
+			} else
 				shell_put_str("Command not found.\r\n");
 			break;
 		}

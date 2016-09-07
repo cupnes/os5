@@ -4,6 +4,7 @@
 #include <sched.h>
 #include <common.h>
 #include <lock.h>
+#include <kernel.h>
 
 #define GDT_IDX_OFS	5
 #define APP_ENTRY_POINT	0x20000020
@@ -121,6 +122,7 @@ void task_exit(struct task *t)
 
 	kern_lock(&if_bit);
 
+	sched_update_wakeupevq(EVENT_TYPE_EXIT);
 	sched_runq_del(t);
 	schedule();
 

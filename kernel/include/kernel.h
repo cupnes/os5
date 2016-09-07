@@ -16,6 +16,9 @@ enum {
 	SYSCALL_EXIT
 };
 
-#define EVENT_TYPE_KBD			1
+enum {
+	EVENT_TYPE_KBD = 1,
+	EVENT_TYPE_EXIT
+};
 
 #endif /* _KERNEL_H_ */
