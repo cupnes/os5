@@ -21,6 +21,10 @@ unsigned int do_syscall(unsigned int syscall_id, unsigned int arg1, unsigned int
 		wakeup_after_msec(arg1);
 		result = 0;
 		break;
+	case SYSCALL_SCHED_WAKEUP_EVENT:
+		wakeup_after_event(arg1);
+		result = 0;
+		break;
 	case SYSCALL_CON_GET_CURSOR_POS_Y:
 		result = (unsigned int)cursor_pos.y;
 		break;

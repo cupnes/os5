@@ -4,6 +4,7 @@
 #include <console_io.h>
 #include <sched.h>
 #include <lock.h>
+#include <kernel.h>
 
 #define QUEUE_BUF_SIZE	256
 
