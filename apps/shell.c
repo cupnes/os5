@@ -13,6 +13,7 @@ enum {
 	WRITEW,
 	WRITEL,
 	IOWRITEB,
+	BG,
 	TEST,
 	COMMAND_NUM
 } _COMMAND_SET;
@@ -316,6 +317,10 @@ static unsigned char get_command_id(const char *command)
 		return IOWRITEB;
 	}
 
+	if (!str_compare(command, "bg")) {
+		return BG;
+	}
+
 	if (!str_compare(command, "test")) {
 		return TEST;
 	}
@@ -328,15 +333,25 @@ static void shell_main(void)
 	while (1) {
 		char buf[MAX_LINE_SIZE];
 		char command[256], args[256];
-		unsigned char command_id;
+		unsigned char command_id, is_background = 0;
 		unsigned int fp;
 
 		shell_put_str("OS5> ");
 		if (syscall(SYSCALL_CON_GET_LINE, (unsigned int)buf, MAX_LINE_SIZE, 0) <= 0) {
 			continue;
 		}
-		str_get_first_entry(buf, command, args);
-		command_id = get_command_id(command);
+
+		while (1) {
+			str_get_first_entry(buf, command, args);
+			command_id = get_command_id(command);
+			if (command_id != BG)
+				break;
+			else {
+				is_background = 1;
+				copy_mem(args, buf, (unsigned int)str_get_len(args));
+			}
+		}
+
 		switch (command_id) {
 		case ECHO:
 			command_echo(args);
@@ -372,7 +387,8 @@ static void shell_main(void)
 			fp = syscall(SYSCALL_OPEN, (unsigned int)command, 0, 0);
 			if (fp) {
 				syscall(SYSCALL_EXEC, fp, 0, 0);
-				syscall(SYSCALL_SCHED_WAKEUP_EVENT, EVENT_TYPE_EXIT, 0, 0);
+				if (!is_background)
+					syscall(SYSCALL_SCHED_WAKEUP_EVENT, EVENT_TYPE_EXIT, 0, 0);
 			} else
 				shell_put_str("Command not found.\r\n");
 			break;
