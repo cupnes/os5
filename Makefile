@@ -12,13 +12,17 @@ kernel/kernel.bin:
 apps/apps.img:
 	make -C apps
 
+doc:
+	make -C doc
+
 clean:
 	make -C boot clean
 	make -C kernel clean
 	make -C apps clean
+	make -C doc clean
 	rm -f *~ *.o *.bin *.dat *.img *.map
 
 run: fd.img
 	qemu-system-i386 -fda $<
 
-.PHONY: boot/boot.bin kernel/kernel.bin apps/apps.img clean
+.PHONY: boot/boot.bin kernel/kernel.bin apps/apps.img doc clean
