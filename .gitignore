@@ -4,6 +4,7 @@
 *.dat
 *.img
 *.map
+*.txt
 *#
 bin
 GPATH
