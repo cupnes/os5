@@ -1,3 +1,6 @@
+#+title: メモリーマップについて
+#+author: Yuma Ohgami
+
 * boot loader
 | base              | 0x0000 7c00 |
 | SS(stack segment) | 0x0000      |
