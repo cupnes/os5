@@ -3,23 +3,24 @@ CFLAGS	=	-Wall -Wextra
 CFLAGS	+=	-nostdinc -nostdlib -fno-builtin -c
 CFLAGS	+=	-Iinclude -I$(KERNEL_PATH)/include
 CFLAGS	+=	-m32
+BIN_DIR = .bin
 
 .c.o:
 	gcc $(CFLAGS) -o $@ $<
 
-apps.img: bin/shell bin/uptime bin/whoareyou
+apps.img: $(BIN_DIR)/shell $(BIN_DIR)/uptime $(BIN_DIR)/whoareyou
 	../tools/make_os5_fs.sh $+ > $@
 
-bin/shell: shell.o
-	[ -d bin ] || mkdir bin
+$(BIN_DIR)/shell: shell.o
+	[ -d $(BIN_DIR) ] || mkdir $(BIN_DIR)
 	ld -m elf_i386 -o $@ $< -Map shell.map -s -T app.ld -x
 
-bin/uptime: uptime.o
-	[ -d bin ] || mkdir bin
+$(BIN_DIR)/uptime: uptime.o
+	[ -d $(BIN_DIR) ] || mkdir $(BIN_DIR)
 	ld -m elf_i386 -o $@ $< -Map uptime.map -s -T app.ld -x
 
-bin/whoareyou: whoareyou.o
-	[ -d bin ] || mkdir bin
+$(BIN_DIR)/whoareyou: whoareyou.o
+	[ -d $(BIN_DIR) ] || mkdir $(BIN_DIR)
 	ld -m elf_i386 -o $@ $< -Map whoareyou.map -s -T app.ld -x
 
 shell.o: shell.c
@@ -29,6 +30,6 @@ uptime.o: uptime.c
 whoareyou.o: whoareyou.c
 
 clean:
-	rm -rf *~ *.o *.bin *.dat *.img *.map bin
+	rm -rf *~ *.o *.bin *.dat *.img *.map $(BIN_DIR)
 
 .PHONY: clean
