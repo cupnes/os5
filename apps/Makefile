@@ -9,13 +9,12 @@ APP_LD = ../app.ld
 .c.o:
 	gcc $(CFLAGS) -o $@ $<
 
-apps.img: $(BIN_DIR)/shell uptime whoareyou
-	mv $(BIN_DIR)/shell $(BIN_DIR)/0shell
+apps.img: 0shell uptime whoareyou
 	../tools/make_os5_fs.sh $(BIN_DIR)/* > $@
 
-$(BIN_DIR)/shell: shell.o
+0shell:
 	[ -d $(BIN_DIR) ] || mkdir $(BIN_DIR)
-	ld -m elf_i386 -o $@ $< -Map shell.map -s -T app.ld -x
+	make -C $@ BIN_DIR=../$(BIN_DIR) KERNEL_PATH=../$(KERNEL_PATH) APP_LD=$(APP_LD)
 
 uptime:
 	[ -d $(BIN_DIR) ] || mkdir $(BIN_DIR)
@@ -25,11 +24,10 @@ whoareyou:
 	[ -d $(BIN_DIR) ] || mkdir $(BIN_DIR)
 	make -C $@ BIN_DIR=../$(BIN_DIR) KERNEL_PATH=../$(KERNEL_PATH) APP_LD=$(APP_LD)
 
-shell.o: shell.c
-
 clean:
 	rm -rf *~ *.o *.bin *.dat *.img *.map $(BIN_DIR)
+	make -C 0shell clean
 	make -C uptime clean
 	make -C whoareyou clean
 
-.PHONY: uptime whoareyou clean
+.PHONY: 0shell uptime whoareyou clean
