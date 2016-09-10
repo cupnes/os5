@@ -1,26 +1,19 @@
 KERNEL_PATH = ../kernel
 BIN_DIR = .bin
 APP_LD = ../app.ld
+APP_DIRS = $(shell find . -maxdepth 1 -type d '!' -iname '.*')
 
-apps.img: 0shell uptime whoareyou
+apps.img: $(APP_DIRS)
+	[ -d $(BIN_DIR) ] || mkdir $(BIN_DIR)
+	for appdir in $^; do \
+		make -C $$appdir BIN_DIR=../$(BIN_DIR) KERNEL_PATH=../$(KERNEL_PATH) APP_LD=$(APP_LD); \
+	done
 	../tools/make_os5_fs.sh $(BIN_DIR)/* > $@
-
-0shell:
-	[ -d $(BIN_DIR) ] || mkdir $(BIN_DIR)
-	make -C $@ BIN_DIR=../$(BIN_DIR) KERNEL_PATH=../$(KERNEL_PATH) APP_LD=$(APP_LD)
-
-uptime:
-	[ -d $(BIN_DIR) ] || mkdir $(BIN_DIR)
-	make -C $@ BIN_DIR=../$(BIN_DIR) KERNEL_PATH=../$(KERNEL_PATH) APP_LD=$(APP_LD)
-
-whoareyou:
-	[ -d $(BIN_DIR) ] || mkdir $(BIN_DIR)
-	make -C $@ BIN_DIR=../$(BIN_DIR) KERNEL_PATH=../$(KERNEL_PATH) APP_LD=$(APP_LD)
 
 clean:
 	rm -rf *~ *.o *.bin *.dat *.img *.map $(BIN_DIR)
-	make -C 0shell clean
-	make -C uptime clean
-	make -C whoareyou clean
+	for appdir in $(APP_DIRS); do \
+		make -C $$appdir clean; \
+	done
 
-.PHONY: 0shell uptime whoareyou clean
+.PHONY: clean
