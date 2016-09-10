@@ -1,13 +1,6 @@
 KERNEL_PATH = ../kernel
-CFLAGS	=	-Wall -Wextra
-CFLAGS	+=	-nostdinc -nostdlib -fno-builtin -c
-CFLAGS	+=	-Iinclude -I$(KERNEL_PATH)/include
-CFLAGS	+=	-m32
 BIN_DIR = .bin
 APP_LD = ../app.ld
-
-.c.o:
-	gcc $(CFLAGS) -o $@ $<
 
 apps.img: 0shell uptime whoareyou
 	../tools/make_os5_fs.sh $(BIN_DIR)/* > $@
