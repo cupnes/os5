@@ -1,7 +1,7 @@
 NAME=whoareyou
 CFLAGS = -Wall -Wextra
 CFLAGS += -nostdinc -nostdlib -fno-builtin -c
-CFLAGS += -Iinclude -I$(KERNEL_PATH)/include
+CFLAGS += -I$(KERNEL_PATH)/include
 CFLAGS += -m32
 
 $(BIN_DIR)/$(NAME): $(NAME).o
