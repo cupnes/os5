@@ -1,9 +1,21 @@
 #include <kernel.h>
 #include <console_io.h>
 
-unsigned int syscall(unsigned int syscall_id, unsigned int arg1, unsigned int arg2, unsigned int arg3);
+int main(void) __attribute__((section(".entry")));
 
-void uptime_start(void)
+unsigned int syscall(unsigned int syscall_id, unsigned int arg1, unsigned int arg2, unsigned int arg3)
+{
+	unsigned int result;
+
+	__asm__ (
+		"\tint $0x80\n"
+	:"=a"(result)
+	:"a"(syscall_id), "b"(arg1), "c"(arg2), "d"(arg3));
+
+	return result;
+}
+
+int main(void)
 {
 	static unsigned int uptime;
 	unsigned int cursor_pos_y;
@@ -20,16 +32,4 @@ void uptime_start(void)
 		}
 		syscall(SYSCALL_SCHED_WAKEUP_MSEC, 33, 0, 0);
 	}
-}
-
-unsigned int syscall(unsigned int syscall_id, unsigned int arg1, unsigned int arg2, unsigned int arg3)
-{
-	unsigned int result;
-
-	__asm__ (
-		"\tint $0x80\n"
-	:"=a"(result)
-	:"a"(syscall_id), "b"(arg1), "c"(arg2), "d"(arg3));
-
-	return result;
 }
