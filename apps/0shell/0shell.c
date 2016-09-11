@@ -18,12 +18,7 @@ enum {
 	COMMAND_NUM
 } _COMMAND_SET;
 
-static void shell_main(void);
-
-void shell_start(void)
-{
-	shell_main();
-}
+int main(void) __attribute__((section(".entry")));
 
 static unsigned int syscall(unsigned int syscall_id, unsigned int arg1, unsigned int arg2, unsigned int arg3)
 {
@@ -328,7 +323,7 @@ static unsigned char get_command_id(const char *command)
 	return COMMAND_NUM;
 }
 
-static void shell_main(void)
+int main(void)
 {
 	while (1) {
 		char buf[MAX_LINE_SIZE];
