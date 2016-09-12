@@ -1,6 +1,5 @@
+#include <app.h>
 #include <kernel.h>
-
-int main(void) __attribute__((section(".entry")));
 
 unsigned int syscall(unsigned int syscall_id, unsigned int arg1, unsigned int arg2, unsigned int arg3)
 {

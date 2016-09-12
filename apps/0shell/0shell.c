@@ -1,3 +1,4 @@
+#include <app.h>
 #include <io_port.h>
 #include <kernel.h>
 
@@ -17,8 +18,6 @@ enum {
 	TEST,
 	COMMAND_NUM
 } _COMMAND_SET;
-
-int main(void) __attribute__((section(".entry")));
 
 static unsigned int syscall(unsigned int syscall_id, unsigned int arg1, unsigned int arg2, unsigned int arg3)
 {
