@@ -5,6 +5,7 @@
 #include <common.h>
 #include <lock.h>
 #include <kernel.h>
+#include <cpu.h>
 
 #define GDT_IDX_OFS	5
 #define APP_ENTRY_POINT	0x20000020
@@ -103,7 +104,7 @@ void task_init(struct file *f)
 	new_task->tss.esp = 0x20001800;
 	new_task->tss.eflags = 0x00000200;
 	new_task->tss.esp0 = APP_STACK_BASE;
-	new_task->tss.ss0 = 0x0010;
+	new_task->tss.ss0 = GDT_KERN_DS_OFS;
 	new_task->tss.es = GDT_USER_DS_OFS | 0x0003;
 	new_task->tss.cs = GDT_USER_CS_OFS | 0x0003;
 	new_task->tss.ss = GDT_USER_DS_OFS | 0x0003;

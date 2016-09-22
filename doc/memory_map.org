@@ -32,8 +32,8 @@ GDT
 | idx |  ofs |               |
 |-----+------+---------------|
 |   0 | 0x00 | NULL          |
-|   1 | 0x08 | Code(Sup)     |
-|   2 | 0x10 | Data(Sup)     |
+|   1 | 0x08 | Code(Kern)    |
+|   2 | 0x10 | Data(Kern)    |
 |   3 | 0x18 | Code(Usr)     |
 |   4 | 0x20 | Data(Usr)     |
 |   5 | 0x28 | kern_task_tss |

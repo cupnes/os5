@@ -4,6 +4,7 @@
 #include <asm/cpu.h>
 
 #define X86_EFLAGS_IF	0x00000200
+#define GDT_KERN_DS_OFS	0x0010
 
 #define sti()	__asm__ ("sti"::)
 #define cli()	__asm__ ("cli"::)
