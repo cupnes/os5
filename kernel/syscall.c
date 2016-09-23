@@ -51,7 +51,7 @@ unsigned int do_syscall(unsigned int syscall_id, unsigned int arg1, unsigned int
 		result = (unsigned int)fs_open((char *)arg1);
 		break;
 	case SYSCALL_EXEC:
-		task_init((struct file *)arg1);
+		task_init((struct file *)arg1, (int)arg2, (char **)arg3);
 		result = 0;
 		break;
 	case SYSCALL_EXIT:

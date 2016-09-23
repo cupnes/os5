@@ -11,6 +11,7 @@
 #define APP_ENTRY_POINT	0x20000020
 #define APP_STACK_BASE_USER	0x20001800
 #define APP_STACK_BASE_KERN	0x20002000
+#define APP_STACK_SIZE	4096
 #define GDT_USER_CS_OFS	0x0018
 #define GDT_USER_DS_OFS	0x0020
 
@@ -32,13 +33,24 @@ unsigned char context_switch_template[CONTEXT_SWITCH_FN_SIZE] = {
 
 static unsigned short task_id_counter = 1;
 
-void task_init(struct file *f)
+static int str_get_len(const char *src)
+{
+	int len;
+	for (len = 0; src[len] != '\0'; len++);
+	return len + 1;
+}
+
+void task_init(struct file *f, int argc, char *argv[])
 {
 	struct page_directory_entry *pd_base_addr, *pde;
 	struct page_table_entry *pt_base_addr, *pte;
 	struct task *new_task;
 	unsigned int paging_base_addr, phys_stack_base;
 	unsigned int i;
+	unsigned int len = 0;
+	unsigned int argv_space_num, vsp, arg_size;
+	unsigned char *sp, *sp2;
+	char *t;
 
 	/* Allocate task resources */
 	pd_base_addr = (struct page_directory_entry *)mem_alloc();
@@ -100,9 +112,66 @@ void task_init(struct file *f)
 	/* Setup GDT for task_tss */
 	init_gdt(new_task->task_id + GDT_IDX_OFS, (unsigned int)&new_task->tss, sizeof(struct tss), 3);
 
+	/* Setup task stack */
+	/* スタックにint argcとchar *argv[]を積み、
+	 * call命令でジャンプした直後を再現する。
+	 *
+	 * 例) argc=3, argv={"HOGE", "P", "FUGAA"}
+	 * | VA          | 内容              | 備考                               |
+	 * |-------------+-------------------+------------------------------------|
+	 * | 0x2000 17d0 |                   |                                    |
+	 * | 0x2000 17d4 | (Don't Care)      | ESPはここを指した状態にしておく(*) |
+	 * | 0x2000 17d8 | 3                 | argc                               |
+	 * | 0x2000 17dc | 0x2000 17e4       | argv                               |
+	 * | 0x2000 17e0 | (Don't Care)      |                                    |
+	 * | 0x2000 17e4 | 0x2000 17f0       | argv[0]                            |
+	 * | 0x2000 17e8 | 0x2000 17f5       | argv[1]                            |
+	 * | 0x2000 17ec | 0x2000 17f7       | argv[2]                            |
+	 * | 0x2000 17f0 | 'H'  'O' 'G'  'E' |                                    |
+	 * | 0x2000 17f4 | '\0' 'P' '\0' 'F' |                                    |
+	 * | 0x2000 17f8 | 'U'  'G' 'A'  'A' |                                    |
+	 * | 0x2000 17fc | '\0'              |                                    |
+	 * |-------------+-------------------+------------------------------------|
+	 * | 0x2000 1800 |                   |                                    |
+	 * (*) call命令はnearジャンプ時、call命令の次の命令のアドレスを
+	 * 復帰時のEIPとしてスタックに積むため。
+	 */
+	for (i = 0; i < (unsigned int)argc; i++) {
+		len += str_get_len(argv[i]);
+	}
+	argv_space_num = (len / 4) + 1;
+	arg_size = 4 * (4 + argc + argv_space_num);
+
+	sp = (unsigned char *)(phys_stack_base + (APP_STACK_SIZE / 2));
+	sp -= arg_size;
+
+	sp += 4;
+
+	*(int *)sp = argc;
+	sp += 4;
+
+	*(unsigned int *)sp = APP_STACK_BASE_USER - (4 * (argc + argv_space_num));
+	sp += 4;
+
+	sp += 4;
+
+	vsp = APP_STACK_BASE_USER - (4 * argv_space_num);
+	sp2 = sp + (4 * argc);
+	for (i = 0; i < (unsigned int)argc; i++) {
+		*(unsigned int *)sp = vsp;
+		sp += 4;
+		t = argv[i];
+		for (; *t != '\0'; t++) {
+			vsp++;
+			*sp2++ = *t;
+		}
+		*sp2++ = '\0';
+		vsp++;
+	}
+
 	/* Setup task_tss */
 	new_task->tss.eip = APP_ENTRY_POINT;
-	new_task->tss.esp = APP_STACK_BASE_USER;
+	new_task->tss.esp = APP_STACK_BASE_USER - arg_size;
 	new_task->tss.eflags = 0x00000200;
 	new_task->tss.esp0 = APP_STACK_BASE_KERN;
 	new_task->tss.ss0 = GDT_KERN_DS_OFS;

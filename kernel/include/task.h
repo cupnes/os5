@@ -25,7 +25,7 @@ struct task {
 
 extern unsigned char context_switch_template[CONTEXT_SWITCH_FN_SIZE];
 
-void task_init(struct file *f);
+void task_init(struct file *f, int argc, char *argv[]);
 void task_exit(struct task *t);
 
 #endif /* _TASK_H_ */
