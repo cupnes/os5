@@ -322,7 +322,7 @@ static unsigned char get_command_id(const char *command)
 	return COMMAND_NUM;
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
 	while (1) {
 		char buf[MAX_LINE_SIZE];

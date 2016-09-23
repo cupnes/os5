@@ -13,7 +13,7 @@ unsigned int syscall(unsigned int syscall_id, unsigned int arg1, unsigned int ar
 	return result;
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
 	syscall(SYSCALL_CON_PUT_STR, (unsigned int)"OS5\r\n", 0, 0);
 	syscall(SYSCALL_EXIT, 0, 0, 0);

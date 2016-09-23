@@ -14,7 +14,7 @@ unsigned int syscall(unsigned int syscall_id, unsigned int arg1, unsigned int ar
 	return result;
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
 	static unsigned int uptime;
 	unsigned int cursor_pos_y;
