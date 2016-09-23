@@ -380,7 +380,28 @@ int main(void)
 		default:
 			fp = syscall(SYSCALL_OPEN, (unsigned int)command, 0, 0);
 			if (fp) {
-				syscall(SYSCALL_EXEC, fp, 0, 0);
+				unsigned int argc = 0, i;
+				char *argv[256];
+				char *start;
+
+				argv[argc++] = command;
+
+				start = &args[0];
+				for (i = 0; ; i++) {
+					if ((i == 0) && (args[i] == '\0')) {
+						break;
+					} else if ((args[i] == ' ') || (args[i] == '\0')) {
+						argv[argc++] = start;
+						start = &args[i + 1];
+						if (args[i] == ' ')
+							args[i] = '\0';
+						else
+							break;
+					}
+				}
+
+				syscall(SYSCALL_EXEC, fp, argc, (unsigned int)argv);
+
 				if (!is_background)
 					syscall(SYSCALL_SCHED_WAKEUP_EVENT, EVENT_TYPE_EXIT, 0, 0);
 			} else
