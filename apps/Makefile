@@ -1,14 +1,14 @@
 LIB_DIR = .lib
 BIN_DIR = .bin
 APP_LD = ../app.ld
-LIB_DIRS = libkernel
+LIB_DIRS = libkernel libcommon
 APP_DIRS = $(shell find . -maxdepth 1 -type d '!' -iname '.*' '!' -iname 'include' '!' -iname 'lib*')
 CFLAGS = -Wall -Wextra
 CFLAGS += -nostdinc -nostdlib -fno-builtin -c
 CFLAGS += -I../include
 CFLAGS += -m32
 LDFLAGS = -L../$(LIB_DIR)
-LIBS = -lkernel
+LIBS = -lcommon -lkernel
 
 apps.img: lib app
 	../tools/make_os5_fs.sh $(BIN_DIR)/* > $@

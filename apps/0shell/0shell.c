@@ -1,5 +1,6 @@
 #include <app.h>
 #include <kernel.h>
+#include <common.h>
 
 #define MAX_LINE_SIZE	512
 
@@ -26,24 +27,6 @@ static void shell_put_str(char *str)
 static void shell_dump_hex(unsigned int val, unsigned int num_digits)
 {
 	syscall(SYSCALL_CON_DUMP_HEX, val, num_digits, 0);
-}
-
-static int pow(int num, int multer)
-{
-	if (multer == 0) return 1;
-	return pow(num, multer - 1) * num;
-}
-
-static void copy_mem(const void *src, void *dst, unsigned int size)
-{
-	unsigned char *d = (unsigned char *)dst;
-	unsigned char *s = (unsigned char *)src;
-
-	for (; size > 0; size--) {
-		*d = *s;
-		d++;
-		s++;
-	}
 }
 
 static int str_get_len(const char *src)
