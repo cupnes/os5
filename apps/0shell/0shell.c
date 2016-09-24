@@ -18,18 +18,6 @@ enum {
 	COMMAND_NUM
 } _COMMAND_SET;
 
-static unsigned int syscall(unsigned int syscall_id, unsigned int arg1, unsigned int arg2, unsigned int arg3)
-{
-	unsigned int result;
-
-	__asm__ (
-		"\tint $0x80\n"
-	:"=a"(result)
-	:"a"(syscall_id), "b"(arg1), "c"(arg2), "d"(arg3));
-
-	return result;
-}
-
 static void shell_put_str(char *str)
 {
 	syscall(SYSCALL_CON_PUT_STR, (unsigned int)str, 0, 0);
