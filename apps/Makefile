@@ -7,6 +7,7 @@ CFLAGS = -Wall -Wextra
 CFLAGS += -nostdinc -nostdlib -fno-builtin -c
 CFLAGS += -I../include
 CFLAGS += -m32
+CFLAGS += -DCOMPILE_APP
 LDFLAGS = -L../$(LIB_DIR)
 LIBS = -lstring -lcommon -lkernel
 

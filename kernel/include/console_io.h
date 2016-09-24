@@ -6,18 +6,21 @@
 #define IOADR_KBC_STATUS			0x0064
 #define IOADR_KBC_STATUS_BIT_OBF	0x01
 
-#define INTR_IR_KB					1
-#define INTR_NUM_KB					33
-#define INTR_MASK_BIT_KB			0x02
-#define SCREEN_START				0xb8000
 #define COLUMNS						80
 #define ROWS						25
-#define ATTR						0x07
-#define CHATT_CNT					1
 
 #define ASCII_ESC					0x1b
 #define ASCII_BS					0x08
 #define ASCII_HT					0x09
+
+#ifndef COMPILE_APP
+
+#define INTR_IR_KB					1
+#define INTR_NUM_KB					33
+#define INTR_MASK_BIT_KB			0x02
+#define SCREEN_START				0xb8000
+#define ATTR						0x07
+#define CHATT_CNT					1
 
 struct cursor_position {
 	unsigned int x, y;
@@ -41,5 +44,7 @@ unsigned char get_keycode_pressed(void);
 unsigned char get_keycode_released(void);
 char get_char(void);
 unsigned int get_line(char *buf, unsigned int buf_size);
+
+#endif /* COMPILE_APP */
 
 #endif /* _CONSOLE_IO_H_ */
