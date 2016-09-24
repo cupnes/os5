@@ -1,6 +1,6 @@
 #include <app.h>
-#include <io_port.h>
-#include <kernel.h>
+#include "../../kernel/include/io_port.h"
+#include "../../kernel/include/kernel.h"
 
 #define MAX_LINE_SIZE	512
 

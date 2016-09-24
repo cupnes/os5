@@ -1,6 +1,6 @@
 #include <app.h>
-#include <kernel.h>
-#include <console_io.h>
+#include "../../kernel/include/kernel.h"
+#include "../../kernel/include/console_io.h"
 
 unsigned int syscall(unsigned int syscall_id, unsigned int arg1, unsigned int arg2, unsigned int arg3)
 {

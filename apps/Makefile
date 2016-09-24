@@ -1,10 +1,9 @@
-KERNEL_PATH = ../kernel
 BIN_DIR = .bin
 APP_LD = ../app.ld
 APP_DIRS = $(shell find . -maxdepth 1 -type d '!' -iname '.*' '!' -iname 'include')
 CFLAGS = -Wall -Wextra
 CFLAGS += -nostdinc -nostdlib -fno-builtin -c
-CFLAGS += -I../include -I../$(KERNEL_PATH)/include
+CFLAGS += -I../include
 CFLAGS += -m32
 
 apps.img: $(APP_DIRS)
