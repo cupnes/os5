@@ -1,5 +1,5 @@
 #include <app.h>
-#include "../../kernel/include/kernel.h"
+#include <kernel.h>
 
 static int str_compare(const char *src, const char *dst)
 {
