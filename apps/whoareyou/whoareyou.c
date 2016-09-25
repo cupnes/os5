@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 		put_str("Operating System 5\r\n");
 	else
 		put_str("OS5\r\n");
-	syscall(SYSCALL_EXIT, 0, 0, 0);
+	exit();
 
 	return 0;
 }

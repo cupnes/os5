@@ -11,3 +11,8 @@ unsigned int syscall(unsigned int syscall_id, unsigned int arg1, unsigned int ar
 
 	return result;
 }
+
+void exit(void)
+{
+	syscall(SYSCALL_EXIT, 0, 0, 0);
+}
