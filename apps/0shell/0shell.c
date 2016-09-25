@@ -2,6 +2,7 @@
 #include <kernel.h>
 #include <common.h>
 #include <string.h>
+#include <console.h>
 
 #define MAX_LINE_SIZE	512
 
@@ -19,16 +20,6 @@ enum {
 	TEST,
 	COMMAND_NUM
 } _COMMAND_SET;
-
-static void put_str(char *str)
-{
-	syscall(SYSCALL_CON_PUT_STR, (unsigned int)str, 0, 0);
-}
-
-static void dump_hex(unsigned int val, unsigned int num_digits)
-{
-	syscall(SYSCALL_CON_DUMP_HEX, val, num_digits, 0);
-}
 
 static int command_echo(char *args)
 {
@@ -212,7 +203,7 @@ int main(int argc, char *argv[])
 		unsigned int fp;
 
 		put_str("OS5> ");
-		if (syscall(SYSCALL_CON_GET_LINE, (unsigned int)buf, MAX_LINE_SIZE, 0) <= 0) {
+		if (get_line(buf, MAX_LINE_SIZE) <= 0) {
 			continue;
 		}
 
