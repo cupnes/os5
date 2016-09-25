@@ -20,20 +20,20 @@ enum {
 	COMMAND_NUM
 } _COMMAND_SET;
 
-static void shell_put_str(char *str)
+static void put_str(char *str)
 {
 	syscall(SYSCALL_CON_PUT_STR, (unsigned int)str, 0, 0);
 }
 
-static void shell_dump_hex(unsigned int val, unsigned int num_digits)
+static void dump_hex(unsigned int val, unsigned int num_digits)
 {
 	syscall(SYSCALL_CON_DUMP_HEX, val, num_digits, 0);
 }
 
 static int command_echo(char *args)
 {
-	shell_put_str(args);
-	shell_put_str("\r\n");
+	put_str(args);
+	put_str("\r\n");
 
 	return 0;
 }
@@ -45,8 +45,8 @@ static int command_readb(char *args)
 
 	str_get_first_entry(args, first, other);
 	addr = (unsigned char *)str_conv_ahex_int(first);
-	shell_dump_hex(*addr, 2);
-	shell_put_str("\r\n");
+	dump_hex(*addr, 2);
+	put_str("\r\n");
 
 	return 0;
 }
@@ -58,8 +58,8 @@ static int command_readw(char *args)
 
 	str_get_first_entry(args, first, other);
 	addr = (unsigned short *)str_conv_ahex_int(first);
-	shell_dump_hex(*addr, 4);
-	shell_put_str("\r\n");
+	dump_hex(*addr, 4);
+	put_str("\r\n");
 
 	return 0;
 }
@@ -71,8 +71,8 @@ static int command_readl(char *args)
 
 	str_get_first_entry(args, first, other);
 	addr = (unsigned int *)str_conv_ahex_int(first);
-	shell_dump_hex(*addr, 8);
-	shell_put_str("\r\n");
+	dump_hex(*addr, 8);
+	put_str("\r\n");
 
 	return 0;
 }
@@ -84,8 +84,8 @@ static int command_ioreadb(char *args)
 
 	str_get_first_entry(args, first, other);
 	addr = (unsigned short)str_conv_ahex_int(first);
-	shell_dump_hex(inb_p(addr), 2);
-	shell_put_str("\r\n");
+	dump_hex(inb_p(addr), 2);
+	put_str("\r\n");
 
 	return 0;
 }
@@ -149,7 +149,7 @@ static int command_iowriteb(char *args)
 
 static int command_test(char *args)
 {
-	shell_put_str("test\r\n");
+	put_str("test\r\n");
 
 	return 0;
 }
@@ -211,7 +211,7 @@ int main(int argc, char *argv[])
 		unsigned char command_id, is_background = 0;
 		unsigned int fp;
 
-		shell_put_str("OS5> ");
+		put_str("OS5> ");
 		if (syscall(SYSCALL_CON_GET_LINE, (unsigned int)buf, MAX_LINE_SIZE, 0) <= 0) {
 			continue;
 		}
@@ -286,7 +286,7 @@ int main(int argc, char *argv[])
 				if (!is_background)
 					syscall(SYSCALL_SCHED_WAKEUP_EVENT, EVENT_TYPE_EXIT, 0, 0);
 			} else
-				shell_put_str("Command not found.\r\n");
+				put_str("Command not found.\r\n");
 			break;
 		}
 	}
