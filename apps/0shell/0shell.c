@@ -17,7 +17,9 @@ enum {
 	WRITEL,
 	IOWRITEB,
 	BG,
+#ifdef DEBUG
 	TEST,
+#endif /* DEBUG */
 	COMMAND_NUM
 } _COMMAND_SET;
 
@@ -138,12 +140,14 @@ static int command_iowriteb(char *args)
 	return 0;
 }
 
+#ifdef DEBUG
 static int command_test(char *args)
 {
 	put_str("test\r\n");
 
 	return 0;
 }
+#endif /* DEBUG */
 
 static unsigned char get_command_id(const char *command)
 {
@@ -187,9 +191,11 @@ static unsigned char get_command_id(const char *command)
 		return BG;
 	}
 
+#ifdef DEBUG
 	if (!str_compare(command, "test")) {
 		return TEST;
 	}
+#endif /* DEBUG */
 
 	return COMMAND_NUM;
 }
@@ -246,9 +252,11 @@ int main(int argc, char *argv[])
 		case IOWRITEB:
 			command_iowriteb(args);
 			break;
+#ifdef DEBUG
 		case TEST:
 			command_test(args);
 			break;
+#endif /* DEBUG */
 		default:
 			fp = syscall(SYSCALL_OPEN, (unsigned int)command, 0, 0);
 			if (fp) {
