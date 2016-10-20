@@ -10,7 +10,7 @@
 	movw	$0x1000, %sp
 
 	/* ビデオモード設定(画面クリア) */
-	movw	$0x0003, %ax
+	movw	$0x0013, %ax
 	int	$0x10
 
 	movw	$msg_welcome, %si
@@ -211,6 +211,8 @@ load_track2_head1:
 	ljmp	$8, $0x7e00
 
 print_msg:
+	/* グラフィックモードでは何もしない */
+	ret
 	lodsb
 	andb	%al, %al
 	jz	print_msg_ret

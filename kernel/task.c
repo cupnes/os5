@@ -14,7 +14,7 @@
 #define APP_STACK_SIZE	4096
 #define GDT_USER_CS_OFS	0x0018
 #define GDT_USER_DS_OFS	0x0020
-#define VRAM_BASE	0x000b8000
+#define VRAM_BASE	0x000a0000
 
 /*
 00000000 <context_switch>:
@@ -102,17 +102,13 @@ void task_init(struct file *f, int argc, char *argv[])
 		pte++;
 	}
 	paging_base_addr = VRAM_BASE >> 12;
-	for (; i < 0x3f8; i++) {
+	for (; i < 0x400; i++) {
 		pte->all = 0;
 		pte->p = 1;
 		pte->r_w = 1;
 		pte->u_s = 1;
 		pte->page_base = paging_base_addr;
-		paging_base_addr += PAGE_SIZE;
-		pte++;
-	}
-	for (; i < 0x400; i++) {
-		pte->all = 0;
+		paging_base_addr += PAGE_SIZE >> 12;
 		pte++;
 	}
 

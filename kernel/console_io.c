@@ -96,30 +96,31 @@ void con_init(void)
 
 void update_cursor(void)
 {
-	unsigned int cursor_address = (cursor_pos.y * 80) + cursor_pos.x;
-	unsigned char cursor_address_msb = (unsigned char)(cursor_address >> 8);
-	unsigned char cursor_address_lsb = (unsigned char)cursor_address;
-	unsigned char if_bit;
+	/* グラフィックモード時は何もしない */
+	/* unsigned int cursor_address = (cursor_pos.y * 80) + cursor_pos.x; */
+	/* unsigned char cursor_address_msb = (unsigned char)(cursor_address >> 8); */
+	/* unsigned char cursor_address_lsb = (unsigned char)cursor_address; */
+	/* unsigned char if_bit; */
 
-	kern_lock(&if_bit);
-	outb_p(0x0e, 0x3d4);
-	outb_p(cursor_address_msb, 0x3d5);
-	outb_p(0x0f, 0x3d4);
-	outb_p(cursor_address_lsb, 0x3d5);
-	kern_unlock(&if_bit);
+	/* kern_lock(&if_bit); */
+	/* outb_p(0x0e, 0x3d4); */
+	/* outb_p(cursor_address_msb, 0x3d5); */
+	/* outb_p(0x0f, 0x3d4); */
+	/* outb_p(cursor_address_lsb, 0x3d5); */
+	/* kern_unlock(&if_bit); */
 
-	if (cursor_pos.y >= ROWS) {
-		unsigned int start_address = (cursor_pos.y - ROWS + 1) * 80;
-		unsigned char start_address_msb = (unsigned char)(start_address >> 8);
-		unsigned char start_address_lsb = (unsigned char)start_address;
+	/* if (cursor_pos.y >= ROWS) { */
+	/* 	unsigned int start_address = (cursor_pos.y - ROWS + 1) * 80; */
+	/* 	unsigned char start_address_msb = (unsigned char)(start_address >> 8); */
+	/* 	unsigned char start_address_lsb = (unsigned char)start_address; */
 
-		kern_lock(&if_bit);
-		outb_p(0x0c, 0x3d4);
-		outb_p(start_address_msb, 0x3d5);
-		outb_p(0x0d, 0x3d4);
-		outb_p(start_address_lsb, 0x3d5);
-		kern_unlock(&if_bit);
-	}
+	/* 	kern_lock(&if_bit); */
+	/* 	outb_p(0x0c, 0x3d4); */
+	/* 	outb_p(start_address_msb, 0x3d5); */
+	/* 	outb_p(0x0d, 0x3d4); */
+	/* 	outb_p(start_address_lsb, 0x3d5); */
+	/* 	kern_unlock(&if_bit); */
+	/* } */
 }
 
 void put_char_pos(char c, unsigned char x, unsigned char y)
