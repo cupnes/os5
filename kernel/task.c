@@ -90,13 +90,15 @@ void task_init(struct file *f, int argc, char *argv[])
 	/* Initialize task page table */
 	pte = pt_base_addr;
 	paging_base_addr = (unsigned int)f->data_base_addr >> 12;
-	pte->all = 0;
-	pte->p = 1;
-	pte->r_w = 1;
-	pte->u_s = 1;
-	pte->page_base = paging_base_addr;
-	pte++;
-	for (i = 1; i < 0x400; i++) {
+	for (i = 0; i < f->head->block_num; i++) {
+		pte->all = 0;
+		pte->p = 1;
+		pte->r_w = 1;
+		pte->u_s = 1;
+		pte->page_base = paging_base_addr++;
+		pte++;
+	}
+	for (; i < 0x400; i++) {
 		pte->all = 0;
 		pte++;
 	}
