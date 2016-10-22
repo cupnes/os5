@@ -12,14 +12,17 @@ void fs_init(void *fs_base_addr)
 {
 	struct file *f;
 	unsigned char i;
+	unsigned char *file_start_addr = fs_base_addr;
 
 	queue_init((struct list *)&fhead);
 	fhead.num_files = *(unsigned char *)fs_base_addr;
 
+	file_start_addr += PAGE_SIZE;
 	for (i = 1; i <= fhead.num_files; i++) {
 		f = (struct file *)mem_alloc();
-		f->name = (char *)fs_base_addr + (PAGE_SIZE * i);
-		f->data_base_addr = (char *)fs_base_addr + (PAGE_SIZE * i) + 32;
+		f->head = (struct file_header *)file_start_addr;
+		f->data_base_addr = (char *)file_start_addr + sizeof(struct file_header);
+		file_start_addr += PAGE_SIZE * f->head->block_num;
 		queue_enq((struct list *)f, (struct list *)&fhead);
 	}
 	fshell = (struct file *)fhead.lst.next;
@@ -35,7 +38,7 @@ struct file *fs_open(const char *name)
 	 * ようにする */
 
 	for (f = (struct file *)fhead.lst.next; f != (struct file *)&fhead; f = (struct file *)f->lst.next) {
-		if (!str_compare(name, f->name))
+		if (!str_compare(name, f->head->name))
 			return f;
 	}
 
