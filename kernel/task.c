@@ -9,8 +9,8 @@
 
 #define GDT_IDX_OFS	5
 #define APP_ENTRY_POINT	0x20000020
-#define APP_STACK_BASE_USER	0x20001800
-#define APP_STACK_BASE_KERN	0x20002000
+#define APP_STACK_BASE_USER	0xffffe800
+#define APP_STACK_BASE_KERN	0xfffff000
 #define APP_STACK_SIZE	4096
 #define GDT_USER_CS_OFS	0x0018
 #define GDT_USER_DS_OFS	0x0020
@@ -43,7 +43,7 @@ static int str_get_len(const char *src)
 void task_init(struct file *f, int argc, char *argv[])
 {
 	struct page_directory_entry *pd_base_addr, *pde;
-	struct page_table_entry *pt_base_addr, *pte;
+	struct page_table_entry *pt_base_addr, *pt_stack_base_addr, *pte;
 	struct task *new_task;
 	unsigned int paging_base_addr, phys_stack_base;
 	unsigned int i;
@@ -55,6 +55,7 @@ void task_init(struct file *f, int argc, char *argv[])
 	/* Allocate task resources */
 	pd_base_addr = (struct page_directory_entry *)mem_alloc();
 	pt_base_addr = (struct page_table_entry *)mem_alloc();
+	pt_stack_base_addr = (struct page_table_entry *)mem_alloc();
 	new_task = (struct task *)mem_alloc();
 	phys_stack_base = (unsigned int)mem_alloc();
 
@@ -75,10 +76,16 @@ void task_init(struct file *f, int argc, char *argv[])
 	pde->u_s = 1;
 	pde->pt_base = (unsigned int)pt_base_addr >> 12;
 	pde++;
-	for (i++; i < 0x400; i++) {
+	for (i++; i < 0x3ff; i++) {
 		pde->all = 0;
 		pde++;
 	}
+	pde->all = 0;
+	pde->p = 1;
+	pde->r_w = 1;
+	pde->u_s = 1;
+	pde->pt_base = (unsigned int)pt_stack_base_addr >> 12;
+	pde++;
 
 	/* Initialize task page table */
 	pte = pt_base_addr;
@@ -89,6 +96,17 @@ void task_init(struct file *f, int argc, char *argv[])
 	pte->u_s = 1;
 	pte->page_base = paging_base_addr;
 	pte++;
+	for (i = 1; i < 0x400; i++) {
+		pte->all = 0;
+		pte++;
+	}
+
+	/* Initialize stack page table */
+	pte = pt_stack_base_addr;
+	for (i = 0; i < 0x3fe; i++) {
+		pte->all = 0;
+		pte++;
+	}
 	paging_base_addr = phys_stack_base >> 12;
 	pte->all = 0;
 	pte->p = 1;
@@ -96,10 +114,8 @@ void task_init(struct file *f, int argc, char *argv[])
 	pte->u_s = 1;
 	pte->page_base = paging_base_addr;
 	pte++;
-	for (i = 2; i < 0x400; i++) {
-		pte->all = 0;
-		pte++;
-	}
+	pte->all = 0;
+	pte++;
 
 	/* Setup task_id */
 	new_task->task_id = task_id_counter++;
