@@ -135,7 +135,7 @@ load_track2_head0:
 	jc	load_track2_head0
 
 	/* トラック2, ヘッド1, 全セクタ
-	 * src: トラック2, ヘッド0の全セクタ
+	 * src: トラック2, ヘッド1の全セクタ
 	 *      (18セクタ = 9216バイト = 0x2400バイト)
 	 * dst: 0x0001 3000 〜 0x0001 53ff
 	 */
@@ -148,6 +148,81 @@ load_track2_head1:
 	movw	$0x0212, %ax
 	int	$0x13
 	jc	load_track2_head1
+
+	/* トラック3, ヘッド0, 全セクタ
+	 * src: トラック3, ヘッド0の全セクタ
+	 *      (18セクタ = 9216バイト = 0x2400バイト)
+	 * dst: 0x0001 5400 〜 0x0001 77ff
+	 */
+load_track3_head0:
+	movw	$0x1000, %ax
+	movw	%ax, %es
+	movw	$0x5400, %bx
+	movw	$0x0000, %dx
+	movw	$0x0301, %cx
+	movw	$0x0212, %ax
+	int	$0x13
+	jc	load_track3_head0
+
+	/* トラック3, ヘッド1, 全セクタ
+	 * src: トラック3, ヘッド1の全セクタ
+	 *      (18セクタ = 9216バイト = 0x2400バイト)
+	 * dst: 0x0001 7800 〜 0x0001 9bff
+	*/
+load_track3_head1:
+	movw	$0x1000, %ax
+	movw	%ax, %es
+	movw	$0x7800, %bx
+	movw	$0x0100, %dx
+	movw	$0x0301, %cx
+	movw	$0x0212, %ax
+	int	$0x13
+	jc	load_track3_head1
+
+	/* トラック4, ヘッド0, 全セクタ
+	 * src: トラック4, ヘッド0の全セクタ
+	 *      (18セクタ = 9216バイト = 0x2400バイト)
+	 * dst: 0x0001 9c00 〜 0x0001 bfff
+	*/
+load_track4_head0:
+	movw	$0x1000, %ax
+	movw	%ax, %es
+	movw	$0x9c00, %bx
+	movw	$0x0000, %dx
+	movw	$0x0401, %cx
+	movw	$0x0212, %ax
+	int	$0x13
+	jc	load_track4_head0
+
+	/* トラック4, ヘッド1, 全セクタ
+	 * src: トラック4, ヘッド1の全セクタ
+	 *      (18セクタ = 9216バイト = 0x2400バイト)
+	 * dst: 0x0001 c000 〜 0x0001 e3ff
+	*/
+load_track4_head1:
+	movw	$0x1000, %ax
+	movw	%ax, %es
+	movw	$0xc000, %bx
+	movw	$0x0100, %dx
+	movw	$0x0401, %cx
+	movw	$0x0212, %ax
+	int	$0x13
+	jc	load_track4_head1
+
+	/* トラック5, ヘッド0, 全セクタ
+	 * src: トラック5, ヘッド0のセクタ1〜14
+	 *      (14セクタ = 7168バイト = 0x1c00バイト)
+	 * dst: 0x0001 e400 〜 0x0001 ffff
+	*/
+load_track5_head0_1:
+	movw	$0x1000, %ax
+	movw	%ax, %es
+	movw	$0xe400, %bx
+	movw	$0x0000, %dx
+	movw	$0x0501, %cx
+	movw	$0x020e, %ax
+	int	$0x13
+	jc	load_track5_head0_1
 
 	movw	$msg_completed, %si
 	call	print_msg
