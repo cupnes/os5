@@ -4,7 +4,7 @@ work_dir=cap_$(date '+%Y%m%d%H%M%S')
 
 mkdir ${work_dir}
 
-qemu -fda fd.img &
+qemu-system-i386 -fda fd.img &
 
 sleep 1
 echo "convert -loop 0 -delay 15 ${work_dir}/cap_*.gif anime.gif"
