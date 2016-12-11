@@ -75,7 +75,7 @@ void task_init(struct file *f, int argc, char *argv[])
 	pde->u_s = 1;
 	pde->pt_base = (unsigned int)pt_base_addr >> 12;
 	pde++;
-	for (; i < 0x400; i++) {
+	for (i++; i < 0x400; i++) {
 		pde->all = 0;
 		pde++;
 	}
