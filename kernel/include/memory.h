@@ -2,6 +2,7 @@
 #define __MEMORY_H__
 
 #define PAGE_SIZE	0x1000
+#define PAGE_ADDR_MASK	0xfffff000
 
 struct page_directory_entry {
 	union {
