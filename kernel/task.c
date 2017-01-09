@@ -45,7 +45,7 @@ void task_init(struct file *f, int argc, char *argv[])
 	struct page_directory_entry *pd_base_addr, *pde;
 	struct page_table_entry *pt_base_addr, *pt_stack_base_addr, *pte;
 	struct task *new_task;
-	unsigned int paging_base_addr, phys_stack_base;
+	unsigned int paging_base_addr, phys_stack_base, phys_stack_base2;
 	unsigned int i;
 	unsigned int len = 0;
 	unsigned int argv_space_num, vsp, arg_size;
@@ -58,6 +58,7 @@ void task_init(struct file *f, int argc, char *argv[])
 	pt_stack_base_addr = (struct page_table_entry *)mem_alloc();
 	new_task = (struct task *)mem_alloc();
 	phys_stack_base = (unsigned int)mem_alloc();
+	phys_stack_base2 = (unsigned int)mem_alloc();
 
 	/* Initialize task page directory */
 	pde = pd_base_addr;
@@ -105,11 +106,18 @@ void task_init(struct file *f, int argc, char *argv[])
 
 	/* Initialize stack page table */
 	pte = pt_stack_base_addr;
-	for (i = 0; i < 0x3fe; i++) {
+	for (i = 0; i < 0x3fd; i++) {
 		pte->all = 0;
 		pte++;
 	}
 	paging_base_addr = phys_stack_base >> 12;
+	pte->all = 0;
+	pte->p = 1;
+	pte->r_w = 1;
+	pte->u_s = 1;
+	pte->page_base = paging_base_addr;
+	pte++;
+	paging_base_addr = phys_stack_base2 >> 12;
 	pte->all = 0;
 	pte->p = 1;
 	pte->r_w = 1;
@@ -160,7 +168,7 @@ void task_init(struct file *f, int argc, char *argv[])
 	argv_space_num = (len / 4) + 1;
 	arg_size = 4 * (4 + argc + argv_space_num);
 
-	sp = (unsigned char *)(phys_stack_base + (APP_STACK_SIZE / 2));
+	sp = (unsigned char *)(phys_stack_base2 + (APP_STACK_SIZE / 2));
 	sp -= arg_size;
 
 	sp += 4;
@@ -210,7 +218,7 @@ void task_exit(struct task *t)
 	unsigned char if_bit;
 	struct page_directory_entry *pd_base_addr, *pde;
 	struct page_table_entry *pt_base_addr, *pt_stack_base_addr, *pte;
-	unsigned int phys_stack_base;
+	unsigned int phys_stack_base, phys_stack_base2;
 
 	kern_lock(&if_bit);
 
@@ -224,7 +232,10 @@ void task_exit(struct task *t)
 	pt_stack_base_addr = (struct page_table_entry *)(pde->pt_base << 12);
 	pte = pt_stack_base_addr + 0x3fd;
 	phys_stack_base = pte->page_base << 12;
+	pte = pt_stack_base_addr + 0x3fe;
+	phys_stack_base2 = pte->page_base << 12;
 
+	mem_free((void *)phys_stack_base2);
 	mem_free((void *)phys_stack_base);
 	mem_free(t);
 	mem_free(pt_stack_base_addr);
