@@ -209,7 +209,7 @@ void task_exit(struct task *t)
 {
 	unsigned char if_bit;
 	struct page_directory_entry *pd_base_addr, *pde;
-	struct page_table_entry *pt_base_addr, *pte;
+	struct page_table_entry *pt_base_addr, *pt_stack_base_addr, *pte;
 	unsigned int phys_stack_base;
 
 	kern_lock(&if_bit);
@@ -220,11 +220,14 @@ void task_exit(struct task *t)
 	pd_base_addr = (struct page_directory_entry *)(t->tss.__cr3 & PAGE_ADDR_MASK);
 	pde = pd_base_addr + 0x080;
 	pt_base_addr = (struct page_table_entry *)(pde->pt_base << 12);
-	pte = pt_base_addr + 0x001;
+	pde = pd_base_addr + 0x3ff;
+	pt_stack_base_addr = (struct page_table_entry *)(pde->pt_base << 12);
+	pte = pt_stack_base_addr + 0x3fd;
 	phys_stack_base = pte->page_base << 12;
 
 	mem_free((void *)phys_stack_base);
 	mem_free(t);
+	mem_free(pt_stack_base_addr);
 	mem_free(pt_base_addr);
 	mem_free(pd_base_addr);
 
