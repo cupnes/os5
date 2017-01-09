@@ -12,6 +12,11 @@ unsigned int syscall(unsigned int syscall_id, unsigned int arg1, unsigned int ar
 	return result;
 }
 
+unsigned int get_global_counter(void)
+{
+	return syscall(SYSCALL_TIMER_GET_GLOBAL_COUNTER, 0, 0, 0);
+}
+
 void exit(void)
 {
 	syscall(SYSCALL_EXIT, 0, 0, 0);

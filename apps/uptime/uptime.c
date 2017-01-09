@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 	unsigned int cursor_pos_y;
 
 	while (1) {
-		uptime = syscall(SYSCALL_TIMER_GET_GLOBAL_COUNTER, 0, 0, 0) / 1000;
+		uptime = get_global_counter() / 1000;
 		cursor_pos_y = get_cursor_pos_y();
 		if (cursor_pos_y < ROWS) {
 			put_str_pos("uptime:", COLUMNS - (7 + 4), 0);
