@@ -8,7 +8,7 @@
 #include <cpu.h>
 
 #define GDT_IDX_OFS	5
-#define APP_ENTRY_POINT	0x20000020
+#define APP_ENTRY_POINT	0x20000030
 #define APP_STACK_BASE_USER	0xffffe800
 #define APP_STACK_BASE_KERN	0xfffff000
 #define APP_STACK_SIZE	4096
