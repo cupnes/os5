@@ -45,7 +45,7 @@ struct file *fs_open(const char *name)
 	return NULL;
 }
 
-int fs_close(struct file *f)
+int fs_close(struct file *f __attribute__ ((unused)))
 {
 	/* 将来的には、fidに対応するstruct fileのtask_idメンバーを設定
 	 * なし(0)にする。 */
