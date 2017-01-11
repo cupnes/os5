@@ -200,7 +200,7 @@ static unsigned char get_command_id(const char *command)
 	return COMMAND_NUM;
 }
 
-int main(int argc, char *argv[])
+int main(int argc __attribute__ ((unused)), char *argv[] __attribute__ ((unused)))
 {
 	while (1) {
 		char buf[MAX_LINE_SIZE];
