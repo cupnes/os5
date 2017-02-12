@@ -131,34 +131,37 @@ void task_init(struct file *f, int argc, char *argv[])
 	new_task->task_id = task_id_counter++;
 
 	/* Setup context switch function */
-	copy_mem(context_switch_template, new_task->context_switch_func, CONTEXT_SWITCH_FN_SIZE);
-	new_task->context_switch_func[CONTEXT_SWITCH_FN_TSKNO_FIELD] = 8 * (new_task->task_id + GDT_IDX_OFS);
+	copy_mem(context_switch_template, new_task->context_switch_func,
+		 CONTEXT_SWITCH_FN_SIZE);
+	new_task->context_switch_func[CONTEXT_SWITCH_FN_TSKNO_FIELD] =
+		8 * (new_task->task_id + GDT_IDX_OFS);
 	new_task->context_switch = (void (*)(void))new_task->context_switch_func;
 
 	/* Setup GDT for task_tss */
-	init_gdt(new_task->task_id + GDT_IDX_OFS, (unsigned int)&new_task->tss, sizeof(struct tss), 3);
+	init_gdt(new_task->task_id + GDT_IDX_OFS, (unsigned int)&new_task->tss,
+		 sizeof(struct tss), 3);
 
 	/* Setup task stack */
 	/* スタックにint argcとchar *argv[]を積み、
 	 * call命令でジャンプした直後を再現する。
 	 *
 	 * 例) argc=3, argv={"HOGE", "P", "FUGAA"}
-	 * | VA          | 内容              | 備考                               |
-	 * |-------------+-------------------+------------------------------------|
-	 * | 0x2000 17d0 |                   |                                    |
-	 * | 0x2000 17d4 | (Don't Care)      | ESPはここを指した状態にしておく(*) |
-	 * | 0x2000 17d8 | 3                 | argc                               |
-	 * | 0x2000 17dc | 0x2000 17e4       | argv                               |
-	 * | 0x2000 17e0 | (Don't Care)      |                                    |
-	 * | 0x2000 17e4 | 0x2000 17f0       | argv[0]                            |
-	 * | 0x2000 17e8 | 0x2000 17f5       | argv[1]                            |
-	 * | 0x2000 17ec | 0x2000 17f7       | argv[2]                            |
-	 * | 0x2000 17f0 | 'H'  'O' 'G'  'E' |                                    |
-	 * | 0x2000 17f4 | '\0' 'P' '\0' 'F' |                                    |
-	 * | 0x2000 17f8 | 'U'  'G' 'A'  'A' |                                    |
-	 * | 0x2000 17fc | '\0'              |                                    |
-	 * |-------------+-------------------+------------------------------------|
-	 * | 0x2000 1800 |                   |                                    |
+	 * | VA          | 内容              | 備考                           |
+	 * |-------------+-------------------+--------------------------------|
+	 * | 0x2000 17d0 |                   |                                |
+	 * | 0x2000 17d4 | (Don't Care)      | ESPはここを指した状態にする(*) |
+	 * | 0x2000 17d8 | 3                 | argc                           |
+	 * | 0x2000 17dc | 0x2000 17e4       | argv                           |
+	 * | 0x2000 17e0 | (Don't Care)      |                                |
+	 * | 0x2000 17e4 | 0x2000 17f0       | argv[0]                        |
+	 * | 0x2000 17e8 | 0x2000 17f5       | argv[1]                        |
+	 * | 0x2000 17ec | 0x2000 17f7       | argv[2]                        |
+	 * | 0x2000 17f0 | 'H'  'O' 'G'  'E' |                                |
+	 * | 0x2000 17f4 | '\0' 'P' '\0' 'F' |                                |
+	 * | 0x2000 17f8 | 'U'  'G' 'A'  'A' |                                |
+	 * | 0x2000 17fc | '\0'              |                                |
+	 * |-------------+-------------------+--------------------------------|
+	 * | 0x2000 1800 |                   |                                |
 	 * (*) call命令はnearジャンプ時、call命令の次の命令のアドレスを
 	 * 復帰時のEIPとしてスタックに積むため。
 	 */
@@ -225,7 +228,8 @@ void task_exit(struct task *t)
 	sched_update_wakeupevq(EVENT_TYPE_EXIT);
 	sched_runq_del(t);
 
-	pd_base_addr = (struct page_directory_entry *)(t->tss.__cr3 & PAGE_ADDR_MASK);
+	pd_base_addr =
+		(struct page_directory_entry *)(t->tss.__cr3 & PAGE_ADDR_MASK);
 	pde = pd_base_addr + 0x080;
 	pt_base_addr = (struct page_table_entry *)(pde->pt_base << 12);
 	pde = pd_base_addr + 0x3ff;

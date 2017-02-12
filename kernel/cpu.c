@@ -1,6 +1,7 @@
 #include <cpu.h>
 
-void init_gdt(unsigned int idx, unsigned int base, unsigned int limit, unsigned char dpl)
+void init_gdt(unsigned int idx, unsigned int base, unsigned int limit,
+	      unsigned char dpl)
 {
 	gdt[idx].limit0 = limit & 0x0000ffff;
 	gdt[idx].limit1 = (limit & 0x000f0000) >> 16;

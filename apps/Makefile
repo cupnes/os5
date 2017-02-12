@@ -2,7 +2,8 @@ LIB_DIR = .lib
 BIN_DIR = .bin
 APP_LD = ../app.ld
 LIB_DIRS = libkernel libcommon libconsole libstring
-APP_DIRS = $(shell find . -maxdepth 1 -type d '!' -iname '.*' '!' -iname 'include' '!' -iname 'lib*')
+APP_DIRS = $(shell find . -maxdepth 1 -type d '!' -iname '.*' '!'	\
+-iname 'include' '!' -iname 'lib*')
 CFLAGS = -Wall -Wextra
 CFLAGS += -nostdinc -nostdlib -fno-builtin -c
 CFLAGS += -I../include
@@ -17,13 +18,17 @@ apps.img: lib app
 lib: $(LIB_DIRS)
 	[ -d $(LIB_DIR) ] || mkdir $(LIB_DIR)
 	for libdir in $^; do \
-		make -C $$libdir LIB_DIR=../$(LIB_DIR) APP_LD=$(APP_LD) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)"; \
+		make -C $$libdir LIB_DIR=../$(LIB_DIR)	\
+		APP_LD=$(APP_LD) CFLAGS="$(CFLAGS)"	\
+		LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)"; \
 	done
 
 app: $(APP_DIRS)
 	[ -d $(BIN_DIR) ] || mkdir $(BIN_DIR)
 	for appdir in $^; do \
-		make -C $$appdir BIN_DIR=../$(BIN_DIR) APP_LD=$(APP_LD) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)"; \
+		make -C $$appdir BIN_DIR=../$(BIN_DIR)	\
+		APP_LD=$(APP_LD) CFLAGS="$(CFLAGS)"	\
+		LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)"; \
 	done
 
 clean:

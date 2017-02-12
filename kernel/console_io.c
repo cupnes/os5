@@ -110,7 +110,8 @@ void update_cursor(void)
 
 	if (cursor_pos.y >= ROWS) {
 		unsigned int start_address = (cursor_pos.y - ROWS + 1) * 80;
-		unsigned char start_address_msb = (unsigned char)(start_address >> 8);
+		unsigned char start_address_msb =
+			(unsigned char)(start_address >> 8);
 		unsigned char start_address_lsb = (unsigned char)start_address;
 
 		kern_lock(&if_bit);
@@ -211,7 +212,8 @@ void dump_hex(unsigned int val, unsigned int num_digits)
 	update_cursor();
 }
 
-void dump_hex_pos(unsigned int val, unsigned int num_digits, unsigned char x, unsigned char y)
+void dump_hex_pos(unsigned int val, unsigned int num_digits,
+		  unsigned char x, unsigned char y)
 {
 	unsigned int new_x = x + num_digits;
 	unsigned int dump_digit = new_x - 1;

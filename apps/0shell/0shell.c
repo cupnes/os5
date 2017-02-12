@@ -200,7 +200,8 @@ static unsigned char get_command_id(const char *command)
 	return COMMAND_NUM;
 }
 
-int main(int argc __attribute__ ((unused)), char *argv[] __attribute__ ((unused)))
+int main(int argc __attribute__ ((unused)),
+	 char *argv[] __attribute__ ((unused)))
 {
 	while (1) {
 		char buf[MAX_LINE_SIZE];
@@ -220,7 +221,8 @@ int main(int argc __attribute__ ((unused)), char *argv[] __attribute__ ((unused)
 				break;
 			else {
 				is_background = 1;
-				copy_mem(args, buf, (unsigned int)str_get_len(args));
+				copy_mem(args, buf,
+					 (unsigned int)str_get_len(args));
 			}
 		}
 
@@ -270,7 +272,8 @@ int main(int argc __attribute__ ((unused)), char *argv[] __attribute__ ((unused)
 				for (i = 0; ; i++) {
 					if ((i == 0) && (args[i] == '\0')) {
 						break;
-					} else if ((args[i] == ' ') || (args[i] == '\0')) {
+					} else if ((args[i] == ' ') ||
+						   (args[i] == '\0')) {
 						argv[argc++] = start;
 						start = &args[i + 1];
 						if (args[i] == ' ')
@@ -280,10 +283,12 @@ int main(int argc __attribute__ ((unused)), char *argv[] __attribute__ ((unused)
 					}
 				}
 
-				syscall(SYSCALL_EXEC, fp, argc, (unsigned int)argv);
+				syscall(SYSCALL_EXEC, fp, argc,
+					(unsigned int)argv);
 
 				if (!is_background)
-					syscall(SYSCALL_SCHED_WAKEUP_EVENT, EVENT_TYPE_EXIT, 0, 0);
+					syscall(SYSCALL_SCHED_WAKEUP_EVENT,
+						EVENT_TYPE_EXIT, 0, 0);
 			} else
 				put_str("Command not found.\r\n");
 			break;

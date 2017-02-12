@@ -38,13 +38,15 @@ int kern_init(void)
 	intr_set_handler(EXCP_NUM_UD, (unsigned int)&invalid_opcode_handler);
 	intr_set_handler(EXCP_NUM_NM, (unsigned int)&device_not_available_handler);
 	intr_set_handler(EXCP_NUM_DF, (unsigned int)&double_fault_handler);
-	intr_set_handler(EXCP_NUM_CSO, (unsigned int)&coprocessor_segment_overrun_handler);
+	intr_set_handler(EXCP_NUM_CSO,
+			 (unsigned int)&coprocessor_segment_overrun_handler);
 	intr_set_handler(EXCP_NUM_TS, (unsigned int)&invalid_tss_handler);
 	intr_set_handler(EXCP_NUM_NP, (unsigned int)&segment_not_present_handler);
 	intr_set_handler(EXCP_NUM_SS, (unsigned int)&stack_fault_handler);
 	intr_set_handler(EXCP_NUM_GP, (unsigned int)&general_protection_handler);
 	intr_set_handler(EXCP_NUM_PF, (unsigned int)&page_fault_handler);
-	intr_set_handler(EXCP_NUM_MF, (unsigned int)&x87_fpu_floating_point_error_handler);
+	intr_set_handler(EXCP_NUM_MF,
+			 (unsigned int)&x87_fpu_floating_point_error_handler);
 	intr_set_handler(EXCP_NUM_AC, (unsigned int)&alignment_check_handler);
 	intr_set_handler(EXCP_NUM_MC, (unsigned int)&machine_check_handler);
 	intr_set_handler(EXCP_NUM_XM, (unsigned int)&simd_floating_point_handler);

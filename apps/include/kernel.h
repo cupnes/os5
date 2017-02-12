@@ -5,7 +5,8 @@
 #include "../../kernel/include/io_port.h"
 #include "../../kernel/include/console_io.h"
 
-unsigned int syscall(unsigned int syscall_id, unsigned int arg1, unsigned int arg2, unsigned int arg3);
+unsigned int syscall(unsigned int syscall_id, unsigned int arg1,
+		     unsigned int arg2, unsigned int arg3);
 unsigned int get_global_counter(void);
 void exit(void);
 

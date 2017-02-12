@@ -31,7 +31,8 @@ struct segment_descriptor {
 			unsigned short limit0;
 			unsigned short base0;
 			unsigned short base1: 8, type: 4, s: 1, dpl: 2, p: 1;
-			unsigned short limit1: 4, avl: 1, l: 1, d: 1, g: 1, base2: 8;
+			unsigned short limit1: 4, avl: 1, l: 1, d: 1, g: 1,
+				base2: 8;
 		};
 	};
 };
@@ -68,6 +69,7 @@ struct tss {
 
 extern struct segment_descriptor gdt[GDT_SIZE];
 
-void init_gdt(unsigned int idx, unsigned int base, unsigned int limit, unsigned char dpl);
+void init_gdt(unsigned int idx, unsigned int base, unsigned int limit,
+	      unsigned char dpl);
 
 #endif /* _CPU_H_ */

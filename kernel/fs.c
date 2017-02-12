@@ -21,7 +21,8 @@ void fs_init(void *fs_base_addr)
 	for (i = 1; i <= fhead.num_files; i++) {
 		f = (struct file *)mem_alloc();
 		f->head = (struct file_header *)file_start_addr;
-		f->data_base_addr = (char *)file_start_addr + sizeof(struct file_header);
+		f->data_base_addr =
+			(char *)file_start_addr + sizeof(struct file_header);
 		file_start_addr += PAGE_SIZE * f->head->block_num;
 		queue_enq((struct list *)f, (struct list *)&fhead);
 	}
@@ -37,7 +38,8 @@ struct file *fs_open(const char *name)
 	 * イルのtask_idが既に設定されていれば、fs_openはエラーを返す
 	 * ようにする */
 
-	for (f = (struct file *)fhead.lst.next; f != (struct file *)&fhead; f = (struct file *)f->lst.next) {
+	for (f = (struct file *)fhead.lst.next; f != (struct file *)&fhead;
+	     f = (struct file *)f->lst.next) {
 		if (!str_compare(name, f->head->name))
 			return f;
 	}
