@@ -24,7 +24,8 @@ while [ -n "$1" ]; do
 	if [ $data_size -le $data_size_1st_block ]; then
 		dd if=/dev/zero count=$((data_size_1st_block - data_size)) bs=1
 	else
-		dd if=/dev/zero count=$((block_size - ((header_size + data_size) % block_size))) bs=1
+		cnt=$((block_size - ((header_size + data_size) % block_size)))
+		dd if=/dev/zero count=$cnt bs=1
 	fi
 
 	shift
