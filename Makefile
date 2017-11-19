@@ -1,10 +1,10 @@
 all: fd.img
 
-fd.img: boot/boot.bin kernel/kernel.bin apps/apps.img
+fd.img: boot/legacy_bios/boot.bin kernel/kernel.bin apps/apps.img
 	cat $+ > $@
 
-boot/boot.bin:
-	make -C boot
+boot/legacy_bios/boot.bin:
+	make -C boot/legacy_bios
 
 kernel/kernel.bin:
 	make -C kernel
@@ -16,7 +16,7 @@ doc:
 	make -C doc
 
 clean:
-	make -C boot clean
+	make -C boot/legacy_bios clean
 	make -C kernel clean
 	make -C apps clean
 	make -C doc clean
@@ -25,4 +25,4 @@ clean:
 run: fd.img
 	qemu-system-i386 -fda $<
 
-.PHONY: boot/boot.bin kernel/kernel.bin apps/apps.img doc clean
+.PHONY: boot/legacy_bios/boot.bin kernel/kernel.bin apps/apps.img doc clean
