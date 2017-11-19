@@ -4,10 +4,12 @@
 *.bin
 *.dat
 *.img
+*.efi
 *.map
 *.txt
 *#
 bin
+fs
 GPATH
 GRTAGS
 GTAGS
