@@ -7,15 +7,18 @@ fs/EFI/BOOT/BOOTX64.EFI: boot/uefi/image.efi
 fd.img: boot/legacy_bios/boot.bin kernel/kernel.bin apps/apps.img
 	cat $+ > $@
 
-boot/uefi/image.efi: kernel/kernel.bin apps/apps.img
-	make -C boot/uefi KERNEL=../../kernel/kernel.bin \
+boot/uefi/image.efi: kernel/kernel_64.bin apps/apps.img
+	make -C boot/uefi KERNEL=../../kernel/kernel_64.bin \
 		APPS=../../apps/apps.img
 
 boot/legacy_bios/boot.bin:
 	make -C boot/legacy_bios
 
+kernel/kernel_64.bin:
+	make -C kernel kernel_64.bin x86_64=true
+
 kernel/kernel.bin:
-	make -C kernel
+	make -C kernel kernel.bin
 
 apps/apps.img:
 	make -C apps
