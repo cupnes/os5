@@ -4,8 +4,7 @@
 
 #define STACK_HEAP_SIZE	1048576	/* 1MB */
 
-void efi_main(void *ImageHandle __attribute__ ((unused)),
-	      struct EFI_SYSTEM_TABLE *SystemTable)
+void efi_main(void *ImageHandle, struct EFI_SYSTEM_TABLE *SystemTable)
 {
 	extern unsigned char _binary_kernel_bin_start;
 	extern unsigned char _binary_kernel_bin_size;
@@ -62,6 +61,8 @@ void efi_main(void *ImageHandle __attribute__ ((unused)),
 		putc(L' ');
 	}
 	puts(L"\r\n");
+
+	exit_boot_services(ImageHandle);
 
 	while (TRUE);
 }
