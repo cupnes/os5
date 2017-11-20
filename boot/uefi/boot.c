@@ -1,6 +1,7 @@
 #include <efi.h>
 #include <common.h>
 #include <mem.h>
+#include <fb.h>
 
 #define STACK_HEAP_SIZE	1048576	/* 1MB */
 
@@ -18,6 +19,9 @@ void efi_main(void *ImageHandle, struct EFI_SYSTEM_TABLE *SystemTable)
 	void *apps_start;
 	unsigned char *p;
 	unsigned int i;
+	unsigned long long stack_base;
+	unsigned long long kernel_arg1;
+	unsigned long long kernel_arg2;
 
 	efi_init(SystemTable);
 
@@ -35,6 +39,10 @@ void efi_main(void *ImageHandle, struct EFI_SYSTEM_TABLE *SystemTable)
 	alloc_addr = mdesc->PhysicalStart;
 	puts(L"alloc addr = 0x");
 	puth(alloc_addr, 16);
+	puts(L"\r\n");
+	stack_base = mdesc->PhysicalStart + (mdesc->NumberOfPages * PAGE_SIZE);
+	puts(L"stack_base = 0x");
+	puth(stack_base, 16);
 	puts(L"\r\n");
 
 	kernel_start = (void *)alloc_addr;
@@ -62,9 +70,28 @@ void efi_main(void *ImageHandle, struct EFI_SYSTEM_TABLE *SystemTable)
 	}
 	puts(L"\r\n");
 
+	kernel_arg1 = (unsigned long long)ST;
+	init_fb();
+	kernel_arg2 = (unsigned long long)&fb;
+
+	puts(L"kernel_arg1 = 0x");
+	puth(kernel_arg1, 16);
+	puts(L"\r\n");
+	puts(L"kernel_arg2 = 0x");
+	puth(kernel_arg2, 16);
+	puts(L"\r\n");
+	puts(L"stack_base = 0x");
+	puth(stack_base, 16);
+	puts(L"\r\n");
+
 	exit_boot_services(ImageHandle);
 
-	__asm__ ("jmp	%0\n"::"r"(kernel_start));
+	__asm__ ("	mov	%0, %%rsi\n"
+		 "	mov	%1, %%rdi\n"
+		 "	mov	%2, %%rsp\n"
+		 "	jmp	*%3\n"
+		 ::"r"(kernel_arg2), "r"(kernel_arg1), "r"(stack_base),
+		  "r"(kernel_start));
 
 	while (TRUE);
 }
