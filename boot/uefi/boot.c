@@ -64,5 +64,7 @@ void efi_main(void *ImageHandle, struct EFI_SYSTEM_TABLE *SystemTable)
 
 	exit_boot_services(ImageHandle);
 
+	__asm__ ("jmp	%0\n"::"r"(kernel_start));
+
 	while (TRUE);
 }
