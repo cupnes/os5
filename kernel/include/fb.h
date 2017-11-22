@@ -12,4 +12,10 @@ struct fb {
 
 typedef struct EFI_GRAPHICS_OUTPUT_BLT_PIXEL fb_pixel;
 
+extern struct fb fb;
+
+void fb_init(struct fb *_fb);
+inline void draw_px(unsigned int x, unsigned int y,
+		    unsigned char r, unsigned char g, unsigned char b);
+
 #endif

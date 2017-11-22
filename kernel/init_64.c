@@ -5,17 +5,12 @@ int kern_init(struct EFI_SYSTEM_TABLE *st __attribute__ ((unused)),
 	      struct fb *_fb)
 {
 	unsigned int x, y;
-	fb_pixel *p = (fb_pixel *)_fb->base;
 
-	for (y = 0; y < _fb->vr; y++) {
-		for (x = 0; x < _fb->hr; x++) {
-			p->Blue = x % 256;
-			p->Green = y % 256;
-			p->Red = (x + y) % 256;
-			p->Reserved = 255;
-			p++;
-		}
-	}
+	fb_init(_fb);
+
+	for (y = 0; y < fb.vr; y++)
+		for (x = 0; x < fb.hr; x++)
+			draw_px(x, y, (x + y) % 256, y % 256, x % 256);
 
 	while (1);
 
