@@ -354,8 +354,28 @@ struct EFI_SIMPLE_POINTER_PROTOCOL {
 	void *WaitForInput;
 };
 
+struct EFI_TIME {
+	unsigned short Year; // 1900 – 9999
+	unsigned char Month; // 1 – 12
+	unsigned char Day; // 1 – 31
+	unsigned char Hour; // 0 – 23
+	unsigned char Minute; // 0 – 59
+	unsigned char Second; // 0 – 59
+	unsigned char Pad1;
+	unsigned int Nanosecond; // 0 – 999,999,999
+	unsigned short TimeZone; // -1440 to 1440 or 2047
+	unsigned char Daylight;
+	unsigned char Pad2;
+};
+
 struct EFI_FILE_INFO {
-	unsigned char _buf[80];
+	unsigned long long Size;
+	unsigned long long FileSize;
+	unsigned long long PhysicalSize;
+	struct EFI_TIME CreateTime;
+	struct EFI_TIME LastAccessTime;
+	struct EFI_TIME ModificationTime;
+	unsigned long long Attribute;
 	unsigned short FileName[];
 };
 
@@ -374,7 +394,12 @@ struct EFI_FILE_PROTOCOL {
 	unsigned long long (*Write)(struct EFI_FILE_PROTOCOL *This,
 				    unsigned long long *BufferSize,
 				    void *Buffer);
-	unsigned long long _buf3[4];
+	unsigned long long _buf3[2];
+	unsigned long long (*GetInfo)(struct EFI_FILE_PROTOCOL *This,
+				      struct EFI_GUID *InformationType,
+				      unsigned long long *BufferSize,
+				      void *Buffer);
+	unsigned long long _buf4;
 	unsigned long long (*Flush)(struct EFI_FILE_PROTOCOL *This);
 };
 
@@ -468,6 +493,7 @@ extern struct EFI_DEVICE_PATH_FROM_TEXT_PROTOCOL *DPFTP;
 extern struct EFI_DEVICE_PATH_UTILITIES_PROTOCOL *DPUP;
 extern struct EFI_GUID lip_guid;
 extern struct EFI_GUID dpp_guid;
+extern struct EFI_GUID fi_guid;
 
 void efi_init(struct EFI_SYSTEM_TABLE *SystemTable);
 

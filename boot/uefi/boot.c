@@ -2,24 +2,28 @@
 #include <common.h>
 #include <mem.h>
 #include <fb.h>
+#include <file.h>
 
+#define KERNEL_FILE_NAME	L"kernel.bin"
+#define APPS_FILE_NAME	L"apps.img"
 #define STACK_HEAP_SIZE	1048576	/* 1MB */
 
 void efi_main(void *ImageHandle, struct EFI_SYSTEM_TABLE *SystemTable)
 {
-	extern unsigned char _binary_kernel_bin_start;
-	extern unsigned char _binary_kernel_bin_size;
-	extern unsigned char _binary_apps_img_start;
-	extern unsigned char _binary_apps_img_size;
-
+	unsigned long long status;
+	struct EFI_FILE_PROTOCOL *root;
+	struct EFI_FILE_PROTOCOL *file_kernel;
+	struct EFI_FILE_PROTOCOL *file_apps;
+	unsigned long long kernel_size;
+	unsigned long long apps_size;
 	unsigned long long alloc_size;
 	struct EFI_MEMORY_DESCRIPTOR *mdesc;
 	unsigned long long alloc_addr;
+	unsigned long long stack_base;
 	void *kernel_start;
 	void *apps_start;
 	unsigned char *p;
 	unsigned int i;
-	unsigned long long stack_base;
 	unsigned long long kernel_arg1;
 	unsigned long long kernel_arg2;
 
@@ -27,9 +31,23 @@ void efi_main(void *ImageHandle, struct EFI_SYSTEM_TABLE *SystemTable)
 
 	puts(L"Starting OS5 UEFI bootloader ...\r\n");
 
-	alloc_size = (unsigned long long)&_binary_kernel_bin_size +
-		(unsigned long long)&_binary_apps_img_size + STACK_HEAP_SIZE;
-	puts(L"(kern img size) + (apps img size) + (stack and heap size) = 0x");
+	status = SFSP->OpenVolume(SFSP, &root);
+	assert(status, L"SFSP->OpenVolume");
+
+	status = root->Open(
+		root, &file_kernel, KERNEL_FILE_NAME, EFI_FILE_MODE_READ, 0);
+	assert(status, L"root->Open(kernel)");
+
+	kernel_size = get_file_size(file_kernel);
+
+	status = root->Open(
+		root, &file_apps, APPS_FILE_NAME, EFI_FILE_MODE_READ, 0);
+	assert(status, L"root->Open(apps)");
+
+	apps_size = get_file_size(file_apps);
+
+	alloc_size = kernel_size + apps_size + STACK_HEAP_SIZE;
+	puts(L"(kern bin size) + (apps img size) + (stack and heap size) = 0x");
 	puth(alloc_size, 16);
 	puts(L"\r\n");
 
@@ -46,14 +64,12 @@ void efi_main(void *ImageHandle, struct EFI_SYSTEM_TABLE *SystemTable)
 	puts(L"\r\n");
 
 	kernel_start = (void *)alloc_addr;
-	ST->BootServices->CopyMem(kernel_start,
-				  (void *)&_binary_kernel_bin_start,
-				  (unsigned long long)&_binary_kernel_bin_size);
-	alloc_addr += (unsigned long long)&_binary_kernel_bin_size;
+	status = file_kernel->Read(file_kernel, &kernel_size, kernel_start);
+	assert(status, L"file_kernel->Read");
+	alloc_addr += kernel_size;
 	apps_start = (void *)alloc_addr;
-	ST->BootServices->CopyMem(apps_start,
-				  (void *)&_binary_apps_img_start,
-				  (unsigned long long)&_binary_apps_img_size);
+	status = file_apps->Read(file_apps, &apps_size, apps_start);
+	assert(status, L"file_apps->Read");
 
 	puts(L"loaded kernel(first 8 bytes): ");
 	p = (unsigned char *)kernel_start;
@@ -69,6 +85,9 @@ void efi_main(void *ImageHandle, struct EFI_SYSTEM_TABLE *SystemTable)
 		putc(L' ');
 	}
 	puts(L"\r\n");
+
+	file_kernel->Close(file_kernel);
+	file_apps->Close(file_apps);
 
 	kernel_arg1 = (unsigned long long)ST;
 	init_fb();

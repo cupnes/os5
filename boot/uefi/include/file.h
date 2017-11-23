@@ -6,6 +6,7 @@
 #define MAX_FILE_NAME_LEN	4
 #define MAX_FILE_NUM	10
 #define MAX_FILE_BUF	1024
+#define FILE_INFO_BUF_SIZE	180
 
 struct FILE {
 	struct RECT rect;
@@ -14,5 +15,7 @@ struct FILE {
 };
 
 extern struct FILE file_list[MAX_FILE_NUM];
+
+unsigned long long get_file_size(struct EFI_FILE_PROTOCOL *file);
 
 #endif

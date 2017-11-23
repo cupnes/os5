@@ -1,15 +1,16 @@
 all: fd.img
 
-fs/EFI/BOOT/BOOTX64.EFI: boot/uefi/image.efi
-	mkdir -p fs/EFI/BOOT
-	cp $< $@
+fs: boot/uefi/boot.efi kernel/kernel_64.bin apps/apps.img
+	mkdir -p $@/EFI/BOOT
+	cp boot/uefi/boot.efi $@/EFI/BOOT/BOOTX64.EFI
+	cp kernel/kernel_64.bin $@/kernel.bin
+	cp apps/apps.img $@/apps.img
 
 fd.img: boot/legacy_bios/boot.bin kernel/kernel.bin apps/apps.img
 	cat $+ > $@
 
-boot/uefi/image.efi: kernel/kernel_64.bin apps/apps.img
-	make -C boot/uefi KERNEL=../../kernel/kernel_64.bin \
-		APPS=../../apps/apps.img
+boot/uefi/boot.efi:
+	make -C boot/uefi
 
 boot/legacy_bios/boot.bin:
 	make -C boot/legacy_bios
@@ -42,5 +43,5 @@ run64: fs/EFI/BOOT/BOOTX64.EFI
 run32: fd.img
 	qemu-system-i386 -fda $<
 
-.PHONY: boot/legacy_bios/boot.bin boot/uefi/image.efi kernel/kernel.bin \
+.PHONY: boot/legacy_bios/boot.bin boot/uefi/boot.efi kernel/kernel.bin \
 	apps/apps.img doc clean run run64 run32
