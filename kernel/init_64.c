@@ -9,14 +9,6 @@ void putc(char c);
 int kern_init(struct EFI_SYSTEM_TABLE *st __attribute__ ((unused)),
 	      struct fb *_fb)
 {
-	/* unsigned int y = 1, x = 3; */
-	/* volatile unsigned int a; */
-	/* if (font_bitmap['A'][y * FONT_WIDTH + x]) { */
-	/* 	a = 0xbeefcafe; */
-	/* } else { */
-	/* 	a = 0xbabefee1; */
-	/* } */
-
 	fb_init(_fb);
 	set_fg(255, 255, 255);
 	set_bg(0, 70, 250);
