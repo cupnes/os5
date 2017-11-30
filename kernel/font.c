@@ -1,5 +1,6 @@
 #include <font.h>
 
+#if 0
 unsigned char font_bitmap[][FONT_HEIGHT * FONT_WIDTH] = {
 	[' '] = {
 		0,0,0,0,0,0,0,0,
@@ -482,8 +483,7 @@ unsigned char font_bitmap[][FONT_HEIGHT * FONT_WIDTH] = {
 		0,0,0,0,0,0,0,0
 	}
 };
-
-#if 0
+#else
 unsigned char font_bitmap[][FONT_HEIGHT][FONT_WIDTH] = {
 	[' '] = {
 		{0,0,0,0,0,0,0,0},

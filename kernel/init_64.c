@@ -35,7 +35,7 @@ void putc(char c)
 
 	for (y = 0; y < FONT_HEIGHT; y++)
 		for (x = 0; x < FONT_WIDTH; x++)
-			if (font_bitmap[(unsigned int)c][y * FONT_WIDTH + x])
+			if (font_bitmap[(unsigned int)c][y][x])
 				draw_px_fg(cursor_x + x, cursor_y + y);
 
 	cursor_x += FONT_WIDTH;

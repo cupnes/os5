@@ -4,6 +4,6 @@
 #define FONT_WIDTH	8
 #define FONT_HEIGHT	10
 
-extern unsigned char font_bitmap[][FONT_HEIGHT * FONT_WIDTH];
+extern unsigned char font_bitmap[][FONT_HEIGHT][FONT_WIDTH];
 
 #endif
