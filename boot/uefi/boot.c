@@ -4,9 +4,16 @@
 #include <fb.h>
 #include <file.h>
 
+/* #define PI_KERNEL_APPS */
+
 #define KERNEL_FILE_NAME	L"kernel.bin"
 #define APPS_FILE_NAME	L"apps.img"
 #define STACK_HEAP_SIZE	1048576	/* 1MB */
+
+#ifndef PI_KERNEL_APPS
+#define KERNEL_START	0x0000000000110000
+#define STACK_BASE	0x0000000000400000
+#endif
 
 void efi_main(void *ImageHandle, struct EFI_SYSTEM_TABLE *SystemTable)
 {
@@ -16,8 +23,10 @@ void efi_main(void *ImageHandle, struct EFI_SYSTEM_TABLE *SystemTable)
 	struct EFI_FILE_PROTOCOL *file_apps;
 	unsigned long long kernel_size;
 	unsigned long long apps_size;
+#ifdef PI_KERNEL_APPS
 	unsigned long long alloc_size;
 	struct EFI_MEMORY_DESCRIPTOR *mdesc;
+#endif
 	unsigned long long alloc_addr;
 	unsigned long long stack_base;
 	void *kernel_start;
@@ -51,6 +60,7 @@ void efi_main(void *ImageHandle, struct EFI_SYSTEM_TABLE *SystemTable)
 	if (has_apps)
 		apps_size = get_file_size(file_apps);
 
+#ifdef PI_KERNEL_APPS
 	alloc_size = kernel_size + STACK_HEAP_SIZE;
 	if (has_apps) {
 		puts(L"(kern bin size) + (apps img size) + ");
@@ -61,15 +71,22 @@ void efi_main(void *ImageHandle, struct EFI_SYSTEM_TABLE *SystemTable)
 
 	puth(alloc_size, 16);
 	puts(L"\r\n");
+#endif
 
 	init_memmap();
 
+#ifdef PI_KERNEL_APPS
 	mdesc = get_allocatable_area(alloc_size);
 	alloc_addr = mdesc->PhysicalStart;
+	stack_base = mdesc->PhysicalStart + (mdesc->NumberOfPages * PAGE_SIZE);
+#else
+	alloc_addr = KERNEL_START;
+	stack_base = STACK_BASE;
+#endif
+
 	puts(L"alloc addr = 0x");
 	puth(alloc_addr, 16);
 	puts(L"\r\n");
-	stack_base = mdesc->PhysicalStart + (mdesc->NumberOfPages * PAGE_SIZE);
 	puts(L"stack_base = 0x");
 	puth(stack_base, 16);
 	puts(L"\r\n");
