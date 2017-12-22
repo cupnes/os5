@@ -8,6 +8,10 @@
 #define APPS_FILE_NAME	L"apps.img"
 #define STACK_HEAP_SIZE	1048576	/* 1MB */
 
+#define KERNEL_START	0x0000000000110000
+#define APPS_START	0x0000000000200000
+#define STACK_BASE	0x0000000000400000
+
 void efi_main(void *ImageHandle, struct EFI_SYSTEM_TABLE *SystemTable)
 {
 	unsigned long long status;
@@ -16,12 +20,6 @@ void efi_main(void *ImageHandle, struct EFI_SYSTEM_TABLE *SystemTable)
 	struct EFI_FILE_PROTOCOL *file_apps;
 	unsigned long long kernel_size;
 	unsigned long long apps_size;
-	unsigned long long alloc_size;
-	struct EFI_MEMORY_DESCRIPTOR *mdesc;
-	unsigned long long alloc_addr;
-	unsigned long long stack_base;
-	void *kernel_start;
-	void *apps_start;
 	unsigned char *p;
 	unsigned int i;
 	unsigned long long kernel_arg1;
@@ -46,40 +44,21 @@ void efi_main(void *ImageHandle, struct EFI_SYSTEM_TABLE *SystemTable)
 
 	apps_size = get_file_size(file_apps);
 
-	alloc_size = kernel_size + apps_size + STACK_HEAP_SIZE;
-	puts(L"(kern bin size) + (apps img size) + (stack and heap size) = 0x");
-	puth(alloc_size, 16);
-	puts(L"\r\n");
-
-	init_memmap();
-
-	mdesc = get_allocatable_area(alloc_size);
-	alloc_addr = mdesc->PhysicalStart;
-	puts(L"alloc addr = 0x");
-	puth(alloc_addr, 16);
-	puts(L"\r\n");
-	stack_base = mdesc->PhysicalStart + (mdesc->NumberOfPages * PAGE_SIZE);
-	puts(L"stack_base = 0x");
-	puth(stack_base, 16);
-	puts(L"\r\n");
-
-	kernel_start = (void *)alloc_addr;
-	status = file_kernel->Read(file_kernel, &kernel_size, kernel_start);
+	status = file_kernel->Read(file_kernel, &kernel_size,
+				   (void *)KERNEL_START);
 	assert(status, L"file_kernel->Read");
-	alloc_addr += kernel_size;
-	apps_start = (void *)alloc_addr;
-	status = file_apps->Read(file_apps, &apps_size, apps_start);
+	status = file_apps->Read(file_apps, &apps_size, (void *)APPS_START);
 	assert(status, L"file_apps->Read");
 
 	puts(L"loaded kernel(first 8 bytes): ");
-	p = (unsigned char *)kernel_start;
+	p = (unsigned char *)KERNEL_START;
 	for (i = 0; i < 8; i++) {
 		puth(*p++, 2);
 		putc(L' ');
 	}
 	puts(L"\r\n");
 	puts(L"loaded apps(first 8 bytes): ");
-	p = (unsigned char *)apps_start;
+	p = (unsigned char *)APPS_START;
 	for (i = 0; i < 8; i++) {
 		puth(*p++, 2);
 		putc(L' ');
@@ -100,17 +79,17 @@ void efi_main(void *ImageHandle, struct EFI_SYSTEM_TABLE *SystemTable)
 	puth(kernel_arg2, 16);
 	puts(L"\r\n");
 	puts(L"stack_base = 0x");
-	puth(stack_base, 16);
+	puth(STACK_BASE, 16);
 	puts(L"\r\n");
 
 	exit_boot_services(ImageHandle);
 
+	unsigned long long _sb = STACK_BASE, _ks = KERNEL_START;
 	__asm__ ("	mov	%0, %%rsi\n"
 		 "	mov	%1, %%rdi\n"
 		 "	mov	%2, %%rsp\n"
 		 "	jmp	*%3\n"
-		 ::"r"(kernel_arg2), "r"(kernel_arg1), "r"(stack_base),
-		  "r"(kernel_start));
+		 ::"r"(kernel_arg2), "r"(kernel_arg1), "r"(_sb), "r"(_ks));
 
 	while (TRUE);
 }

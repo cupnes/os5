@@ -3,8 +3,6 @@ CFLAGS += -nostdinc -nostdlib -fno-builtin -c
 CFLAGS += -Iinclude
 ifneq ($(x86_64),true)
 CFLAGS += -m32
-else
-CFLAGS += -fPIE
 endif
 LDFLAGS = -Map System.map -s -x
 ifneq ($(x86_64),true)
