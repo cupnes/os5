@@ -20,6 +20,10 @@ void putc(char c)
 
 	case '\n':
 		cursor_y += FONT_HEIGHT;
+		if ((cursor_y + FONT_HEIGHT) >= fb.vr) {
+			cursor_x = cursor_y = 0;
+			clear_screen();
+		}
 		break;
 
 	default:
@@ -32,6 +36,10 @@ void putc(char c)
 		if ((cursor_x + FONT_WIDTH) >= fb.hr) {
 			cursor_x = 0;
 			cursor_y += FONT_HEIGHT;
+			if ((cursor_y + FONT_HEIGHT) >= fb.vr) {
+				cursor_x = cursor_y = 0;
+				clear_screen();
+			}
 		}
 
 		break;
