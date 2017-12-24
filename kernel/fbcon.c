@@ -45,3 +45,9 @@ void putc(char c)
 		break;
 	}
 }
+
+void puts(char *s)
+{
+	while (*s != '\0')
+		putc(*s++);
+}
