@@ -13,14 +13,27 @@ void putc(char c)
 {
 	unsigned int x, y;
 
-	for (y = 0; y < FONT_HEIGHT; y++)
-		for (x = 0; x < FONT_WIDTH; x++)
-			if (font_bitmap[(unsigned int)c][y][x])
-				draw_px_fg(cursor_x + x, cursor_y + y);
-
-	cursor_x += FONT_WIDTH;
-	if ((cursor_x + FONT_WIDTH) >= fb.hr) {
+	switch(c) {
+	case '\r':
 		cursor_x = 0;
+		break;
+
+	case '\n':
 		cursor_y += FONT_HEIGHT;
+		break;
+
+	default:
+		for (y = 0; y < FONT_HEIGHT; y++)
+			for (x = 0; x < FONT_WIDTH; x++)
+				if (font_bitmap[(unsigned int)c][y][x])
+					draw_px_fg(cursor_x + x, cursor_y + y);
+
+		cursor_x += FONT_WIDTH;
+		if ((cursor_x + FONT_WIDTH) >= fb.hr) {
+			cursor_x = 0;
+			cursor_y += FONT_HEIGHT;
+		}
+
+		break;
 	}
 }

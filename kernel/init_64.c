@@ -12,7 +12,13 @@ int kern_init(struct EFI_SYSTEM_TABLE *st __attribute__ ((unused)),
 
 	fbcon_init();
 
-	putc('A');
+	unsigned char i;
+	for (i = 0; i < 100; i++)
+		putc('A');
+
+	putc('\r');
+	putc('\n');
+	putc('B');
 
 	while (1);
 
