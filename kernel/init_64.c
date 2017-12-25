@@ -2,6 +2,8 @@
 #include <fb.h>
 #include <fbcon.h>
 
+void test_kb_polling(void);
+
 int kern_init(struct EFI_SYSTEM_TABLE *st __attribute__ ((unused)),
 	      struct fb *_fb)
 {
@@ -12,9 +14,14 @@ int kern_init(struct EFI_SYSTEM_TABLE *st __attribute__ ((unused)),
 
 	fbcon_init();
 
-	puts("HELLO WORLD!");
-
-	while (1);
+	while (1) {
+		char c = getc();
+		if (('a' <= c) && (c <= 'z'))
+			c = c - 'a' + 'A';
+		else if (c == '\n')
+			putc('\r');
+		putc(c);
+	}
 
 	return 0;
 }

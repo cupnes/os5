@@ -1,6 +1,7 @@
 #include <fbcon.h>
 #include <fb.h>
 #include <font.h>
+#include <kbc.h>
 
 unsigned int cursor_x, cursor_y;
 
@@ -50,4 +51,9 @@ void puts(char *s)
 {
 	while (*s != '\0')
 		putc(*s++);
+}
+
+char getc(void)
+{
+	return keymap[get_keycode_pressed()];
 }
