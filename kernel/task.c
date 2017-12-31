@@ -138,8 +138,8 @@ void task_init(struct file *f, int argc, char *argv[])
 	new_task->context_switch = (void (*)(void))new_task->context_switch_func;
 
 	/* Setup GDT for task_tss */
-	init_gdt(new_task->task_id + GDT_IDX_OFS, (unsigned int)&new_task->tss,
-		 sizeof(struct tss), 3);
+	gdt_set(new_task->task_id + GDT_IDX_OFS, (unsigned int)&new_task->tss,
+		sizeof(struct tss), 3);
 
 	/* Setup task stack */
 	/* スタックにint argcとchar *argv[]を積み、
