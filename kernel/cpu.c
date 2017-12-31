@@ -3,6 +3,8 @@
 void gdt_set(unsigned int idx, unsigned int base, unsigned int limit,
 	     unsigned char dpl)
 {
+	gdt[idx].a = gdt[idx].b = 0;
+
 	gdt[idx].limit0 = limit & 0x0000ffff;
 	gdt[idx].limit1 = (limit & 0x000f0000) >> 16;
 
