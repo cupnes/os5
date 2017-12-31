@@ -6,6 +6,9 @@
 #define X86_EFLAGS_IF	0x00000200
 #define GDT_KERN_DS_OFS	0x0010
 
+#define GDT_S_SYSTEM	0
+#define GDT_TYPE_SYS_TSS_AVAIL	9
+
 #define sti()	__asm__ ("sti"::)
 #define cli()	__asm__ ("cli"::)
 #define x86_get_eflags()	({			\
@@ -70,6 +73,7 @@ struct tss {
 extern struct segment_descriptor gdt[GDT_SIZE];
 
 void gdt_set(unsigned int idx, unsigned int base, unsigned int limit,
-	     unsigned char dpl);
+	     unsigned char g, unsigned char d, unsigned char l,
+	     unsigned char dpl, unsigned char s, unsigned char type);
 
 #endif /* _CPU_H_ */

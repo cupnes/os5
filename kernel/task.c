@@ -139,7 +139,8 @@ void task_init(struct file *f, int argc, char *argv[])
 
 	/* Setup GDT for task_tss */
 	gdt_set(new_task->task_id + GDT_IDX_OFS, (unsigned int)&new_task->tss,
-		sizeof(struct tss), 3);
+		sizeof(struct tss), 0, 0, 0, 3, GDT_S_SYSTEM,
+		GDT_TYPE_SYS_TSS_AVAIL);
 
 	/* Setup task stack */
 	/* スタックにint argcとchar *argv[]を積み、
