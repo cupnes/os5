@@ -12,6 +12,9 @@
 #define GDT_TYPE_DATA_RW	2
 #define GDT_TYPE_CODE_ER	10
 
+#define SS_KERNEL_CODE	0x0008
+#define SS_KERNEL_DATA	0x0010
+
 #define sti()	__asm__ ("sti"::)
 #define cli()	__asm__ ("cli"::)
 #define x86_get_eflags()	({			\
