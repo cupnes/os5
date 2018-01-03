@@ -2,8 +2,6 @@
 #include <fb.h>
 #include <fbcon.h>
 
-void test_kb_polling(void);
-
 int kern_init(struct EFI_SYSTEM_TABLE *st __attribute__ ((unused)),
 	      struct fb *_fb)
 {
