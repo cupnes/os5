@@ -7,7 +7,10 @@
 #define GDT_KERN_DS_OFS	0x0010
 
 #define GDT_S_SYSTEM	0
+#define GDT_S_CODE_OR_DATA	1
 #define GDT_TYPE_SYS_TSS_AVAIL	9
+#define GDT_TYPE_DATA_RW	2
+#define GDT_TYPE_CODE_ER	10
 
 #define sti()	__asm__ ("sti"::)
 #define cli()	__asm__ ("cli"::)
@@ -72,6 +75,9 @@ struct tss {
 
 extern struct segment_descriptor gdt[GDT_SIZE];
 
+#ifdef X86_64
+void gdt_init(void);
+#endif
 void gdt_set(unsigned int idx, unsigned int base, unsigned int limit,
 	     unsigned char g, unsigned char d, unsigned char l,
 	     unsigned char dpl, unsigned char s, unsigned char type);

@@ -1,3 +1,4 @@
+#include <cpu.h>
 #include <efi.h>
 #include <fb.h>
 #include <fbcon.h>
@@ -11,6 +12,8 @@ int kern_init(struct EFI_SYSTEM_TABLE *st __attribute__ ((unused)),
 	clear_screen();
 
 	fbcon_init();
+
+	gdt_init();
 
 	while (1) {
 		char c = getc();
