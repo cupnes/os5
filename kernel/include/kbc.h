@@ -10,7 +10,11 @@
 #define ASCII_BS	0x08
 #define ASCII_HT	0x09
 
+#define INTR_NUM_KB	33
+#define INTR_MASK_BIT_KB	0x02
+
 extern const char keymap[];
+extern unsigned char keyboard_handler;
 
 unsigned char get_keycode_pressed(void);
 
