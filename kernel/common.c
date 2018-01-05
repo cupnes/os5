@@ -1,4 +1,7 @@
 #include <common.h>
+#include <lock.h>
+
+unsigned char error_status;
 
 int str_compare(const char *src, const char *dst)
 {
@@ -34,4 +37,39 @@ void copy_mem(const void *src, void *dst, unsigned int size)
 		d++;
 		s++;
 	}
+}
+
+void enqueue(struct queue *q, unsigned char data)
+{
+	unsigned char if_bit;
+
+	if (q->is_full) {
+		error_status = 1;
+	} else {
+		error_status = 0;
+		kern_lock(&if_bit);
+		q->buf[q->end] = data;
+		q->end++;
+		if (q->start == q->end) q->is_full = 1;
+		kern_unlock(&if_bit);
+	}
+}
+
+unsigned char dequeue(struct queue *q)
+{
+	unsigned char data = 0;
+	unsigned char if_bit;
+
+	kern_lock(&if_bit);
+	if (!q->is_full && (q->start == q->end)) {
+		error_status = 1;
+	} else {
+		error_status = 0;
+		data = q->buf[q->start];
+		q->start++;
+		q->is_full = 0;
+	}
+	kern_unlock(&if_bit);
+
+	return data;
 }

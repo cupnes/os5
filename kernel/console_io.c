@@ -5,8 +5,7 @@
 #include <sched.h>
 #include <lock.h>
 #include <kernel.h>
-
-#define QUEUE_BUF_SIZE	256
+#include <common.h>
 
 const char keymap[] = {
 	0x00, ASCII_ESC, '1', '2', '3', '4', '5', '6',
@@ -27,50 +26,9 @@ const char keymap[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, '\\', 0x00, 0x00
 };
 
-struct queue {
-	unsigned char buf[QUEUE_BUF_SIZE];
-	unsigned char start, end;
-	unsigned char is_full;
-} keycode_queue;
+struct queue keycode_queue;
 
 struct cursor_position cursor_pos;
-
-static unsigned char error_status;
-
-static void enqueue(struct queue *q, unsigned char data)
-{
-	unsigned char if_bit;
-
-	if (q->is_full) {
-		error_status = 1;
-	} else {
-		error_status = 0;
-		kern_lock(&if_bit);
-		q->buf[q->end] = data;
-		q->end++;
-		if (q->start == q->end) q->is_full = 1;
-		kern_unlock(&if_bit);
-	}
-}
-
-static unsigned char dequeue(struct queue *q)
-{
-	unsigned char data = 0;
-	unsigned char if_bit;
-
-	kern_lock(&if_bit);
-	if (!q->is_full && (q->start == q->end)) {
-		error_status = 1;
-	} else {
-		error_status = 0;
-		data = q->buf[q->start];
-		q->start++;
-		q->is_full = 0;
-	}
-	kern_unlock(&if_bit);
-
-	return data;
-}
 
 void do_ir_keyboard(void)
 {
