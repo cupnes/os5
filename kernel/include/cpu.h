@@ -23,6 +23,17 @@ __asm__ volatile ("\tpushf\n"				\
 		  "\tpopl	%0\n":"=r"(_v):);	\
 _v;							\
 })
+#define x86_get_rflags()	({			\
+unsigned long long _v;					\
+__asm__ volatile ("\tpushf\n"				\
+		  "\tpopq	%0\n":"=r"(_v):);	\
+_v;							\
+})
+#ifndef X86_64
+#define x86_get_flags	x86_get_eflags
+#else
+#define x86_get_flags	x86_get_rflags
+#endif
 #define x86_get_tr()		({			\
 unsigned short _v;					\
 __asm__ volatile ("\tstr	%0\n":"=r"(_v):);	\

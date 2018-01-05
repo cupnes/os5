@@ -4,7 +4,7 @@
 void kern_lock(unsigned char *if_bit)
 {
 	/* Save EFlags.IF */
-	*if_bit = (x86_get_eflags() & X86_EFLAGS_IF) ? 1 : 0;
+	*if_bit = (x86_get_flags() & X86_EFLAGS_IF) ? 1 : 0;
 
 	/* if saved IF == true, then cli */
 	if (*if_bit)
