@@ -18,6 +18,8 @@ int kern_init(struct EFI_SYSTEM_TABLE *st __attribute__ ((unused)),
 
 	gdt_init();
 
+	kbc_init();
+
 	unsigned char i;
 	for (i = 0; i < EXCEPTION_MAX; i++)
 		intr_set_handler(i, (unsigned long long)&exception_handler);

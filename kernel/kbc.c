@@ -1,5 +1,8 @@
 #include <io_port.h>
+#include <intr.h>
 #include <kbc.h>
+#include <lock.h>
+#include <common.h>
 
 const char keymap[] = {
 	0x00, ASCII_ESC, '1', '2', '3', '4', '5', '6',
@@ -20,15 +23,55 @@ const char keymap[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, '\\', 0x00, 0x00
 };
 
+struct queue keycode_queue;
+
+void do_ir_keyboard(void)
+{
+	unsigned char status, data;
+
+	status = inb_p(IOADR_KBC_STATUS);
+	if (status & IOADR_KBC_STATUS_BIT_OBF) {
+		data = inb_p(IOADR_KBC_DATA);
+		enqueue(&keycode_queue, data);
+	}
+	outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_KB,
+	       IOADR_MPIC_OCW2);
+}
+
+void kbc_init(void)
+{
+	keycode_queue.start = 0;
+	keycode_queue.end = 0;
+	keycode_queue.is_full = 0;
+	error_status = 0;
+}
+
 unsigned char get_keydata_noir(void)
 {
 	while (!(inb_p(IOADR_KBC_STATUS) & IOADR_KBC_STATUS_BIT_OBF));
 	return inb_p(IOADR_KBC_DATA);
 }
 
+unsigned char get_keydata(void)
+{
+	unsigned char data;
+	unsigned char dequeuing = 1;
+	unsigned char if_bit;
+
+	while (dequeuing) {
+		kern_lock(&if_bit);
+		data = dequeue(&keycode_queue);
+		if (!error_status)
+			dequeuing = 0;
+		kern_unlock(&if_bit);
+	}
+
+	return data;
+}
+
 unsigned char get_keycode_pressed(void)
 {
 	unsigned char keycode;
-	while ((keycode = get_keydata_noir()) & IOADR_KBC_DATA_BIT_BRAKE);
+	while ((keycode = get_keydata()) & IOADR_KBC_DATA_BIT_BRAKE);
 	return keycode & ~IOADR_KBC_DATA_BIT_BRAKE;
 }
