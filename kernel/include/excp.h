@@ -1,49 +1,51 @@
 #ifndef _EXCP_H_
 #define _EXCP_H_
 
-#define EXCEPTION_MAX	21
-#define EXCP_NUM_DE	0
-#define EXCP_NUM_DB	1
-#define EXCP_NUM_NMI	2
-#define EXCP_NUM_BP	3
-#define EXCP_NUM_OF	4
-#define EXCP_NUM_BR	5
-#define EXCP_NUM_UD	6
-#define EXCP_NUM_NM	7
-#define EXCP_NUM_DF	8
-#define EXCP_NUM_CSO	9
-#define EXCP_NUM_TS	10
-#define EXCP_NUM_NP	11
-#define EXCP_NUM_SS	12
-#define EXCP_NUM_GP	13
-#define EXCP_NUM_PF	14
-#define EXCP_NUM_MF	16
-#define EXCP_NUM_AC	17
-#define EXCP_NUM_MC	18
-#define EXCP_NUM_XM	19
-#define EXCP_NUM_VE	20
+enum {
+	EXCP_NUM_DE,
+	EXCP_NUM_DB,
+	EXCP_NUM_NMI,
+	EXCP_NUM_BP,
+	EXCP_NUM_OF,
+	EXCP_NUM_BR,
+	EXCP_NUM_UD,
+	EXCP_NUM_NM,
+	EXCP_NUM_DF,
+	EXCP_NUM_CSO,
+	EXCP_NUM_TS,
+	EXCP_NUM_NP,
+	EXCP_NUM_SS,
+	EXCP_NUM_GP,
+	EXCP_NUM_PF,
+	EXCP_NUM_MF = 16,
+	EXCP_NUM_AC,
+	EXCP_NUM_MC,
+	EXCP_NUM_XM,
+	EXCP_NUM_VE,
+	EXCEPTION_MAX
+};
 
-extern unsigned char exception_handler;
-extern unsigned char divide_error_handler;
-extern unsigned char debug_handler;
-extern unsigned char nmi_handler;
-extern unsigned char breakpoint_handler;
-extern unsigned char overflow_handler;
-extern unsigned char bound_range_exceeded_handler;
-extern unsigned char invalid_opcode_handler;
-extern unsigned char device_not_available_handler;
-extern unsigned char double_fault_handler;
-extern unsigned char coprocessor_segment_overrun_handler;
-extern unsigned char invalid_tss_handler;
-extern unsigned char segment_not_present_handler;
-extern unsigned char stack_fault_handler;
-extern unsigned char general_protection_handler;
-extern unsigned char page_fault_handler;
-extern unsigned char x87_fpu_floating_point_error_handler;
-extern unsigned char alignment_check_handler;
-extern unsigned char machine_check_handler;
-extern unsigned char simd_floating_point_handler;
-extern unsigned char virtualization_handler;
+void exception_handler(void);
+void divide_error_handler(void);
+void debug_handler(void);
+void nmi_handler(void);
+void breakpoint_handler(void);
+void overflow_handler(void);
+void bound_range_exceeded_handler(void);
+void invalid_opcode_handler(void);
+void device_not_available_handler(void);
+void double_fault_handler(void);
+void coprocessor_segment_overrun_handler(void);
+void invalid_tss_handler(void);
+void segment_not_present_handler(void);
+void stack_fault_handler(void);
+void general_protection_handler(void);
+void page_fault_handler(void);
+void x87_fpu_floating_point_error_handler(void);
+void alignment_check_handler(void);
+void machine_check_handler(void);
+void simd_floating_point_handler(void);
+void virtualization_handler(void);
 
 void do_exception(void);
 void do_page_fault(unsigned int error_code, unsigned int address);
