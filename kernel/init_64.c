@@ -23,9 +23,7 @@ int kern_init(struct EFI_SYSTEM_TABLE *st __attribute__ ((unused)),
 
 	kern_task_init();
 
-	unsigned char i;
-	for (i = 0; i < EXCEPTION_MAX; i++)
-		intr_set_handler(i, (unsigned long long)&exception_handler);
+	excp_init();
 
 	intr_set_handler(INTR_NUM_KB, (unsigned long long)&keyboard_handler);
 	intr_init();

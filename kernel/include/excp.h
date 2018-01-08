@@ -49,5 +49,6 @@ void virtualization_handler(void);
 
 void do_exception(void);
 void do_page_fault(unsigned int error_code, unsigned int address);
+void excp_init(void);
 
 #endif /* _EXCP_H_ */
