@@ -4,6 +4,9 @@
 #include <lock.h>
 #include <common.h>
 
+#include <cpu.h>
+#include <fbcon.h>
+
 const char keymap[] = {
 	0x00, ASCII_ESC, '1', '2', '3', '4', '5', '6',
 	'7', '8', '9', '0', '-', '^', ASCII_BS, ASCII_HT,
@@ -24,6 +27,8 @@ const char keymap[] = {
 };
 
 struct queue keycode_queue;
+
+unsigned long long tmp_rsp;
 
 void do_ir_keyboard(void)
 {
@@ -66,12 +71,23 @@ unsigned char get_keydata(void)
 		kern_unlock(&if_bit);
 	}
 
+	__asm__ ("movq	%%rbp, %[tmp_rsp]":[tmp_rsp]"=r"(tmp_rsp):);
+	tmp_rsp += 8;
 	return data;
 }
 
 unsigned char get_keycode_pressed(void)
 {
 	unsigned char keycode;
-	while ((keycode = get_keydata()) & IOADR_KBC_DATA_BIT_BRAKE);
+	while (1) {
+		keycode = get_keydata();
+
+		putc('#');
+		puth(tmp_rsp, 16);
+		puts("\r\n");
+
+		if (!(keycode & IOADR_KBC_DATA_BIT_BRAKE))
+			break;
+	}
 	return keycode & ~IOADR_KBC_DATA_BIT_BRAKE;
 }

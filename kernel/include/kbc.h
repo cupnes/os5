@@ -17,6 +17,8 @@
 extern const char keymap[];
 extern unsigned char keyboard_handler;
 
+extern unsigned long long tmp_rsp;
+
 unsigned char get_keycode_pressed(void);
 void kbc_init(void);
 

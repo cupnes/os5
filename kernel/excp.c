@@ -7,6 +7,8 @@
 #include <fbcon.h>
 #endif
 
+#include <kbc.h>
+
 #define EXCP_DUMP_STACK_DEPTH	30
 
 void do_exception(void)
@@ -113,6 +115,9 @@ void do_stack_fault_handler(unsigned long long sp)
 void do_general_protection_handler(unsigned long long sp)
 {
 	puts("GENERAL PROTECTION\r\n");
+	puts("TMP RSP=");
+	puth(tmp_rsp, 16);
+	puts("\r\n");
 	dump_stack(EXCP_DUMP_STACK_DEPTH, sp);
 	while (1);
 }
