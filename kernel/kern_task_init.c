@@ -4,6 +4,8 @@
 
 #define KERN_TASK_GDT_IDX	5
 
+struct tss kern_task_tss;
+
 static void kern_task_context_switch(void)
 {
 	__asm__("ljmp	$0x28, $0");
@@ -11,7 +13,6 @@ static void kern_task_context_switch(void)
 
 void kern_task_init(void)
 {
-	static struct tss kern_task_tss;
 	unsigned int old_cr3, cr3 = 0x0008f018;
 	unsigned short segment_selector = 8 * KERN_TASK_GDT_IDX;
 
