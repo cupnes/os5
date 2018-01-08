@@ -4,6 +4,7 @@
 void fbcon_init(void);
 void putc(char c);
 void puts(char *s);
+void puth(unsigned long long val, unsigned char num_digits);
 char getc(void);
 
 #endif

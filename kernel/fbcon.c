@@ -3,6 +3,8 @@
 #include <font.h>
 #include <kbc.h>
 
+#define MAX_STR_BUF	100
+
 unsigned int cursor_x, cursor_y;
 
 void fbcon_init(void)
@@ -51,6 +53,25 @@ void puts(char *s)
 {
 	while (*s != '\0')
 		putc(*s++);
+}
+
+void puth(unsigned long long val, unsigned char num_digits)
+{
+	int i;
+	unsigned short unit_val;
+	char str[MAX_STR_BUF];
+
+	for (i = num_digits - 1; i >= 0; i--) {
+		unit_val = (unsigned short)(val & 0x0f);
+		if (unit_val < 0xa)
+			str[i] = '0' + unit_val;
+		else
+			str[i] = 'A' + (unit_val - 0xa);
+		val >>= 4;
+	}
+	str[num_digits] = '\0';
+
+	puts(str);
 }
 
 char getc(void)
