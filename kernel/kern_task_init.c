@@ -6,6 +6,7 @@
 
 struct tss kern_task_tss;
 
+#ifndef X86_64
 static void kern_task_context_switch(void)
 {
 	__asm__("ljmp	$0x28, $0");
@@ -31,3 +32,16 @@ void kern_task_init(void)
 	task_instance_table[KERN_TASK_ID].context_switch =
 		kern_task_context_switch;
 }
+#else
+void kern_task_init(void)
+{
+	unsigned short segment_selector = 8 * KERN_TASK_GDT_IDX;
+
+	kern_task_tss.rsp0l = KERN_INT_STACK_BASE;
+	kern_task_tss.rsp0h = (unsigned long long)KERN_INT_STACK_BASE >> 32;
+	gdt_set(KERN_TASK_GDT_IDX, (unsigned long long)&kern_task_tss,
+		sizeof(kern_task_tss), 0, 0, 0, 0, GDT_S_SYSTEM,
+		GDT_TYPE_SYS_TSS_AVAIL);
+	__asm__("ltr	%0"::"r"(segment_selector));
+}
+#endif

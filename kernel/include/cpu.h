@@ -15,6 +15,9 @@
 #define SS_KERNEL_CODE	0x0008
 #define SS_KERNEL_DATA	0x0010
 
+#define KERN_INT_STACK_BASE	0x0000000000380000
+#define KERN_STACK_BASE	0x0000000000400000
+
 #define sti()	__asm__ ("sti"::)
 #define cli()	__asm__ ("cli"::)
 #define x86_get_eflags()	({			\
@@ -57,6 +60,7 @@ struct segment_descriptor {
 	};
 };
 
+#ifndef X86_64
 struct tss {
 	unsigned short		back_link, __blh;
 	unsigned int		esp0;
@@ -86,6 +90,36 @@ struct tss {
 	unsigned short		trace;
 	unsigned short		io_bitmap_base;
 };
+#else
+struct tss {
+	unsigned int	__reserved1;
+	unsigned int	rsp0l;
+	unsigned int	rsp0h;
+	unsigned int	rsp1l;
+	unsigned int	rsp1h;
+	unsigned int	rsp2l;
+	unsigned int	rsp2h;
+	unsigned int	__reserved2;
+	unsigned int	__reserved3;
+	unsigned int	ist1l;
+	unsigned int	ist1h;
+	unsigned int	ist2l;
+	unsigned int	ist2h;
+	unsigned int	ist3l;
+	unsigned int	ist3h;
+	unsigned int	ist4l;
+	unsigned int	ist4h;
+	unsigned int	ist5l;
+	unsigned int	ist5h;
+	unsigned int	ist6l;
+	unsigned int	ist6h;
+	unsigned int	ist7l;
+	unsigned int	ist7h;
+	unsigned int	__reserved4;
+	unsigned int	__reserved5;
+	unsigned short	__reserved6, io_bitmap_base;
+};
+#endif
 
 extern struct segment_descriptor gdt[GDT_SIZE];
 

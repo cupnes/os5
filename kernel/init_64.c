@@ -5,6 +5,7 @@
 #include <fb.h>
 #include <fbcon.h>
 #include <kbc.h>
+#include <kern_task.h>
 
 int kern_init(struct EFI_SYSTEM_TABLE *st __attribute__ ((unused)),
 	      struct fb *_fb)
@@ -19,6 +20,8 @@ int kern_init(struct EFI_SYSTEM_TABLE *st __attribute__ ((unused)),
 	gdt_init();
 
 	kbc_init();
+
+	kern_task_init();
 
 	unsigned char i;
 	for (i = 0; i < EXCEPTION_MAX; i++)

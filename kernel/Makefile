@@ -14,7 +14,8 @@ OBJS = sys.o cpu.o intr.o excp.o memory.o sched.o fs.o task.o	\
 		common.o debug.o init.o kern_task_init.o
 else
 LDFLAGS += -T sys_64.ld
-OBJS = init_64.o fb.o font.o fbcon.o kbc.o cpu.o excp.o intr.o sys_64.o lock.o common.o
+OBJS = init_64.o fb.o font.o fbcon.o kbc.o cpu.o excp.o intr.o	\
+	sys_64.o lock.o common.o kern_task_init.o
 endif
 
 kernel_64.bin: $(OBJS)
