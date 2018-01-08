@@ -42,6 +42,11 @@ unsigned short _v;					\
 __asm__ volatile ("\tstr	%0\n":"=r"(_v):);	\
 _v;							\
 })
+#define x86_get_rsp()		({			\
+unsigned long long _v;					\
+__asm__ volatile ("\tmovq	%%rsp, %0\n":"=r"(_v):);\
+_v;							\
+})
 #define x86_halt()	__asm__ ("hlt"::)
 
 struct segment_descriptor {
@@ -129,5 +134,8 @@ void gdt_init(void);
 void gdt_set(unsigned int idx, unsigned int base, unsigned int limit,
 	     unsigned char g, unsigned char d, unsigned char l,
 	     unsigned char dpl, unsigned char s, unsigned char type);
+#ifdef X86_64
+void dump_stack(unsigned int depth, unsigned long long sp_addr);
+#endif
 
 #endif /* _CPU_H_ */

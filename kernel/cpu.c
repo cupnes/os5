@@ -2,6 +2,7 @@
 
 #ifdef X86_64
 #include <asm/cpu.h>
+#include <fbcon.h>
 
 struct segment_descriptor gdt[GDT_SIZE];
 unsigned long long gdtr[2];
@@ -64,3 +65,33 @@ void gdt_set(unsigned int idx, unsigned int base, unsigned int limit,
 	gdt[idx].type = type;
 	gdt[idx].p = 1;
 }
+
+#ifdef X86_64
+void dump_stack(unsigned int depth, unsigned long long sp_addr)
+{
+	puts("##DUMP STACK(DEPTH=0X");
+	puth(depth, 8);
+	puts(")\r\n");
+
+	unsigned long long *sp;
+	if (sp_addr)
+		sp = (unsigned long long *)sp_addr;
+	else
+		sp = (unsigned long long *)x86_get_rsp();
+	puts("SP=");
+	puth((unsigned long long)sp, 16);
+	puts("\r\n");
+
+	unsigned int i;
+	for (i = 0; i < depth; i++) {
+		if ((unsigned long long)sp >= KERN_STACK_BASE)
+			break;
+		puth(i, 2);
+		puts(":");
+		puth((unsigned long long)sp, 16);
+		puts(":");
+		puth(*sp++, 16);
+		puts("\r\n");
+	}
+}
+#endif
