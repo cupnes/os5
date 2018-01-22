@@ -17,7 +17,13 @@
 extern const char keymap[];
 extern unsigned char keyboard_handler;
 
-extern unsigned long long tmp_rsp;
+extern unsigned long long tmp_rbp_b;
+extern unsigned long long tmp_rbp_1;
+extern unsigned long long tmp_rbp_2;
+extern unsigned long long tmp_rbp_3;
+extern unsigned long long tmp_rbp_4;
+extern unsigned long long tmp_rbp_5;
+extern unsigned long long tmp_rbp;
 
 unsigned char get_keycode_pressed(void);
 void kbc_init(void);

@@ -116,7 +116,9 @@ void do_general_protection_handler(unsigned long long sp)
 {
 	puts("GENERAL PROTECTION\r\n");
 	puts("TMP RSP=");
-	puth(tmp_rsp, 16);
+	puth(tmp_rbp_b, 16);
+	putc(',');
+	puth(tmp_rbp, 16);
 	puts("\r\n");
 	dump_stack(EXCP_DUMP_STACK_DEPTH, sp);
 	while (1);

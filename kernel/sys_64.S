@@ -6,15 +6,15 @@ keyboard_handler:
 	push	%rcx
 	push	%rdx
 	push	%rbx
-	push	%rsp
 	push	%rbp
 	push	%rsi
 	push	%rdi
+	push	%rsp
 	call	do_ir_keyboard
+	pop	%rsp
 	pop	%rdi
 	pop	%rsi
 	pop	%rbp
-	pop	%rsp
 	pop	%rbx
 	pop	%rdx
 	pop	%rcx
