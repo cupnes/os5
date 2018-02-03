@@ -1,5 +1,7 @@
 #include <io_port.h>
+#include <intr.h>
 #include <kbc.h>
+#include <fbcon.h>
 
 const char keymap[] = {
 	0x00, ASCII_ESC, '1', '2', '3', '4', '5', '6',
@@ -19,6 +21,25 @@ const char keymap[] = {
 	0x00, 0x00, 0x00, '_', 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, '\\', 0x00, 0x00
 };
+
+void do_ir_keyboard(void)
+{
+	unsigned char status;
+	status = inb_p(IOADR_KBC_STATUS);
+	if (status & IOADR_KBC_STATUS_BIT_OBF) {
+		unsigned char keycode = inb_p(IOADR_KBC_DATA);
+		if (!(keycode & IOADR_KBC_DATA_BIT_BRAKE)) {
+			char c = keymap[keycode];
+			if (('a' <= c) && (c <= 'z'))
+				c = c - 'a' + 'A';
+			else if (c == '\n')
+				putc('\r');
+			putc(c);
+		}
+	}
+	outb_p(IOADR_MPIC_OCW2_BIT_MANUAL_EOI | INTR_IR_KB,
+	       IOADR_MPIC_OCW2);
+}
 
 unsigned char get_keydata_noir(void)
 {

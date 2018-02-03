@@ -29,14 +29,8 @@ int kern_init(struct EFI_SYSTEM_TABLE *st __attribute__ ((unused)),
 	intr_set_mask_master(mask);
 	sti();
 
-	while (1) {
-		char c = getc();
-		if (('a' <= c) && (c <= 'z'))
-			c = c - 'a' + 'A';
-		else if (c == '\n')
-			putc('\r');
-		putc(c);
-	}
+	while (1)
+		x86_halt();
 
 	return 0;
 }
