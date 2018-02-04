@@ -302,7 +302,11 @@ struct EFI_SYSTEM_TABLE {
 			void *Destination,
 			void *Source,
 			unsigned long long Length);
-		unsigned long long _buf12[2];
+		void (*SetMem)(
+			void *Buffer,
+			unsigned long long Size,
+			unsigned char Value);
+		unsigned long long _buf12;
 	} *BootServices;
 };
 
