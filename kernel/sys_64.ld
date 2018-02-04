@@ -1,14 +1,32 @@
 OUTPUT_FORMAT("binary");
 
+MEMORY
+{
+	bin(wxa)  : o = 0x00000000, l = 1m
+	body(wxa) : o = 0x00110000, l = 960k
+}
+
 SECTIONS
 {
-	. = 0x0000000000110000;
-	.text	: {*(.text)}
-	.rodata	: {
+	.header : {
+		QUAD(__bss_start)
+		QUAD(__bss_end - __bss_start)
+	} > bin
+
+	.kernel : {
+		__text_start = .;
+		*(.text)
+
 		*(.strings)
 		*(.rodata)
 		*(.rodata.*)
-	}
-	.data	: {*(.data)}
-	.bss	: {*(.bss)}
+
+		*(.data)
+
+		__bss_start = .;
+		*(.bss)
+		__bss_end = .;
+
+		*(.eh_frame)
+	} > body AT> bin
 }

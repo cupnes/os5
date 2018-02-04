@@ -41,9 +41,20 @@ void efi_main(void *ImageHandle, struct EFI_SYSTEM_TABLE *SystemTable)
 
 	kernel_size = get_file_size(file_kernel);
 
+	struct header {
+		void *bss_start;
+		unsigned long long bss_size;
+	} head;
+	unsigned long long head_size = sizeof(head);
+	status = file_kernel->Read(file_kernel, &head_size, (void *)&head);
+	assert(status, L"file_kernel->Read(head)");
+
+	kernel_size -= sizeof(head);
 	status = file_kernel->Read(file_kernel, &kernel_size,
 				   (void *)KERNEL_START);
-	assert(status, L"file_kernel->Read");
+	assert(status, L"file_kernel->Read(body)");
+
+	ST->BootServices->SetMem(head.bss_start, head.bss_size, 0);
 
 	puts(L"loaded kernel(first 8 bytes): ");
 	p = (unsigned char *)KERNEL_START;

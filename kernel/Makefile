@@ -1,5 +1,5 @@
 CFLAGS = -Wall -Wextra
-CFLAGS += -nostdinc -nostdlib -fno-builtin -c
+CFLAGS += -nostdinc -nostdlib -fno-builtin -fno-common -c
 CFLAGS += -Iinclude
 ifneq ($(x86_64),true)
 CFLAGS += -m32
