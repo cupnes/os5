@@ -14,12 +14,9 @@ SECTIONS
 	} > bin
 
 	.kernel : {
-		__text_start = .;
 		*(.text)
 
-		*(.strings)
 		*(.rodata)
-		*(.rodata.*)
 
 		*(.data)
 
