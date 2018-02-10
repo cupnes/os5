@@ -2,8 +2,8 @@ OUTPUT_FORMAT("binary");
 
 MEMORY
 {
-	bin(wxa)  : o = 0x00000000, l = 1m
-	body(wxa) : o = 0x00110000, l = 960k
+	exec_file(r) : ORIGIN = 0x00000000, LENGTH = 1m
+	ram(wx)      : ORIGIN = 0x00110000, LENGTH = 960k
 }
 
 SECTIONS
@@ -11,9 +11,9 @@ SECTIONS
 	.header : {
 		QUAD(__bss_start)
 		QUAD(__bss_end - __bss_start)
-	} > bin
+	} > exec_file
 
-	.kernel : {
+	.body : {
 		*(.text)
 
 		*(.rodata)
@@ -25,5 +25,5 @@ SECTIONS
 		__bss_end = .;
 
 		*(.eh_frame)
-	} > body AT> bin
+	} > ram AT> exec_file
 }
