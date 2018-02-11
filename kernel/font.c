@@ -1,6 +1,6 @@
 #include <font.h>
 
-unsigned char font_bitmap[][FONT_HEIGHT][FONT_WIDTH] = {
+const unsigned char font_bitmap[][FONT_HEIGHT][FONT_WIDTH] = {
 	[' '] = {
 		{0,0,0,0,0,0,0,0},
 		{0,0,0,0,0,0,0,0},
